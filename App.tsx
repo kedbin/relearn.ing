@@ -45,11 +45,11 @@ const journalEntries = [
     id: 'week-01-cloud-to-ai',
     title: 'Week 01 · Cloud → AI Bridge',
     date: 'Nov 24, 2025',
-    summary: 'Paired my cloud skills with AI copilots to rebuild deployment checklists and remove copy/paste toil.',
+    summary: 'Paired my cloud workflows with Gemini CLI, Claude Code, and GitHub Copilot to rebuild deployment checklists and remove copy/paste toil.',
     highlights: [
-      'Rebuilt the AWS incident runbook with GPT-generated decision trees.',
-      'Recorded a daily "pairing with AI" log to track prompts that work.',
-      'Automated credential rotation reminders with a tiny Lambda + Bedrock call.'
+      'Used Gemini Pro 3.0 + Claude Code to co-write the incident checklist and strip stale steps.',
+      'Recorded a daily "pairing with AI" log comparing Gemini CLI vs GitHub Copilot suggestions.',
+      'Tested Kimi K2 and GLM 4.6 agents for automating repetitive bash snippets.'
     ],
     status: 'Published'
   },
@@ -95,13 +95,13 @@ const experimentCadence = [
     icon: ClipboardCheck
   },
   {
-    title: 'Cloud to AI Bridge Log',
-    description: 'Documenting how I pair AWS/GCP work with GPT-4, Claude, and local models—what prompts, guardrails, and automations actually stick.',
+    title: 'Agent Stack Lab Notes',
+    description: 'Documenting experiments across Gemini CLI, Gemini Pro 3.0, GitHub Copilot, Claude Code, Kimi K2, and GLM 4.6—what prompts, guardrails, and automations actually stick.',
     icon: Compass
   },
   {
     title: 'Public Build Transparency',
-    description: 'Posting the messy data: sleep, context switches, deploys, failed prompts. Authenticity > highlight reels.',
+    description: 'Posting the messy data: sleep, context switches, failed prompts, plus MCP experiments like wiring agents into Gmail for triage.',
     icon: Target
   }
 ];
@@ -318,7 +318,7 @@ const ProblemSection = () => {
       title: 'Skill Gap Panic',
       subtitle: 'Why AI felt unreachable',
       bullets: [
-        'Analysis paralysis from juggling OpenAI, AWS Bedrock, Claude, local models—so I used none of them well.',
+        'Analysis paralysis from juggling Gemini CLI, GitHub Copilot, Claude Code, Kimi K2, GLM 4.6, and every new agent drop—so I used none of them well.',
         'Too many tutorials, not enough shipping. I couldn’t point to proofs of progress.',
         'Emotional spiral: if I can’t keep up now, how will I ever become the engineer I want to be?'
       ]
@@ -586,16 +586,16 @@ const AboutPage = () => (
       </div>
       <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kedbin.</h1>
       <p className="text-slate-300 text-lg">
-        Cloud engineer focused on AWS + GCP reliability, automating incident response runbooks, and pairing those lessons with AI copilots.
-        Years of on-call shifts made me obsessive about documentation, automation, and honest retros—that’s the energy powering relearn.ing.
+        Cloud engineer running nonstop experiments with Gemini CLI, Gemini Pro 3.0, GitHub Copilot, Claude Code, Kimi K2, and GLM 4.6 to replace stale SOPs.
+        Right now I’m optimizing my workflow end-to-end—testing MCP integrations (including Gmail command runs) so the boring coordination work handles itself.
       </p>
     </div>
 
     <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
       {[
-        { label: 'Cloud incidents handled', value: '84', note: 'Every one documented + now automated' },
-        { label: 'AI pairing sessions logged', value: '37', note: 'Tracking prompts, latency, accuracy' },
-        { label: 'Weekly retros completed', value: '21', note: 'Hard data on focus, sleep, deep work' }
+        { label: 'Agent experiments logged', value: '42', note: 'Gemini CLI, Gemini Pro 3.0, Copilot, Claude Code, Kimi K2, GLM 4.6' },
+        { label: 'Toolchains compared', value: '6', note: 'Swapping between Copilot, Claude Code, Gemini CLI, Gemini Pro 3.0, Kimi K2, GLM 4.6' },
+        { label: 'MCP automations prototyped', value: '5', note: 'Testing Gmail + workflow integrations' }
       ].map((stat) => (
         <div key={stat.label} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
           <p className="text-4xl font-bold text-white font-display">{stat.value}</p>
@@ -617,8 +617,8 @@ const AboutPage = () => (
       <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
         <h2 className="text-2xl font-display text-white mb-3">Currently focused on</h2>
         <ul className="grid md:grid-cols-2 gap-3 text-sm md:text-base">
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Finishing the AI-ready runbook for incident response</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Shipping one tutorial per month translating cloud tasks → AI prompts</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing comparison notes across Gemini CLI, Gemini Pro 3.0, Copilot, Claude Code, Kimi K2, and GLM 4.6</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Integrating MCP-powered agents into Gmail so triage and replies feel like a command palette</li>
           <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours of deep work weekly</li>
           <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Expanding journal subscribers who want honest progress reports</li>
         </ul>
