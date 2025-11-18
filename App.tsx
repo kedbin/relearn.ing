@@ -14,7 +14,8 @@ import {
   Zap,
   BookOpen,
   Menu,
-  X
+  X,
+  AlertCircle
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -77,8 +78,8 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
         
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
-          <NavLink href="#" active={page === 'home'} onClick={() => setPage('home')}>Journal</NavLink>
-          <NavLink href="#" active={page === 'blog'} onClick={() => setPage('blog')}>Articles</NavLink>
+          <NavLink href="#" active={page === 'home'} onClick={() => setPage('home')}>Home</NavLink>
+          <NavLink href="#" active={page === 'journal'} onClick={() => setPage('journal')}>Journal</NavLink>
           <NavLink href="#" active={page === 'about'} onClick={() => setPage('about')}>About</NavLink>
         </nav>
 
@@ -116,8 +117,8 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
             className="md:hidden bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
-              <NavLink href="#" active={page === 'home'} onClick={() => { setPage('home'); setMobileMenuOpen(false); }}>Journal</NavLink>
-              <NavLink href="#" active={page === 'blog'} onClick={() => { setPage('blog'); setMobileMenuOpen(false); }}>Articles</NavLink>
+              <NavLink href="#" active={page === 'home'} onClick={() => { setPage('home'); setMobileMenuOpen(false); }}>Home</NavLink>
+              <NavLink href="#" active={page === 'journal'} onClick={() => { setPage('journal'); setMobileMenuOpen(false); }}>Journal</NavLink>
               <NavLink href="#" active={page === 'about'} onClick={() => { setPage('about'); setMobileMenuOpen(false); }}>About</NavLink>
               <hr className="border-slate-800" />
               <button className="w-full py-3 bg-brand-600 text-white rounded-lg font-semibold">Subscribe</button>
@@ -131,8 +132,11 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
 
 const Hero = () => {
   const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+
+  const scrollToProblem = () => {
+    document.getElementById('problem')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -164,19 +168,19 @@ const Hero = () => {
           </h1>
           
           <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            The world is changing faster than ever. I felt stuck in old patterns. 
-            This is my public log of unlearning the obsolete and mastering the new—in 
+            I felt stuck, weighed down by old habits and outdated tools. 
+            This is my public journal of unlearning the obsolete and mastering the new—in 
             <span className="text-slate-200 font-semibold"> life</span>, 
             <span className="text-slate-200 font-semibold"> tech</span>, and 
             <span className="text-slate-200 font-semibold"> AI</span>.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="px-8 py-4 bg-white text-slate-950 font-bold rounded-full hover:bg-slate-200 transition-colors flex items-center gap-2">
-              Start Reading <ArrowRight className="w-4 h-4" />
-            </button>
-            <button className="px-8 py-4 bg-slate-800/50 text-white font-semibold rounded-full border border-slate-700 hover:bg-slate-800 transition-colors backdrop-blur-sm">
-              View The Stack
+            <button 
+              onClick={scrollToProblem}
+              className="px-8 py-4 bg-white text-slate-950 font-bold rounded-full hover:bg-slate-200 transition-colors flex items-center gap-2"
+            >
+              Read the Story <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </motion.div>
@@ -191,6 +195,58 @@ const Hero = () => {
     </section>
   );
 };
+
+const ProblemSection = () => (
+  <section id="problem" className="py-24 relative">
+    <div className="container mx-auto px-6">
+      <div className="max-w-3xl mx-auto text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-6">The Catalyst: A Playbook Full of Bad Habits</h2>
+        <p className="text-lg text-slate-400 leading-relaxed">
+          I was running on outdated software. The friction between my old methods and the modern world was becoming impossible to ignore. 
+          I realized I had to rewrite my entire operating system.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-2xl backdrop-blur-sm">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-red-400" />
+            In Life & Work
+          </h3>
+          <ul className="space-y-3 text-slate-400">
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 mt-1">•</span> Mindless scrolling instead of mindful presence.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 mt-1">•</span> Procrastinating on long-term goals for short-term comfort.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 mt-1">•</span> Reacting emotionally instead of responding thoughtfully.
+            </li>
+          </ul>
+        </div>
+
+        <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-2xl backdrop-blur-sm">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+             <AlertCircle className="w-5 h-5 text-red-400" />
+            In Tech & AI
+          </h3>
+          <ul className="space-y-3 text-slate-400">
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 mt-1">•</span> Clinging to familiar but inefficient developer tools.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 mt-1">•</span> Writing boilerplate code that could be automated.
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-slate-600 mt-1">•</span> Fearing new technologies instead of learning to leverage them.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+);
 
 const FeatureCard = ({ icon: Icon, title, description, index }: { icon: any, title: string, description: string, index: number }) => (
   <motion.div
@@ -223,12 +279,12 @@ const Pillars = () => {
     {
       icon: Cpu,
       title: "Relearn AI",
-      description: "From fear to mastery. leveraging artificial intelligence not just as a tool, but as a partner in creativity and problem-solving."
+      description: "From fear to mastery. Leveraging artificial intelligence not just as a tool, but as a partner in creativity and problem-solving."
     }
   ];
 
   return (
-    <section className="py-32 relative">
+    <section className="py-24 relative">
       <div className="container mx-auto px-6">
         <div className="mb-16 md:mb-24">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">The Three Pillars</h2>
@@ -354,15 +410,16 @@ export default function App() {
               transition={{ duration: 0.3 }}
             >
               <Hero />
+              <ProblemSection />
               <Pillars />
               <Quote />
               <Newsletter />
             </motion.div>
           )}
           
-          {(page === 'blog' || page === 'about') && (
+          {(page === 'journal' || page === 'about') && (
             <motion.div 
-              key="blog"
+              key="journal"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
