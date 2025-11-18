@@ -584,10 +584,12 @@ const AboutPage = () => (
         <Sparkles className="w-3 h-3" />
         About the builder
       </div>
-      <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kedbin.</h1>
+      <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kim Edrian Binasoy (he/him).</h1>
       <p className="text-slate-300 text-lg">
-        Cloud engineer running nonstop experiments with Gemini CLI, Gemini Pro 3.0, GitHub Copilot, Claude Code, Kimi K2, and GLM 4.6 to replace stale SOPs.
-        Right now I’m optimizing my workflow end-to-end—testing MCP integrations (including Gmail command runs) so the boring coordination work handles itself.
+        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions across transportation, banking, and financial services. I’ve lived through every Agile SDLC phase and picked up scars in infrastructure, networking, QA testing, and project leadership along the way.
+      </p>
+      <p className="text-slate-300 text-lg mt-4">
+        Relearn.ing is how I turn that background into better workflows: I’m obsessed with automation, efficiency, and optimizing my SOPs through hands-on experiments with Gemini CLI, Gemini Pro 3.0, GitHub Copilot, Claude Code, Kimi K2, GLM 4.6, and MCP agents (including Gmail command integrations).
       </p>
     </div>
 
