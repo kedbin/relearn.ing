@@ -45,7 +45,7 @@ const journalEntries = [
     id: 'week-01-cloud-to-ai',
     title: 'Week 01 · Cloud → AI Bridge',
     date: 'Nov 24, 2025',
-    summary: 'Paired my entry-level cloud skills with AI copilots to rebuild deployment checklists and remove copy/paste toil.',
+    summary: 'Paired my cloud skills with AI copilots to rebuild deployment checklists and remove copy/paste toil.',
     highlights: [
       'Rebuilt the AWS incident runbook with GPT-generated decision trees.',
       'Recorded a daily "pairing with AI" log to track prompts that work.',
@@ -264,7 +264,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/70 border border-slate-700/60 backdrop-blur-sm text-xs font-medium text-brand-200 mb-8">
             <Sparkles className="w-3 h-3" />
-            <span>Entry → mid cloud engineer relearning AI in public</span>
+            <span>Cloud engineer relearning AI in public</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-white mb-8 leading-[1.1]">
@@ -272,7 +272,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
           </h1>
           
           <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-            I’m a junior-to-mid cloud engineer who realized my SOPs were fossilized, my focus was fried, and AI was passing me by.
+            I’m a cloud engineer who realized my SOPs were fossilized, my focus was fried, and AI was passing me by.
             This site is the unfiltered rebuild—habits, tooling, prompts, and emotions—so other overwhelmed builders can see the messy middle, not just the highlight reel.
           </p>
 
@@ -586,8 +586,8 @@ const AboutPage = () => (
       </div>
       <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kedbin.</h1>
       <p className="text-slate-300 text-lg">
-        Entry-to-mid level cloud engineer. Three years of AWS/GCP deployments, unglamorous on-call shifts, and lots of imposter syndrome.
-        I’m using relearn.ing to rebuild the rituals, tooling, and emotional resilience it takes to grow into an AI-native engineer.
+        Cloud engineer focused on AWS + GCP reliability, automating incident response runbooks, and pairing those lessons with AI copilots.
+        Years of on-call shifts made me obsessive about documentation, automation, and honest retros—that’s the energy powering relearn.ing.
       </p>
     </div>
 
