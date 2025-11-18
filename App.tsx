@@ -1,238 +1,379 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { 
+  Brain, 
+  Code2, 
+  Cpu, 
+  ArrowRight, 
+  Mail, 
+  Github, 
+  Twitter, 
+  Linkedin, 
+  ChevronDown,
+  Sparkles,
+  Zap,
+  BookOpen,
+  Menu,
+  X
+} from 'lucide-react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
-// --- SVG Icon Components ---
+// --- Utils ---
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
-const BrainIcon: React.FC<{ className?: string }> = ({ className = 'h-12 w-12' }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.553L16.25 21.75l-.648-1.197a3.375 3.375 0 00-2.456-2.456L12 17.25l1.197-.648a3.375 3.375 0 002.456-2.456L16.25 13.5l.648 1.197a3.375 3.375 0 002.456 2.456L20.25 18l-1.197.648a3.375 3.375 0 00-2.456 2.456z" />
-  </svg>
+// --- Components ---
+
+const Logo = () => (
+  <a 
+    href="#" 
+    className="text-2xl font-bold tracking-tighter font-display group flex items-center gap-2"
+  >
+    <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500/10 group-hover:bg-brand-500/20 transition-colors">
+      <Zap className="h-5 w-5 text-brand-400 group-hover:text-brand-300 transition-colors" />
+    </div>
+    <span className="text-white">
+      relearn<span className="text-brand-400">.ing</span>
+    </span>
+  </a>
 );
 
-const CodeIcon: React.FC<{ className?: string }> = ({ className = 'h-12 w-12' }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z" />
-  </svg>
+const NavLink = ({ children, href, active, onClick }: { children: React.ReactNode; href: string; active?: boolean; onClick?: () => void }) => (
+  <a
+    href={href}
+    onClick={(e) => { e.preventDefault(); onClick?.(); }}
+    className={cn(
+      "text-sm font-medium transition-colors duration-200 hover:text-brand-300 relative px-3 py-2 rounded-md",
+      active ? "text-brand-400 bg-brand-500/10" : "text-slate-400"
+    )}
+  >
+    {children}
+  </a>
 );
 
-const AtomIcon: React.FC<{ className?: string }> = ({ className = 'h-12 w-12' }) => (
- <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-  <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.73-.664 1.206-.861a7.5 7.5 0 10-9.362 9.362c.198.475.477.89.861 1.206l3.03-2.496m-2.496-3.03c.384-.317.664-.73.861-1.206a7.5 7.5 0 00-9.362-9.362 7.5 7.5 0 009.362 9.362c-.475-.198-.89-.477-1.206-.861zm-2.496 3.03l-2.122 2.122a2.25 2.25 0 003.182 3.182l2.122-2.122" />
-</svg>
-);
+const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void }) => {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-// --- Page Section Components ---
-
-const Header: React.FC<{ setPage: (page: string) => void }> = ({ setPage }) => (
-  <header className="sticky top-0 z-50 bg-slate-900/70 backdrop-blur-md">
-    <div className="container mx-auto px-6 py-4">
-      <div className="flex items-center justify-between">
-        <a 
-          href="#" 
-          onClick={(e) => { e.preventDefault(); setPage('home'); }} 
-          className="text-2xl font-bold text-white tracking-wider cursor-pointer"
-        >
-          relearn<span className="text-sky-400">.ing</span>
-        </a>
-        <nav>
-          <a 
-            href="#" 
-            onClick={(e) => { e.preventDefault(); setPage('blog'); }} 
-            className="text-slate-300 hover:text-sky-400 transition-colors duration-300 cursor-pointer"
-          >
-            Blog
-          </a>
+  return (
+    <header 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
+        scrolled ? "bg-slate-950/80 backdrop-blur-md border-slate-800/50 py-3" : "bg-transparent border-transparent py-5"
+      )}
+    >
+      <div className="container mx-auto px-6 flex items-center justify-between">
+        <div onClick={() => setPage('home')} className="cursor-pointer">
+          <Logo />
+        </div>
+        
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-1">
+          <NavLink href="#" active={page === 'home'} onClick={() => setPage('home')}>Journal</NavLink>
+          <NavLink href="#" active={page === 'blog'} onClick={() => setPage('blog')}>Articles</NavLink>
+          <NavLink href="#" active={page === 'about'} onClick={() => setPage('about')}>About</NavLink>
         </nav>
-      </div>
-    </div>
-  </header>
-);
 
-const Hero: React.FC = () => (
-  <section className="relative min-h-[70vh] flex items-center justify-center text-center overflow-hidden">
-     <div className="absolute inset-0 bg-grid-slate-700/[0.05] bg-[bottom_1px_center] [mask-image:linear-gradient(to_bottom,transparent,black)]"></div>
-    <div className="container mx-auto px-6 z-10">
-      <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight mb-4 tracking-tighter">
-        My Personal Journey to
-        <br />
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-500">
-          Relearning
-        </span>.
-      </h1>
-      <p className="text-lg md:text-xl max-w-3xl mx-auto text-slate-300">
-        I felt stuck, weighed down by old habits. This is my public journal to self-advocate—sharing what works, learning from what fails, and ultimately, relearning how to optimize my playbook for life, tech, and AI.
-      </p>
-    </div>
-  </section>
-);
-
-const ProblemStatement: React.FC = () => (
-  <section id="problem" className="py-20 sm:py-24 bg-slate-900/50">
-    <div className="container mx-auto px-6">
-       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-white">The Catalyst: A Playbook Full of Bad Habits</h2>
-        <p className="text-lg text-slate-400 mt-2 max-w-3xl mx-auto">I was running on outdated software. The friction between my old methods and the modern world was becoming impossible to ignore. Here's what that felt like:</p>
-      </div>
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 text-slate-300">
-        <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700">
-          <h3 className="font-semibold text-white text-lg mb-3">In Life & Work</h3>
-          <ul className="list-disc list-inside space-y-2 text-slate-400">
-            <li>Mindless scrolling instead of mindful presence.</li>
-            <li>Procrastinating on important, long-term goals.</li>
-            <li>Reacting emotionally instead of responding thoughtfully.</li>
-            <li>Choosing comfort zones over challenging growth.</li>
-          </ul>
+        <div className="hidden md:flex items-center gap-4">
+            <button className="text-slate-400 hover:text-white transition-colors">
+                <Github className="h-5 w-5" />
+            </button>
+             <button className="text-slate-400 hover:text-white transition-colors">
+                <Twitter className="h-5 w-5" />
+            </button>
+            <button 
+                onClick={() => setPage('subscribe')}
+                className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold rounded-full transition-all shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40"
+            >
+                Subscribe
+            </button>
         </div>
-        <div className="bg-slate-800/50 p-6 rounded-lg border border-slate-700">
-          <h3 className="font-semibold text-white text-lg mb-3">In Tech & AI</h3>
-          <ul className="list-disc list-inside space-y-2 text-slate-400">
-            <li>Clinging to familiar but inefficient developer tools.</li>
-            <li>Writing boilerplate code that could be automated.</li>
-            <li>Ignoring the fundamentals of new AI capabilities.</li>
-            <li>Fearing new technologies instead of learning to leverage them.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-);
 
-
-const featuresData = [
-  {
-    icon: <BrainIcon className="h-10 w-10 text-sky-400" />,
-    title: 'Relearn Life',
-    description: "Breaking free from limiting beliefs and old habits. I'm focusing on mindfulness, emotional intelligence, and resilience for a more fulfilling existence.",
-  },
-  {
-    icon: <CodeIcon className="h-10 w-10 text-sky-400" />,
-    title: 'Relearn Tech',
-    description: 'The digital landscape evolves constantly. My goal is to stay ahead by mastering current technologies and understanding the principles that drive innovation.',
-  },
-  {
-    icon: <AtomIcon className="h-10 w-10 text-sky-400" />,
-    title: 'Relearn AI',
-    description: "Artificial intelligence is reshaping our world. I'm learning to leverage AI tools ethically and effectively to augment my capabilities, not replace them.",
-  },
-];
-
-const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string }> = ({ icon, title, description }) => (
-    <div className="bg-slate-800/50 p-8 rounded-xl border border-slate-700 transition-all duration-300 hover:border-sky-500/50 hover:shadow-2xl hover:shadow-sky-500/10 transform hover:-translate-y-2">
-      <div className="mb-4">{icon}</div>
-      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-      <p className="text-slate-400">{description}</p>
-    </div>
-);
-
-
-const Features: React.FC = () => (
-  <section id="features" className="py-20 sm:py-32">
-    <div className="container mx-auto px-6">
-      <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-white">The Three Pillars of My Journey</h2>
-        <p className="text-lg text-slate-400 mt-2 max-w-2xl mx-auto">To bring structure to this process, I'm focusing my efforts on these three core areas.</p>
-      </div>
-      <div className="grid md:grid-cols-3 gap-8">
-        {featuresData.map((feature, index) => (
-          <FeatureCard key={index} {...feature} />
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const Quote: React.FC = () => (
-    <section className="py-20 sm:py-24 bg-slate-900">
-        <div className="container mx-auto px-6 text-center">
-            <blockquote className="max-w-4xl mx-auto">
-                <p className="text-2xl md:text-3xl font-medium text-slate-200 italic leading-relaxed">
-                    "The illiterate of the 21st century will not be those who cannot read and write, but those who cannot learn, unlearn, and relearn."
-                </p>
-                <cite className="block mt-6 text-slate-400 not-italic">— Alvin Toffler</cite>
-            </blockquote>
-        </div>
-    </section>
-);
-
-
-const CallToAction: React.FC = () => (
-  <section className="py-20 sm:py-32">
-    <div className="container mx-auto px-6 text-center">
-      <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Follow The Journey</h2>
-      <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-        If this resonates with you, subscribe for updates as I post new entries to my blog. I'll be sharing the lessons, failures, and successes along the way.
-      </p>
-      <form className="max-w-lg mx-auto flex flex-col sm:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
-        <input 
-          type="email" 
-          placeholder="your.email@example.com"
-          className="w-full px-5 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
-          aria-label="Email Address"
-          disabled
-        />
+        {/* Mobile Menu Button */}
         <button 
-          type="submit"
-          className="bg-slate-600 text-slate-400 font-semibold px-8 py-3 rounded-lg w-full sm:w-auto flex-shrink-0 cursor-not-allowed"
-          disabled
+          className="md:hidden p-2 text-slate-400"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          Subscribe
+          {mobileMenuOpen ? <X /> : <Menu />}
         </button>
-      </form>
-      <p className="text-sm text-slate-500 mt-4">Email subscriptions are coming soon.</p>
-    </div>
-  </section>
-);
+      </div>
 
-const BlogPage: React.FC<{ setPage: (page: string) => void }> = ({ setPage }) => (
-  <section className="min-h-[70vh] flex items-center justify-center text-center">
-    <div className="container mx-auto px-6 py-12">
-      <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Blog</h1>
-      <p className="text-xl text-sky-400 mb-8">Under Development</p>
-      <p className="text-lg max-w-2xl mx-auto text-slate-300 mb-10">
-        I'm currently documenting my journey and preparing my first few posts.
-        Check back soon to read about my process of unlearning and relearning.
-      </p>
-      <button
-        onClick={() => setPage('home')}
-        className="bg-sky-600 text-white font-semibold px-8 py-3 rounded-lg hover:bg-sky-500 transition-colors duration-300"
+      {/* Mobile Nav */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 overflow-hidden"
+          >
+            <div className="px-6 py-4 flex flex-col gap-4">
+              <NavLink href="#" active={page === 'home'} onClick={() => { setPage('home'); setMobileMenuOpen(false); }}>Journal</NavLink>
+              <NavLink href="#" active={page === 'blog'} onClick={() => { setPage('blog'); setMobileMenuOpen(false); }}>Articles</NavLink>
+              <NavLink href="#" active={page === 'about'} onClick={() => { setPage('about'); setMobileMenuOpen(false); }}>About</NavLink>
+              <hr className="border-slate-800" />
+              <button className="w-full py-3 bg-brand-600 text-white rounded-lg font-semibold">Subscribe</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </header>
+  );
+};
+
+const Hero = () => {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 w-full h-full">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-500/20 rounded-full blur-[128px] animate-blob mix-blend-screen" />
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[128px] animate-blob animation-delay-2000 mix-blend-screen" />
+        <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-emerald-500/10 rounded-full blur-[128px] animate-blob animation-delay-4000 mix-blend-screen" />
+      </div>
+
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+
+      <div className="container mx-auto px-6 relative z-10 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700/50 backdrop-blur-sm text-xs font-medium text-brand-300 mb-8">
+            <Sparkles className="w-3 h-3" />
+            <span>Writing the new playbook</span>
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-white mb-8 leading-[1.1]">
+            My Journey to <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400">
+              Relearn Everything.
+            </span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            The world is changing faster than ever. I felt stuck in old patterns. 
+            This is my public log of unlearning the obsolete and mastering the new—in 
+            <span className="text-slate-200 font-semibold"> life</span>, 
+            <span className="text-slate-200 font-semibold"> tech</span>, and 
+            <span className="text-slate-200 font-semibold"> AI</span>.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="px-8 py-4 bg-white text-slate-950 font-bold rounded-full hover:bg-slate-200 transition-colors flex items-center gap-2">
+              Start Reading <ArrowRight className="w-4 h-4" />
+            </button>
+            <button className="px-8 py-4 bg-slate-800/50 text-white font-semibold rounded-full border border-slate-700 hover:bg-slate-800 transition-colors backdrop-blur-sm">
+              View The Stack
+            </button>
+          </div>
+        </motion.div>
+      </div>
+
+      <motion.div 
+        style={{ y: y2 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500 animate-bounce"
       >
-        Return Home
-      </button>
+        <ChevronDown className="w-6 h-6" />
+      </motion.div>
+    </section>
+  );
+};
+
+const FeatureCard = ({ icon: Icon, title, description, index }: { icon: any, title: string, description: string, index: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ delay: index * 0.1, duration: 0.5 }}
+    className="group p-8 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/30 transition-all duration-300 hover:bg-slate-800/50 backdrop-blur-sm"
+  >
+    <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:bg-brand-500/20">
+      <Icon className="w-6 h-6 text-slate-400 group-hover:text-brand-400 transition-colors" />
+    </div>
+    <h3 className="text-xl font-display font-bold text-white mb-3">{title}</h3>
+    <p className="text-slate-400 leading-relaxed">{description}</p>
+  </motion.div>
+);
+
+const Pillars = () => {
+  const features = [
+    {
+      icon: Brain,
+      title: "Relearn Life",
+      description: "Discarding limiting beliefs. Optimizing for mindfulness, resilience, and emotional intelligence in a high-noise world."
+    },
+    {
+      icon: Code2,
+      title: "Relearn Tech",
+      description: "Moving beyond legacy code and habits. Embracing modern stacks, automation, and the principles of next-gen engineering."
+    },
+    {
+      icon: Cpu,
+      title: "Relearn AI",
+      description: "From fear to mastery. leveraging artificial intelligence not just as a tool, but as a partner in creativity and problem-solving."
+    }
+  ];
+
+  return (
+    <section className="py-32 relative">
+      <div className="container mx-auto px-6">
+        <div className="mb-16 md:mb-24">
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">The Three Pillars</h2>
+          <div className="h-1 w-20 bg-brand-500 rounded-full" />
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6 lg:gap-10">
+          {features.map((f, i) => (
+            <FeatureCard key={i} {...f} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Quote = () => (
+  <section className="py-32 relative overflow-hidden">
+    <div className="absolute inset-0 bg-slate-900/50 skew-y-3 scale-110 translate-y-10 z-0" />
+    <div className="container mx-auto px-6 relative z-10 text-center">
+      <motion.blockquote 
+        initial={{ opacity: 0, scale: 0.9 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        className="max-w-4xl mx-auto"
+      >
+        <span className="text-6xl text-brand-500/20 font-serif absolute -top-8 -left-8">"</span>
+        <p className="text-3xl md:text-5xl font-medium text-white leading-tight tracking-tight font-display">
+          The illiterate of the 21st century will not be those who cannot read and write, but those who cannot <span className="text-brand-400">learn, unlearn, and relearn.</span>
+        </p>
+        <footer className="mt-10 text-slate-400 font-medium tracking-wide uppercase text-sm">
+          — Alvin Toffler
+        </footer>
+      </motion.blockquote>
     </div>
   </section>
 );
 
-const Footer: React.FC = () => (
-  <footer className="border-t border-slate-800">
-    <div className="container mx-auto px-6 py-8 text-center text-slate-500">
-      <p>&copy; {new Date().getFullYear()} relearn.ing. All rights reserved.</p>
-      <p className="text-sm mt-1">A personal perspective on growth and adaptation.</p>
+const BlogPlaceholder = ({ setPage }: { setPage: (p: string) => void }) => (
+  <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-6 pt-32">
+    <BookOpen className="w-16 h-16 text-brand-500 mb-6 opacity-50" />
+    <h2 className="text-3xl font-bold text-white mb-4">The Archives Are Opening Soon</h2>
+    <p className="text-slate-400 max-w-md mx-auto mb-8">
+      I'm currently migrating my notes and draft posts to this new platform. 
+      Expect deep dives into AI workflows and personal productivity.
+    </p>
+    <button 
+      onClick={() => setPage('home')}
+      className="text-brand-400 hover:text-brand-300 font-medium flex items-center gap-2"
+    >
+      <ArrowRight className="rotate-180 w-4 h-4" /> Back Home
+    </button>
+  </div>
+);
+
+const Newsletter = () => (
+  <section className="py-32 relative">
+     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/80 pointer-events-none" />
+    <div className="container mx-auto px-6 relative z-10">
+      <div className="max-w-3xl mx-auto bg-slate-800/30 border border-slate-700/50 rounded-3xl p-8 md:p-12 backdrop-blur-md text-center">
+        <Mail className="w-10 h-10 text-brand-400 mx-auto mb-6" />
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-display">Join the Inner Circle</h2>
+        <p className="text-slate-400 mb-8 text-lg">
+          Get notified when I publish new breakdowns on tech, AI, and life optimization. 
+          No spam, just signal.
+        </p>
+        
+        <form className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto" onSubmit={(e) => e.preventDefault()}>
+          <input 
+            type="email" 
+            placeholder="Enter your email" 
+            className="flex-1 px-5 py-3 bg-slate-950/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 text-white placeholder:text-slate-600"
+          />
+          <button className="px-8 py-3 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-brand-500/20">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+);
+
+const Footer = () => (
+  <footer className="bg-slate-950 border-t border-slate-900 py-12 text-center md:text-left">
+    <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div>
+        <Logo />
+        <p className="text-slate-500 text-sm mt-2">
+          © {new Date().getFullYear()} relearn.ing. Built in public.
+        </p>
+      </div>
+      <div className="flex gap-6 text-slate-400">
+        <a href="#" className="hover:text-brand-400 transition-colors"><Github className="w-5 h-5" /></a>
+        <a href="#" className="hover:text-brand-400 transition-colors"><Twitter className="w-5 h-5" /></a>
+        <a href="#" className="hover:text-brand-400 transition-colors"><Linkedin className="w-5 h-5" /></a>
+      </div>
     </div>
   </footer>
 );
 
-
-// --- Main App Component ---
+// --- Main App ---
 
 export default function App() {
   const [page, setPage] = useState('home');
 
+  // Simple scroll to top on page change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page]);
+
   return (
-    <div className="bg-slate-900 min-h-screen font-sans antialiased">
-      <Header setPage={setPage} />
-      <main>
-        {page === 'home' ? (
-          <>
-            <Hero />
-            <ProblemStatement />
-            <Features />
-            <Quote />
-            <CallToAction />
-          </>
-        ) : (
-          <BlogPage setPage={setPage} />
-        )}
+    <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-brand-500/30 selection:text-white">
+      <Header page={page} setPage={setPage} />
+      
+      <main className="relative">
+        <AnimatePresence mode="wait">
+          {page === 'home' && (
+            <motion.div 
+              key="home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Hero />
+              <Pillars />
+              <Quote />
+              <Newsletter />
+            </motion.div>
+          )}
+          
+          {(page === 'blog' || page === 'about') && (
+            <motion.div 
+              key="blog"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+            >
+              <BlogPlaceholder setPage={setPage} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
+
       <Footer />
     </div>
   );
