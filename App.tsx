@@ -18,26 +18,19 @@ import {
   AlertCircle,
   Compass,
   Target,
-  ClipboardCheck
+  ClipboardCheck,
+  Calendar,
+  Tag,
+  ArrowLeft
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { journalEntries, getAllJournalEntries, type JournalEntry } from './data/journal';
 
 // --- Utils ---
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-type JournalEntry = {
-  id: string;
-  title: string;
-  date: string;
-  summary: string;
-  highlights: string[];
-  status: string;
-};
-
-const journalEntries: JournalEntry[] = [];
 
 const journeyPhases = [
   {
