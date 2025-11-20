@@ -32,7 +32,7 @@ export const getJournalEntry = async (id: string): Promise<string | null> => {
   if (!entry) return null;
   
   try {
-    const response = await fetch(`/src/data/journal/${entry.filename}`);
+    const response = await fetch(`/journal/${entry.filename}`);
     if (!response.ok) return null;
     return await response.text();
   } catch (error) {
