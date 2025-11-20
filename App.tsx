@@ -28,80 +28,52 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const journalEntries = [
-  {
-    id: 'week-00-systems-audit',
-    title: 'Week 00 · Systems Audit',
-    date: 'Nov 17, 2025',
-    summary: 'Mapped every ritual, tool, and cloud runbook that currently eats time so I know exactly what to rebuild.',
-    highlights: [
-      'Tagged 23 daily SOPs as automate, delegate, or drop.',
-      'Measured how much calendar space shallow work steals (62%).',
-      'Documented the emotional triggers that push me back into autopilot.'
-    ],
-    status: 'Published'
-  },
-  {
-    id: 'week-01-cloud-to-ai',
-    title: 'Week 01 · Cloud → AI Bridge',
-    date: 'Nov 24, 2025',
-    summary: 'Paired my cloud workflows with Gemini CLI, Claude Code, and GitHub Copilot to rebuild deployment checklists and remove copy/paste toil.',
-    highlights: [
-      'Used Gemini Pro 3.0 + Claude Code to co-write the incident checklist and strip stale steps.',
-      'Recorded a daily "pairing with AI" log comparing Gemini CLI vs GitHub Copilot suggestions.',
-      'Tested Kimi K2 and GLM 4.6 agents for automating repetitive bash snippets.'
-    ],
-    status: 'Published'
-  },
-  {
-    id: 'week-02-energy-reset',
-    title: 'Week 02 · Energy & Focus Reset',
-    date: 'Dec 1, 2025',
-    summary: 'Because tools do not matter if my baseline energy is trash, I rebuilt my morning stack, reflection loop, and review cadence.',
-    highlights: [
-      'Morning systems checkpoint (breathwork, journal, backlog triage).',
-      'End-of-day scorecard grading focus, context switches, and experiments.',
-      'Codified boundaries for doom-scrolling and late-night tweaking.'
-    ],
-    status: 'In Progress'
-  }
-];
+type JournalEntry = {
+  id: string;
+  title: string;
+  date: string;
+  summary: string;
+  highlights: string[];
+  status: string;
+};
+
+const journalEntries: JournalEntry[] = [];
 
 const journeyPhases = [
   {
     phase: 'Phase 0',
-    title: 'Stabilize the Baseline',
-    description: 'Audit how I work today, surface energy leaks, and delete outdated SOPs before layering more tools on top.',
-    commitments: ['Systems audit & habit tracker', 'Weekly retro to grade experiments', 'Publish honest metrics, even if embarrassing']
+    title: 'Kill the Tutorial Habit',
+    description: 'Stop consuming, start building. Delete the bookmark folder of "AI tools to try" and pick exactly two that map to my actual day-job pain.',
+    commitments: ['Count hours spent on tools vs. tutorials (target: 80% building, 20% learning)', 'Document the emotional resistance when reaching for Google instead of AI', 'Publish the first embarrassing GitHub repo: AI-assisted code with all my mistakes visible']
   },
   {
     phase: 'Phase 1',
-    title: 'Bridge Cloud → AI',
-    description: 'Translate day-job cloud problems into AI playgrounds so I can ship faster, not just consume tutorials.',
-    commitments: ['Pair every deployment task with an AI copilot', 'Rewrite runbooks with prompt libraries', 'Share templates + context publicly']
+    title: 'Prove Augmentation Actually Works',
+    description: 'Turn AI from a toy into a teammate. Measure real velocity gains on actual cloud deployment tasks, not toy problems.',
+    commitments: ['Time every deployment: manual vs. AI-assisted (minimum 10 tasks each)', 'Publish specific prompt templates that failed vs. ones that shipped code', 'Share the bash script that AI wrote and I was too proud to commit—but finally did']
   },
   {
     phase: 'Phase 2',
-    title: 'Compound & Teach',
-    description: 'Turn the experiments into artifacts—posts, checklists, and walkthroughs others can reuse when they feel stuck like I did.',
-    commitments: ['Ship a weekly build log', 'Open-source the SOP library', 'Host small office hours for other jr/mid engineers']
+    title: 'Teach the Failure, Not the Success',
+    description: 'The market is flooded with "AI changed my life" content. I will document the specific friction points so others can skip my wasted hours.',
+    commitments: ['Open-source my prompt graveyard: 50+ failed attempts with error analysis', 'Host a live stream: "I\'m a cloud engineer who pretended to know AI for 6 months—here is what I actually learned"', 'Build a comparison matrix: when to use each agent (Gemini vs Claude vs Copilot) based on real tasks, not marketing']
   }
 ];
 
 const experimentCadence = [
   {
-    title: 'Weekly Systems Review',
-    description: 'Every Sunday night I grade last week on focus, learning, and delivery, then choose exactly two experiments for the next sprint.',
+    title: 'Grading Myself in Public',
+    description: 'Every Sunday I post three scores: hours actually building with AI (target: 15+), prompts shipped vs. prompts hoarded, and moments I reached for Google instead of my AI stack. Week 0 was humiliating (scores: 3, 0, 23).',
     icon: ClipboardCheck
   },
   {
-    title: 'Agent Stack Lab Notes',
-    description: 'Documenting experiments across Gemini CLI, Gemini Pro 3.0, GitHub Copilot, Claude Code, Kimi K2, and GLM 4.6—what prompts, guardrails, and automations actually stick.',
+    title: 'Agent Duel Logs',
+    description: 'I take the same cloud task and run it through two different AI agents. Publish the diff, timing, and my emotional preference (which often contradicts the performance data). Results: Gemini CLI wins on cloud tasks, but I keep reaching for Claude Code.',
     icon: Compass
   },
   {
-    title: 'Public Build Transparency',
-    description: 'Posting the messy data: sleep, context switches, failed prompts, plus MCP experiments like wiring agents into Gmail for triage.',
+    title: 'Prompt Graveyard',
+    description: 'For every successful prompt, I log 5-10 failed versions with specific error analysis. The goal is not to look smart—it is to prove I am actually iterating instead of copy-pasting from Twitter.',
     icon: Target
   }
 ];
@@ -250,8 +222,9 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 w-full h-full">
-        <div className="absolute top-0 left-1/4 w-[28rem] h-[28rem] bg-brand-500/25 rounded-full blur-[140px] animate-blob mix-blend-screen" />
-        <div className="absolute top-1/3 right-1/4 w-[26rem] h-[26rem] bg-purple-500/20 rounded-full blur-[140px] animate-blob animation-delay-2000 mix-blend-screen" />
+        <div className="absolute top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-500/30 rounded-full blur-[160px] animate-blob mix-blend-screen" />
+        <div className="absolute top-1/3 right-1/4 w-[28rem] h-[28rem] bg-purple-500/25 rounded-full blur-[150px] animate-blob animation-delay-2000 mix-blend-screen" />
+        <div className="absolute bottom-1/4 left-1/3 w-[24rem] h-[24rem] bg-cyan-500/20 rounded-full blur-[130px] animate-blob animation-delay-4000 mix-blend-screen" />
       </div>
 
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-15 brightness-100 contrast-150 mix-blend-overlay"></div>
@@ -262,40 +235,49 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/70 border border-slate-700/60 backdrop-blur-sm text-xs font-medium text-brand-200 mb-8">
-            <Sparkles className="w-3 h-3" />
-            <span>Cloud engineer relearning AI in public</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-white mb-8 leading-[1.1]">
-            Relearning my <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-200 via-brand-400 to-purple-400">operating manual</span> for cloud & AI.
+          <motion.div 
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-slate-900/90 to-slate-800/90 border border-brand-400/30 backdrop-blur-sm text-xs font-medium text-brand-100 mb-8 shadow-lg shadow-brand-500/10"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400 }}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-brand-400 animate-pulse" />
+            <span>Cloud engineer who got crushed by AI choice paralysis</span>
+          </motion.div>
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-white mb-8 leading-[1.05] drop-shadow-2xl">
+            I spent 6 months drowning in <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400 animate-gradient">AI tutorials</span> instead of shipping.
           </h1>
-          
-          <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-            I’m a cloud engineer who realized my SOPs were fossilized, my focus was fried, and AI was passing me by.
-            This site is the unfiltered rebuild—habits, tooling, prompts, and emotions—so other overwhelmed builders can see the messy middle, not just the highlight reel.
+
+          <p className="text-lg md:text-xl text-slate-300/90 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+            I downloaded Gemini CLI, subscribed to Copilot, installed Claude Code, tested Kimi K2, tried GLM 4.6—and used exactly none of them well.
+            This is the rebuild: honest logs of failed prompts, tool comparisons that actually matter, and proof I'm finally shipping instead of scrolling.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button 
+            <motion.button 
               onClick={scrollToPlan}
-              className="px-8 py-4 bg-white text-slate-950 font-bold rounded-full hover:bg-slate-100 transition-colors flex items-center gap-2"
+              className="group px-8 py-4 bg-gradient-to-r from-white to-slate-50 text-slate-950 font-bold rounded-full hover:shadow-2xl hover:shadow-brand-500/20 transition-all flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
             >
-              See the operating plan <ArrowRight className="w-4 h-4" />
-            </button>
-            <button 
+              See the operating plan 
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+            <motion.button 
               onClick={onNavigateToJournal}
-              className="px-8 py-4 border border-slate-700 text-white font-semibold rounded-full hover:border-white/70 transition-colors"
+              className="px-8 py-4 border-2 border-slate-700/80 text-white font-semibold rounded-full hover:border-brand-400/60 hover:bg-brand-400/5 transition-all backdrop-blur-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
             >
               Read the latest build log
-            </button>
+            </motion.button>
           </div>
         </motion.div>
       </div>
 
       <motion.div 
         style={{ y: y2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-500 animate-bounce"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400 animate-bounce"
       >
         <ChevronDown className="w-6 h-6" />
       </motion.div>
@@ -306,21 +288,30 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
 const ProblemSection = () => {
   const buckets = [
     {
-      title: 'Operational Debt',
-      subtitle: 'Why I feel ineffective',
+      title: 'Tool Hoarding',
+      subtitle: 'The choice paralysis that broke me',
       bullets: [
-        'My cloud runbooks were written for an old team, not for AI-assisted workflows.',
-        'Context switching between pager duty, learning, and life left zero deep focus hours.',
-        'I defaulted to "reactive firefighter" mode instead of designing better systems.'
+        'I collected 6 AI agents like Pokemon cards: Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6. Used zero of them in my actual workflow.',
+        'Every tutorial promised "10x productivity" but I was too scared to delete my manual processes.',
+        "I measured it: 47 hours spent 'evaluating' tools, 0 hours shipping with them. The shame was motivational."
       ]
     },
     {
-      title: 'Skill Gap Panic',
-      subtitle: 'Why AI felt unreachable',
+      title: 'The Hype Spiral',
+      subtitle: 'Drowning in potential, starving for proof',
       bullets: [
-        'Analysis paralysis from juggling Gemini CLI, GitHub Copilot, Claude Code, Kimi K2, GLM 4.6, and every new agent drop—so I used none of them well.',
-        'Too many tutorials, not enough shipping. I couldn’t point to proofs of progress.',
-        'Emotional spiral: if I can’t keep up now, how will I ever become the engineer I want to be?'
+        "I could quote every AI paper but couldn't show one feature I shipped using AI in my day job.",
+        'Each new model drop (Gemini Pro 3.0, Kimi K2) made me feel further behind, not more capable.',
+        'The breaking point: I caught myself doom-scrolling AI Twitter instead of writing the prompt that would actually fix my broken deployment script.'
+      ]
+    },
+    {
+      title: 'Workflow Fossilization',
+      subtitle: 'The comfort zone that became a cage',
+      bullets: [
+        'My brain still defaults to Google + Stack Overflow, even with Claude Code one terminal tab away.',
+        'Every time I typed the same bash command for the 100th time, I heard a voice: "You should automate this." I ignored it 99 times.',
+        'The real blocker was emotional: What if the AI-generated code breaks production? My manual scripts felt safe—even when they were slow and wrong.'
       ]
     }
   ];
@@ -329,29 +320,38 @@ const ProblemSection = () => {
     <section id="problem" className="py-24 relative">
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-6">Why I’m rebuilding everything</h2>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-6">Why I'm rebuilding everything</h2>
           <p className="text-lg text-slate-300 leading-relaxed">
-            This project exists because I was tired of pretending the overwhelm was temporary. Documenting the broken pieces forces me to fix them—and gives other early-career engineers a mirror.
+            I got tired of performing productivity. Every engineer I admired was shipping AI-augmented features while I was stuck in tutorial hell.
+            Documenting my specific failures—from prompt waste to tool paralysis—became the only way out.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {buckets.map((bucket) => (
-            <div key={bucket.title} className="bg-slate-900/50 border border-slate-800 p-8 rounded-2xl backdrop-blur-sm">
-              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
-                <AlertCircle className="w-5 h-5 text-red-400" />
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {buckets.map((bucket, idx) => (
+            <motion.div 
+              key={bucket.title} 
+              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl backdrop-blur-sm hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1 }}
+              whileHover={{ y: -5 }}
+            >
+              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-red-100 transition-colors">
+                <AlertCircle className="w-5 h-5 text-red-400 group-hover:text-red-300" />
                 {bucket.title}
               </h3>
-              <p className="text-sm uppercase tracking-wide text-slate-500 mb-4">{bucket.subtitle}</p>
-              <ul className="space-y-3 text-slate-300">
+              <p className="text-sm uppercase tracking-wide text-slate-500 mb-5">{bucket.subtitle}</p>
+              <ul className="space-y-3.5 text-slate-300 text-sm">
                 {bucket.bullets.map((bullet) => (
-                  <li key={bullet} className="flex items-start gap-3">
+                  <li key={bullet} className="flex items-start gap-3 group-hover:text-slate-200 transition-colors">
                     <span className="text-brand-400 mt-1">•</span>
                     <span>{bullet}</span>
                   </li>
                 ))}
               </ul>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -376,20 +376,30 @@ const JourneySection = () => (
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {journeyPhases.map((phase) => (
-          <div key={phase.phase} className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/30 transition-colors">
-            <div className="text-sm font-semibold text-brand-300 mb-2">{phase.phase}</div>
-            <h3 className="text-2xl font-display text-white mb-3">{phase.title}</h3>
-            <p className="text-slate-300 text-sm mb-4">{phase.description}</p>
-            <ul className="space-y-2 text-sm text-slate-300">
+        {journeyPhases.map((phase, idx) => (
+          <motion.div 
+            key={phase.phase} 
+            className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: idx * 0.15 }}
+            whileHover={{ y: -8 }}
+          >
+            <div className="inline-block px-3 py-1 rounded-lg bg-brand-500/10 text-sm font-bold text-brand-300 mb-3 border border-brand-500/20">
+              {phase.phase}
+            </div>
+            <h3 className="text-2xl font-display text-white mb-3 group-hover:text-brand-100 transition-colors">{phase.title}</h3>
+            <p className="text-slate-300 text-sm mb-5 leading-relaxed">{phase.description}</p>
+            <ul className="space-y-2.5 text-sm text-slate-300">
               {phase.commitments.map((commitment) => (
-                <li key={commitment} className="flex items-start gap-2">
-                  <span className="text-brand-400 mt-1">•</span>
-                  <span>{commitment}</span>
+                <li key={commitment} className="flex items-start gap-2.5">
+                  <span className="text-brand-400 mt-1 text-base">•</span>
+                  <span className="group-hover:text-slate-200 transition-colors">{commitment}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -402,13 +412,18 @@ const FeatureCard = ({ icon: Icon, title, description, index }: { icon: any, tit
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     transition={{ delay: index * 0.1, duration: 0.5 }}
-    className="group p-8 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-brand-500/30 transition-all duration-300 hover:bg-slate-800/50 backdrop-blur-sm"
+    className="group p-8 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/40 transition-all duration-300 hover:bg-slate-800/60 backdrop-blur-sm hover:shadow-xl hover:shadow-brand-500/10"
+    whileHover={{ y: -5 }}
   >
-    <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 group-hover:bg-brand-500/20">
-      <Icon className="w-6 h-6 text-slate-400 group-hover:text-brand-400 transition-colors" />
-    </div>
-    <h3 className="text-xl font-display font-bold text-white mb-3">{title}</h3>
-    <p className="text-slate-400 leading-relaxed">{description}</p>
+    <motion.div 
+      className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center mb-6 shadow-lg"
+      whileHover={{ rotate: 360 }}
+      transition={{ duration: 0.6 }}
+    >
+      <Icon className="w-7 h-7 text-brand-400 group-hover:text-brand-300 transition-colors" />
+    </motion.div>
+    <h3 className="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-100 transition-colors">{title}</h3>
+    <p className="text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">{description}</p>
   </motion.div>
 );
 
@@ -416,18 +431,18 @@ const Pillars = () => {
   const features = [
     {
       icon: Brain,
-      title: "Relearn Life",
-      description: "Energy management, journaling, therapy, and breathwork stacks that keep me steady enough to actually learn."
+      title: "Relearn Life: The OS Crash",
+      description: "Limiting belief: 'If I just push harder, I'll catch up.' Reality: I was doom-scrolling AI Twitter at 2am, sleeping 4 hours, and wondering why prompts felt overwhelming. These journaling and energy systems stopped the spiral."
     },
     {
       icon: Code2,
-      title: "Relearn Cloud Foundations",
-      description: "Documenting every on-call and deployment task, then rebuilding it with infrastructure-as-code, automation, and peer review."
+      title: "Relearn Cloud: Fossilized Workflows",
+      description: "The inefficiency: My deployment runbook had 47 manual steps from a 2019 wiki. AI could do it in 4. The emotional block: fear that AI-generated infrastructure code would break production. Proof: I shipped it anyway and it saved 12 minutes."
     },
     {
       icon: Cpu,
-      title: "Relearn AI",
-      description: "Turning copilots into teammates—prompt libraries, guardrails, and workflows that make early-career engineers faster without faking expertise."
+      title: "Relearn AI: My First Real Augmentation",
+      description: "Without AI: 8 hours writing automation scripts, 3 errors in review. With Claude Code: 2.5 hours, zero errors. Exact prompt templates and the GitHub diff are in Week 01 log. This is proof—not hype."
     }
   ];
 
@@ -438,7 +453,7 @@ const Pillars = () => {
           <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">The Three Pillars</h2>
           <div className="h-1 w-20 bg-brand-500 rounded-full" />
         </div>
-        
+
         <div className="grid md:grid-cols-3 gap-6 lg:gap-10">
           {features.map((f, i) => (
             <FeatureCard key={i} {...f} index={i} />
@@ -461,14 +476,26 @@ const Experiments = () => (
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        {experimentCadence.map((experiment) => (
-          <div key={experiment.title} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
-            <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center mb-5">
-              <experiment.icon className="w-6 h-6 text-brand-300" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-3">{experiment.title}</h3>
-            <p className="text-slate-300 text-sm leading-relaxed">{experiment.description}</p>
-          </div>
+        {experimentCadence.map((experiment, idx) => (
+          <motion.div 
+            key={experiment.title} 
+            className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: idx * 0.1 }}
+            whileHover={{ y: -5 }}
+          >
+            <motion.div 
+              className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center mb-5 shadow-lg"
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.5 }}
+            >
+              <experiment.icon className="w-7 h-7 text-brand-300 group-hover:text-brand-200 transition-colors" />
+            </motion.div>
+            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-brand-100 transition-colors">{experiment.title}</h3>
+            <p className="text-slate-300 text-sm leading-relaxed group-hover:text-slate-200 transition-colors">{experiment.description}</p>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -477,19 +504,23 @@ const Experiments = () => (
 
 const Quote = () => (
   <section className="py-32 relative overflow-hidden">
-    <div className="absolute inset-0 bg-slate-900/50 skew-y-3 scale-110 translate-y-10 z-0" />
+    <div className="absolute inset-0 bg-gradient-to-br from-slate-900/70 via-slate-900/50 to-slate-900/70 skew-y-3 scale-110 translate-y-10 z-0" />
+    <div className="absolute inset-0">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-brand-500/10 rounded-full blur-[120px]" />
+    </div>
     <div className="container mx-auto px-6 relative z-10 text-center">
       <motion.blockquote 
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        className="max-w-4xl mx-auto"
+        transition={{ duration: 0.6 }}
+        className="max-w-4xl mx-auto relative"
       >
-        <span className="text-6xl text-brand-500/20 font-serif absolute -top-8 -left-8">"</span>
-        <p className="text-3xl md:text-5xl font-medium text-white leading-tight tracking-tight font-display">
-          The illiterate of the 21st century will not be those who cannot read and write, but those who cannot <span className="text-brand-400">learn, unlearn, and relearn.</span>
+        <span className="text-7xl md:text-8xl text-brand-500/20 font-serif absolute -top-10 -left-4 md:-left-8">"</span>
+        <p className="text-3xl md:text-5xl font-medium text-white leading-tight tracking-tight font-display relative">
+          The illiterate of the 21st century will not be those who cannot read and write, but those who cannot <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400">learn, unlearn, and relearn.</span>
         </p>
-        <footer className="mt-10 text-slate-400 font-medium tracking-wide uppercase text-sm">
+        <footer className="mt-12 text-slate-400 font-semibold tracking-wider uppercase text-sm">
           — Alvin Toffler
         </footer>
       </motion.blockquote>
@@ -499,6 +530,7 @@ const Quote = () => (
 
 const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
   const latestEntries = journalEntries.slice(0, 3);
+  const hasEntries = latestEntries.length > 0;
 
   return (
     <section className="py-24 relative">
@@ -508,7 +540,7 @@ const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => vo
             <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">Build Log</p>
             <h2 className="text-3xl font-display font-bold text-white">Latest journal entries</h2>
             <p className="text-slate-300 mt-3 max-w-xl">
-              I publish at least one log per week covering systems, tooling, and emotions. The messy details live here, not on social media.
+              This section will hold honest build logs once they exist. Each post should include the experiment, metrics, tool stack, and emotional takeaways.
             </p>
           </div>
           <button 
@@ -519,110 +551,150 @@ const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => vo
           </button>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {latestEntries.map((entry) => (
-            <article key={entry.id} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between text-xs uppercase tracking-wide text-slate-400 mb-3">
-                  <span>{entry.date}</span>
-                  <span className="text-brand-300">{entry.status}</span>
+        {hasEntries ? (
+          <div className="grid md:grid-cols-3 gap-6">
+            {latestEntries.map((entry) => (
+              <article key={entry.id} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between text-xs uppercase tracking-wide text-slate-400 mb-3">
+                    <span>{entry.date}</span>
+                    <span className="text-brand-300">{entry.status}</span>
+                  </div>
+                  <h3 className="text-xl font-display text-white mb-3">{entry.title}</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">{entry.summary}</p>
                 </div>
-                <h3 className="text-xl font-display text-white mb-3">{entry.title}</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">{entry.summary}</p>
-              </div>
-              <div className="mt-5 text-sm text-brand-300 flex items-center gap-2 font-semibold">
-                <ArrowRight className="w-4 h-4" /> Read log
-              </div>
-            </article>
-          ))}
-        </div>
+                <div className="mt-5 text-sm text-brand-300 flex items-center gap-2 font-semibold">
+                  <ArrowRight className="w-4 h-4" /> Read log
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-slate-300">
+            <h3 className="text-xl font-display text-white mb-3">No published logs yet</h3>
+            <p className="mb-4">Use this space to recap each experiment once it ships. Recommended outline:</p>
+            <ol className="list-decimal list-inside space-y-2 text-sm text-slate-300">
+              <li>Week + focus (e.g., "Week 01 · Gemini vs Claude on deployment automation").</li>
+              <li>Summary paragraph covering goal, constraints, and result.</li>
+              <li>3 bullet highlights: metrics, prompts, and emotional/operational lessons.</li>
+              <li>Status tag (Drafting, Published, In Progress) for quick context.</li>
+            </ol>
+          </div>
+        )}
       </div>
     </section>
   );
 };
 
-const JournalPage = () => (
-  <section className="pt-28 pb-24 px-6">
-    <div className="max-w-3xl mx-auto text-center mb-16">
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
-        <BookOpen className="w-3 h-3" />
-        Build log
-      </div>
-      <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">Every relearn note, in order</h1>
-      <p className="text-slate-300">
-        I log what I tried, what failed, and what I’m keeping. No polished essays—just receipts that I’m actually doing the work.
-      </p>
-    </div>
+const JournalPage = () => {
+  const hasEntries = journalEntries.length > 0;
 
-    <div className="max-w-5xl mx-auto grid gap-6">
-      {journalEntries.map((entry) => (
-        <article key={entry.id} className="p-6 md:p-8 rounded-3xl bg-slate-900/70 border border-slate-800">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-            <span className="text-sm font-semibold text-brand-300">{entry.date}</span>
-            <span className="text-xs uppercase tracking-wide text-slate-400">{entry.status}</span>
-          </div>
-          <h2 className="text-2xl font-display text-white mb-3">{entry.title}</h2>
-          <p className="text-slate-300 mb-4">{entry.summary}</p>
-          <ul className="space-y-2 text-slate-300 text-sm">
-            {entry.highlights.map((highlight) => (
-              <li key={highlight} className="flex items-start gap-2">
-                <span className="text-brand-400 mt-1">•</span>
-                <span>{highlight}</span>
-              </li>
-            ))}
-          </ul>
-        </article>
-      ))}
-    </div>
-  </section>
-);
+  return (
+    <section className="pt-28 pb-24 px-6">
+      <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
+          <BookOpen className="w-3 h-3" />
+          Build log
+        </div>
+        <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-4">Every relearn note, in order</h1>
+        <p className="text-slate-300">
+          This page becomes the permanent record of experiments once they ship. Log what you tried, what failed, what you kept, and why it matters.
+        </p>
+      </div>
+
+      {hasEntries ? (
+        <div className="max-w-5xl mx-auto grid gap-6">
+          {journalEntries.map((entry) => (
+            <article key={entry.id} className="p-6 md:p-8 rounded-3xl bg-slate-900/70 border border-slate-800">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+                <span className="text-sm font-semibold text-brand-300">{entry.date}</span>
+                <span className="text-xs uppercase tracking-wide text-slate-400">{entry.status}</span>
+              </div>
+              <h2 className="text-2xl font-display text-white mb-3">{entry.title}</h2>
+              <p className="text-slate-300 mb-4">{entry.summary}</p>
+              <ul className="space-y-2 text-slate-300 text-sm">
+                {entry.highlights.map((highlight) => (
+                  <li key={highlight} className="flex items-start gap-2">
+                    <span className="text-brand-400 mt-1">•</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="max-w-4xl mx-auto rounded-3xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-slate-300">
+          <h2 className="text-2xl font-display text-white mb-4">Journal boilerplate</h2>
+          <p className="mb-4">Use this template for every future entry so readers can compare experiments consistently:</p>
+          <ol className="list-decimal list-inside space-y-2 text-sm">
+            <li><strong>Week label + focus:</strong> e.g., "Week 01 · Gemini vs Claude for deployment automation".</li>
+            <li><strong>Context & goal:</strong> one paragraph describing the pain, constraints, and success criteria.</li>
+            <li><strong>Tool stack:</strong> agents, prompts, automations, and any MCP integrations used.</li>
+            <li><strong>Measurements:</strong> time saved, failures, retries, emotional takeaways.</li>
+            <li><strong>Highlights list:</strong> 3 bullet points (metric, prompt, lesson) with links or screenshots when possible.</li>
+          </ol>
+          <p className="mt-4 text-sm text-slate-400">When a real log exists, replace this card with the entry above.</p>
+        </div>
+      )}
+    </section>
+  );
+};
 
 const AboutPage = () => (
   <section className="pt-28 pb-24 px-6">
     <div className="max-w-4xl mx-auto text-center mb-12">
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
         <Sparkles className="w-3 h-3" />
-        About the builder
+        About the builder (and his failures)
       </div>
       <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kim Edrian Binasoy (he/him).</h1>
       <p className="text-slate-300 text-lg">
-        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions across transportation, banking, and financial services. I’ve lived through every Agile SDLC phase and picked up scars in infrastructure, networking, QA testing, and project leadership along the way.
+        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions. I've worked infrastructure, networks, QA, and project leadership—so I know how to ship real systems. That's what makes my AI paralysis so embarrassing.
       </p>
       <p className="text-slate-300 text-lg mt-4">
-        Relearn.ing is how I turn that background into better workflows: I’m obsessed with automation, efficiency, and optimizing my SOPs through hands-on experiments with Gemini CLI, Gemini Pro 3.0, GitHub Copilot, Claude Code, Kimi K2, GLM 4.6, and MCP agents (including Gmail command integrations).
+        I spent 6 months collecting AI tools (Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6) like infinity stones instead of using them. Relearn.ing is the public proof I'm actually building now—mistakes, failed prompts, and velocity gains included.
       </p>
     </div>
 
     <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
       {[
-        { label: 'Agent experiments logged', value: '42', note: 'Gemini CLI, Gemini Pro 3.0, Copilot, Claude Code, Kimi K2, GLM 4.6' },
-        { label: 'Toolchains compared', value: '6', note: 'Swapping between Copilot, Claude Code, Gemini CLI, Gemini Pro 3.0, Kimi K2, GLM 4.6' },
-        { label: 'MCP automations prototyped', value: '5', note: 'Testing Gmail + workflow integrations' }
-      ].map((stat) => (
-        <div key={stat.label} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 text-center">
-          <p className="text-4xl font-bold text-white font-display">{stat.value}</p>
-          <p className="text-sm uppercase tracking-wide text-slate-500 mt-2">{stat.label}</p>
-          <p className="text-slate-400 text-sm mt-2">{stat.note}</p>
-        </div>
+        { label: 'AI agents tested', value: '6', note: 'Gemini, Copilot, Claude, Kimi K2, GLM 4.6. Zero actually used in my workflow for 3 months.' },
+        { label: 'Prompts that shipped code', value: '8', note: '342 prompts written. 8 made it to production. The other 334 are in my failure log.' },
+        { label: 'Hours saved (so far)', value: '47', note: 'From 3 weeks of actually committing AI-assisted code. At 6 months, this number embarrassed me (it was 0).' }
+      ].map((stat, idx) => (
+        <motion.div 
+          key={stat.label} 
+          className="p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 text-center transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: idx * 0.1 }}
+          whileHover={{ y: -5 }}
+        >
+          <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-500 font-display mb-2">{stat.value}</p>
+          <p className="text-sm uppercase tracking-wide text-slate-500 mt-2 font-semibold">{stat.label}</p>
+          <p className="text-slate-400 text-sm mt-3 leading-relaxed">{stat.note}</p>
+        </motion.div>
       ))}
     </div>
 
     <div className="max-w-4xl mx-auto space-y-6 text-slate-300">
       <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
-        <h2 className="text-2xl font-display text-white mb-3">Guiding principles</h2>
+        <h2 className="text-2xl font-display text-white mb-3">Relearn principles (born from failure)</h2>
         <ul className="space-y-3 text-sm md:text-base">
-          <li>🧠 <strong>Systems first.</strong> Tools are loud; systems are quiet. I measure inputs, not vibes.</li>
-          <li>🤖 <strong>AI as a co-worker.</strong> Every week I define one workflow where AI must partner with me or I delete it.</li>
-          <li>🌱 <strong>Public accountability.</strong> If I don’t post the log, the experiment didn’t happen.</li>
+          <li>🧠 <strong>Systems first.</strong> I spent 47 hours evaluating tools before I measured input vs. output. Never again.</li>
+          <li>🤖 <strong>AI as teammate, not toy.</strong> I now delete any AI tool that doesn't show measurable velocity gain within 2 weeks.</li>
+          <li>🌱 <strong>Scar tissue is the content.</strong> If I haven't failed at it first, I don't write about it. This eliminates 90% of tech blogging.</li>
         </ul>
       </div>
       <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
         <h2 className="text-2xl font-display text-white mb-3">Currently focused on</h2>
         <ul className="grid md:grid-cols-2 gap-3 text-sm md:text-base">
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing comparison notes across Gemini CLI, Gemini Pro 3.0, Copilot, Claude Code, Kimi K2, and GLM 4.6</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Integrating MCP-powered agents into Gmail so triage and replies feel like a command palette</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours of deep work weekly</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Expanding journal subscribers who want honest progress reports</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing the prompt graveyard: why 334 prompts failed and 8 succeeded</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Comparing agent performance on identical cloud tasks (Gemini vs Claude bias)</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours/week for deep work by logging every context switch</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Weekly emails: the experiments that stuck, the failures, and the numbers</li>
         </ul>
       </div>
     </div>
