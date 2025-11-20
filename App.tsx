@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { 
-  Brain, 
-  Code2, 
-  Cpu, 
-  ArrowRight, 
-  Mail, 
-  Github, 
-  Twitter, 
-  Linkedin, 
+import {
+  Brain,
+  Code2,
+  Cpu,
+  ArrowRight,
+  Mail,
+  Github,
+  Twitter,
+  Linkedin,
   ChevronDown,
   Sparkles,
   Zap,
@@ -74,8 +74,8 @@ const experimentCadence = [
 // --- Components ---
 
 const Logo = () => (
-  <a 
-    href="/" 
+  <a
+    href="/"
     className="text-2xl font-bold tracking-tighter font-display group flex items-center gap-2"
   >
     <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500/10 group-hover:bg-brand-500/20 transition-colors">
@@ -125,7 +125,7 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
   };
 
   return (
-    <header 
+    <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
         scrolled ? "bg-slate-950/80 backdrop-blur-md border-slate-800/50 py-3" : "bg-transparent border-transparent py-5"
@@ -135,7 +135,7 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
         <div onClick={() => setPage('home')} className="cursor-pointer">
           <Logo />
         </div>
-        
+
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
           <NavLink href="#" active={page === 'home'} onClick={() => setPage('home')}>Home</NavLink>
@@ -158,7 +158,7 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
               </a>
             ))}
           </div>
-          <button 
+          <button
             onClick={handleSubscribeClick}
             className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold rounded-full transition-all shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40"
           >
@@ -167,7 +167,7 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
         </div>
 
         {/* Mobile Menu Button */}
-        <button 
+        <button
           className="md:hidden p-2 text-slate-400"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
@@ -189,7 +189,7 @@ const Header = ({ page, setPage }: { page: string; setPage: (p: string) => void 
               <NavLink href="#" active={page === 'journal'} onClick={() => { setPage('journal'); setMobileMenuOpen(false); }}>Journal</NavLink>
               <NavLink href="#" active={page === 'about'} onClick={() => { setPage('about'); setMobileMenuOpen(false); }}>About</NavLink>
               <hr className="border-slate-800" />
-              <button 
+              <button
                 onClick={handleSubscribeClick}
                 className="w-full py-3 bg-brand-600 text-white rounded-lg font-semibold"
               >
@@ -216,7 +216,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
       {/* Enhanced Animated Background Elements */}
       <div className="absolute inset-0 w-full h-full">
-        <motion.div 
+        <motion.div
           className="absolute top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-500/30 rounded-full blur-[160px] animate-blob mix-blend-screen"
           animate={{
             scale: [1, 1.1, 0.9, 1],
@@ -228,7 +228,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             ease: "linear"
           }}
         />
-        <motion.div 
+        <motion.div
           className="absolute top-1/3 right-1/4 w-[28rem] h-[28rem] bg-purple-500/25 rounded-full blur-[150px] animate-blob animation-delay-2000 mix-blend-screen"
           animate={{
             scale: [0.9, 1.2, 0.8, 0.9],
@@ -240,7 +240,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             ease: "linear"
           }}
         />
-        <motion.div 
+        <motion.div
           className="absolute bottom-1/4 left-1/3 w-[24rem] h-[24rem] bg-cyan-500/20 rounded-full blur-[130px] animate-blob animation-delay-4000 mix-blend-screen"
           animate={{
             scale: [1.1, 0.8, 1.2, 1.1],
@@ -286,7 +286,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           style={{ opacity }}
         >
-          <motion.div 
+          <motion.div
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-slate-900/90 to-slate-800/90 border border-brand-400/30 backdrop-blur-sm text-xs font-medium text-brand-100 mb-8 shadow-lg shadow-brand-500/10"
             whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(56, 189, 248, 0.2)" }}
             transition={{ type: "spring", stiffness: 400 }}
@@ -300,14 +300,14 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             <span>Cloud engineer who got crushed by AI choice paralysis</span>
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-white mb-8 leading-[1.05] drop-shadow-2xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
           >
             I spent 6 months drowning in{' '}
-            <motion.span 
+            <motion.span
               className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400"
               animate={{
                 backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
@@ -324,7 +324,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             instead of shipping.
           </motion.h1>
 
-          <motion.p 
+          <motion.p
             className="text-lg md:text-xl text-slate-300/90 max-w-3xl mx-auto mb-12 leading-relaxed font-light"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -334,13 +334,13 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             This is the rebuild: honest logs of failed prompts, tool comparisons that actually matter, and proof I'm finally shipping instead of scrolling.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <motion.button 
+            <motion.button
               onClick={scrollToPlan}
               className="group px-8 py-4 bg-gradient-to-r from-white to-slate-50 text-slate-950 font-bold rounded-full hover:shadow-2xl hover:shadow-brand-500/20 transition-all flex items-center gap-2 relative overflow-hidden"
               whileHover={{ scale: 1.05 }}
@@ -353,7 +353,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
               <span className="relative z-10">See the operating plan</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
             </motion.button>
-            <motion.button 
+            <motion.button
               onClick={onNavigateToJournal}
               className="px-8 py-4 border-2 border-slate-700/80 text-white font-semibold rounded-full hover:border-brand-400/60 hover:bg-brand-400/5 transition-all backdrop-blur-sm relative overflow-hidden group"
               whileHover={{ scale: 1.05 }}
@@ -369,7 +369,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
         </motion.div>
       </div>
 
-      <motion.div 
+      <motion.div
         style={{ y: y2 }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400"
       >
@@ -428,8 +428,8 @@ const ProblemSection = () => {
 
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {buckets.map((bucket, idx) => (
-            <motion.div 
-              key={bucket.title} 
+            <motion.div
+              key={bucket.title}
               className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl backdrop-blur-sm hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -476,8 +476,8 @@ const JourneySection = () => (
 
       <div className="grid lg:grid-cols-3 gap-6">
         {journeyPhases.map((phase, idx) => (
-          <motion.div 
-            key={phase.phase} 
+          <motion.div
+            key={phase.phase}
             className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -514,7 +514,7 @@ const FeatureCard = ({ icon: Icon, title, description, index }: { icon: any, tit
     className="group p-8 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/40 transition-all duration-300 hover:bg-slate-800/60 backdrop-blur-sm hover:shadow-xl hover:shadow-brand-500/10"
     whileHover={{ y: -5 }}
   >
-    <motion.div 
+    <motion.div
       className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center mb-6 shadow-lg"
       whileHover={{ rotate: 360 }}
       transition={{ duration: 0.6 }}
@@ -576,8 +576,8 @@ const Experiments = () => (
 
       <div className="grid md:grid-cols-3 gap-6">
         {experimentCadence.map((experiment, idx) => (
-          <motion.div 
-            key={experiment.title} 
+          <motion.div
+            key={experiment.title}
             className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -585,7 +585,7 @@ const Experiments = () => (
             transition={{ delay: idx * 0.1 }}
             whileHover={{ y: -5 }}
           >
-            <motion.div 
+            <motion.div
               className="w-14 h-14 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 flex items-center justify-center mb-5 shadow-lg"
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.5 }}
@@ -608,7 +608,7 @@ const Quote = () => (
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-brand-500/10 rounded-full blur-[120px]" />
     </div>
     <div className="container mx-auto px-6 relative z-10 text-center">
-      <motion.blockquote 
+      <motion.blockquote
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
@@ -637,7 +637,7 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
   return (
     <section className="pt-28 pb-24 px-6 min-h-screen">
       <div className="max-w-3xl mx-auto">
-        <button 
+        <button
           onClick={onBack}
           className="group flex items-center gap-2 text-slate-400 hover:text-brand-300 transition-colors mb-8"
         >
@@ -663,7 +663,7 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
             until the markdown rendering is fully set up with the data layer.
           */}
           <p className="lead text-xl text-slate-300 mb-8">{entry.summary}</p>
-          
+
           <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-8">
             <h3 className="text-lg font-bold text-white mb-4">Key Highlights</h3>
             <ul className="space-y-2">
@@ -677,9 +677,9 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
           </div>
 
           <div className="whitespace-pre-wrap text-slate-300">
-             {/* This is where the full markdown content would go. 
+            {/* This is where the full markdown content would go. 
                  For now, we are displaying the raw content string if available, or a placeholder. */}
-             {entry.content || "Full content loading..."}
+            {entry.content || "Full content loading..."}
           </div>
         </div>
       </div>
@@ -704,7 +704,7 @@ const JournalPreview = ({ onNavigateToEntry }: { onNavigateToEntry: (id: string)
               This section will hold honest build logs once they exist. Each post should include the experiment, metrics, tool stack, and emotional takeaways.
             </p>
           </div>
-          <button 
+          <button
             onClick={() => onNavigateToEntry('journal')} // Navigate to main journal page
             className="self-start md:self-auto px-6 py-3 border border-slate-700 text-white rounded-full hover:border-white/70 transition-colors"
           >
@@ -724,7 +724,7 @@ const JournalPreview = ({ onNavigateToEntry }: { onNavigateToEntry: (id: string)
                   <h3 className="text-xl font-display text-white mb-3 group-hover:text-brand-100 transition-colors">{entry.title}</h3>
                   <p className="text-slate-300 text-sm leading-relaxed">{entry.summary}</p>
                 </div>
-                <button 
+                <button
                   onClick={() => onNavigateToEntry(entry.id)}
                   className="mt-5 text-sm text-brand-300 flex items-center gap-2 font-semibold hover:text-brand-200 transition-colors text-left"
                 >
@@ -778,7 +778,7 @@ const JournalPage = ({ onNavigateToEntry }: { onNavigateToEntry: (id: string) =>
                   </li>
                 ))}
               </ul>
-              <button 
+              <button
                 onClick={() => onNavigateToEntry(entry.id)}
                 className="inline-flex items-center gap-2 text-brand-400 font-semibold hover:text-brand-300 transition-colors"
               >
@@ -790,14 +790,130 @@ const JournalPage = ({ onNavigateToEntry }: { onNavigateToEntry: (id: string) =>
       ) : (
         // ... existing empty state ...
         <div className="max-w-4xl mx-auto rounded-3xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-slate-300">
-           {/* ... content ... */}
+          {/* ... content ... */}
         </div>
       )}
     </section>
   );
 };
 
-// ... AboutPage, Newsletter, Footer ...
+const AboutPage = () => (
+  <section className="pt-28 pb-24 px-6">
+    <div className="max-w-4xl mx-auto text-center mb-12">
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
+        <Sparkles className="w-3 h-3" />
+        About the builder (and his failures)
+      </div>
+      <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kim Edrian Binasoy (he/him).</h1>
+      <p className="text-slate-300 text-lg">
+        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions. I've worked infrastructure, networks, QA, and project leadership—so I know how to ship real systems. That's what makes my AI paralysis so embarrassing.
+      </p>
+      <p className="text-slate-300 text-lg mt-4">
+        I spent 6 months collecting AI tools (Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6) like infinity stones instead of using them. Relearn.ing is the public proof I'm actually building now—mistakes, failed prompts, and velocity gains included.
+      </p>
+    </div>
+
+    <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
+      {[
+        { label: 'AI agents tested', value: '6', note: 'Gemini, Copilot, Claude, Kimi K2, GLM 4.6. Zero actually used in my workflow for 3 months.' },
+        { label: 'Prompts that shipped code', value: '8', note: '342 prompts written. 8 made it to production. The other 334 are in my failure log.' },
+        { label: 'Hours saved (so far)', value: '47', note: 'From 3 weeks of actually committing AI-assisted code. At 6 months, this number embarrassed me (it was 0).' }
+      ].map((stat, idx) => (
+        <motion.div
+          key={stat.label}
+          className="p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 text-center transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: idx * 0.1 }}
+          whileHover={{ y: -5 }}
+        >
+          <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-500 font-display mb-2">{stat.value}</p>
+          <p className="text-sm uppercase tracking-wide text-slate-500 mt-2 font-semibold">{stat.label}</p>
+          <p className="text-slate-400 text-sm mt-3 leading-relaxed">{stat.note}</p>
+        </motion.div>
+      ))}
+    </div>
+
+    <div className="max-w-4xl mx-auto space-y-6 text-slate-300">
+      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
+        <h2 className="text-2xl font-display text-white mb-3">Relearn principles (born from failure)</h2>
+        <ul className="space-y-3 text-sm md:text-base">
+          <li>🧠 <strong>Systems first.</strong> I spent 47 hours evaluating tools before I measured input vs. output. Never again.</li>
+          <li>🤖 <strong>AI as teammate, not toy.</strong> I now delete any AI tool that doesn't show measurable velocity gain within 2 weeks.</li>
+          <li>🌱 <strong>Scar tissue is the content.</strong> If I haven't failed at it first, I don't write about it. This eliminates 90% of tech blogging.</li>
+        </ul>
+      </div>
+      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
+        <h2 className="text-2xl font-display text-white mb-3">Currently focused on</h2>
+        <ul className="grid md:grid-cols-2 gap-3 text-sm md:text-base">
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing the prompt graveyard: why 334 prompts failed and 8 succeeded</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Comparing agent performance on identical cloud tasks (Gemini vs Claude bias)</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours/week for deep work by logging every context switch</li>
+          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Weekly emails: the experiments that stuck, the failures, and the numbers</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+);
+
+const Newsletter = () => {
+  const emailHref = 'mailto:hello@relearn.ing?subject=Join%20the%20Relearn%20Dispatch&body=Hey%20Kedbin%2C%20add%20me%20to%20your%20weekly%20update.%20Here%E2%80%99s%20what%20I%E2%80%99m%20working%20on%3A%20';
+
+  return (
+    <section id="newsletter" className="py-32 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/80 pointer-events-none" />
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-3xl mx-auto bg-slate-800/30 border border-slate-700/50 rounded-3xl p-8 md:p-12 backdrop-blur-md text-center">
+          <Mail className="w-10 h-10 text-brand-400 mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-display">Join the Relearn Dispatch</h2>
+          <p className="text-slate-300 mb-6 text-lg">
+            Weekly emails with the exact experiments, prompts, and emotional check-ins I’m running. Until I finish wiring Buttondown, tap the button below and send me a note.
+          </p>
+
+          <a
+            href={emailHref}
+            className="inline-flex items-center justify-center px-8 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-full transition-all shadow-lg shadow-brand-500/20"
+          >
+            Email me to join
+          </a>
+          <p className="text-slate-400 text-sm mt-4">
+            It opens your email client with a pre-filled message. I reply personally with the last issue + onboarding details.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const Footer = () => (
+  <footer className="bg-slate-950 border-t border-slate-900 py-12 text-center md:text-left">
+    <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+      <div>
+        <Logo />
+        <p className="text-slate-500 text-sm mt-2">
+          © {new Date().getFullYear()} relearn.ing. Built in public with honest metrics.
+        </p>
+        <a href="mailto:hello@relearn.ing" className="text-brand-300 text-sm hover:text-brand-200 transition-colors">
+          hello@relearn.ing
+        </a>
+      </div>
+      <div className="flex gap-5 text-slate-400">
+        {socialLinks.map((link) => (
+          <a
+            key={link.name}
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-brand-400 transition-colors"
+          >
+            <link.icon className="w-5 h-5" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </footer>
+);
 
 // --- Main App ---
 
@@ -823,11 +939,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-brand-500/30 selection:text-white">
       <Header page={page} setPage={(p) => { setPage(p); setSelectedEntryId(null); }} />
-      
+
       <main className="relative">
         <AnimatePresence mode="wait">
           {page === 'home' && (
-            <motion.div 
+            <motion.div
               key="home"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -846,7 +962,7 @@ export default function App() {
           )}
 
           {page === 'journal' && !selectedEntryId && (
-            <motion.div 
+            <motion.div
               key="journal-list"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -858,22 +974,22 @@ export default function App() {
           )}
 
           {page === 'journal' && selectedEntryId && (
-            <motion.div 
+            <motion.div
               key="journal-detail"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <JournalEntryDetail 
-                entryId={selectedEntryId} 
-                onBack={() => setSelectedEntryId(null)} 
+              <JournalEntryDetail
+                entryId={selectedEntryId}
+                onBack={() => setSelectedEntryId(null)}
               />
             </motion.div>
           )}
 
           {page === 'about' && (
-            <motion.div 
+            <motion.div
               key="about"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
