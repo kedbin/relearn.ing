@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { journalEntries, getAllJournalEntries, type JournalEntry } from './data/journal';
+import { journalEntries, getAllJournalEntries, type JournalEntry } from './src/data/journal';
 
 // --- Utils ---
 function cn(...inputs: ClassValue[]) {
