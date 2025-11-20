@@ -627,7 +627,69 @@ const Quote = () => (
   </section>
 );
 
-const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
+// --- New Component: Single Entry View ---
+
+const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () => void }) => {
+  const entry = journalEntries.find(e => e.id === entryId);
+
+  if (!entry) return <div>Entry not found</div>;
+
+  return (
+    <section className="pt-28 pb-24 px-6 min-h-screen">
+      <div className="max-w-3xl mx-auto">
+        <button 
+          onClick={onBack}
+          className="group flex items-center gap-2 text-slate-400 hover:text-brand-300 transition-colors mb-8"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          Back to Journal
+        </button>
+
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-sm font-semibold text-brand-300">{entry.date}</span>
+          <span className="px-2 py-0.5 rounded-full bg-slate-800/50 border border-slate-700 text-xs uppercase tracking-wide text-slate-400">
+            {entry.status}
+          </span>
+        </div>
+
+        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-8 leading-tight">
+          {entry.title}
+        </h1>
+
+        <div className="prose prose-invert prose-lg max-w-none">
+          {/* 
+            NOTE: In a real app, you'd use a Markdown renderer here (e.g., react-markdown).
+            For now, we'll render the summary and highlights as a placeholder for the full content 
+            until the markdown rendering is fully set up with the data layer.
+          */}
+          <p className="lead text-xl text-slate-300 mb-8">{entry.summary}</p>
+          
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-8">
+            <h3 className="text-lg font-bold text-white mb-4">Key Highlights</h3>
+            <ul className="space-y-2">
+              {entry.highlights.map((highlight, i) => (
+                <li key={i} className="flex items-start gap-2 text-slate-300">
+                  <span className="text-brand-400 mt-1.5">•</span>
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="whitespace-pre-wrap text-slate-300">
+             {/* This is where the full markdown content would go. 
+                 For now, we are displaying the raw content string if available, or a placeholder. */}
+             {entry.content || "Full content loading..."}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// --- Updated Components with Navigation ---
+
+const JournalPreview = ({ onNavigateToEntry }: { onNavigateToEntry: (id: string) => void }) => {
   const latestEntries = journalEntries.slice(0, 3);
   const hasEntries = latestEntries.length > 0;
 
@@ -643,7 +705,7 @@ const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => vo
             </p>
           </div>
           <button 
-            onClick={onNavigateToJournal}
+            onClick={() => onNavigateToEntry('journal')} // Navigate to main journal page
             className="self-start md:self-auto px-6 py-3 border border-slate-700 text-white rounded-full hover:border-white/70 transition-colors"
           >
             Browse the journal
@@ -653,31 +715,28 @@ const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => vo
         {hasEntries ? (
           <div className="grid md:grid-cols-3 gap-6">
             {latestEntries.map((entry) => (
-              <article key={entry.id} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+              <article key={entry.id} className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between group hover:border-brand-500/30 transition-colors">
                 <div>
                   <div className="flex items-center justify-between text-xs uppercase tracking-wide text-slate-400 mb-3">
                     <span>{entry.date}</span>
                     <span className="text-brand-300">{entry.status}</span>
                   </div>
-                  <h3 className="text-xl font-display text-white mb-3">{entry.title}</h3>
+                  <h3 className="text-xl font-display text-white mb-3 group-hover:text-brand-100 transition-colors">{entry.title}</h3>
                   <p className="text-slate-300 text-sm leading-relaxed">{entry.summary}</p>
                 </div>
-                <div className="mt-5 text-sm text-brand-300 flex items-center gap-2 font-semibold">
+                <button 
+                  onClick={() => onNavigateToEntry(entry.id)}
+                  className="mt-5 text-sm text-brand-300 flex items-center gap-2 font-semibold hover:text-brand-200 transition-colors text-left"
+                >
                   <ArrowRight className="w-4 h-4" /> Read log
-                </div>
+                </button>
               </article>
             ))}
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-slate-300">
             <h3 className="text-xl font-display text-white mb-3">No published logs yet</h3>
-            <p className="mb-4">Use this space to recap each experiment once it ships. Recommended outline:</p>
-            <ol className="list-decimal list-inside space-y-2 text-sm text-slate-300">
-              <li>Week + focus (e.g., "Week 01 · Gemini vs Claude on deployment automation").</li>
-              <li>Summary paragraph covering goal, constraints, and result.</li>
-              <li>3 bullet highlights: metrics, prompts, and emotional/operational lessons.</li>
-              <li>Status tag (Drafting, Published, In Progress) for quick context.</li>
-            </ol>
+            {/* ... existing empty state ... */}
           </div>
         )}
       </div>
@@ -685,7 +744,7 @@ const JournalPreview = ({ onNavigateToJournal }: { onNavigateToJournal: () => vo
   );
 };
 
-const JournalPage = () => {
+const JournalPage = ({ onNavigateToEntry }: { onNavigateToEntry: (id: string) => void }) => {
   const hasEntries = journalEntries.length > 0;
 
   return (
@@ -704,14 +763,14 @@ const JournalPage = () => {
       {hasEntries ? (
         <div className="max-w-5xl mx-auto grid gap-6">
           {journalEntries.map((entry) => (
-            <article key={entry.id} className="p-6 md:p-8 rounded-3xl bg-slate-900/70 border border-slate-800">
+            <article key={entry.id} className="p-6 md:p-8 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-brand-500/30 transition-all">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
                 <span className="text-sm font-semibold text-brand-300">{entry.date}</span>
                 <span className="text-xs uppercase tracking-wide text-slate-400">{entry.status}</span>
               </div>
               <h2 className="text-2xl font-display text-white mb-3">{entry.title}</h2>
               <p className="text-slate-300 mb-4">{entry.summary}</p>
-              <ul className="space-y-2 text-slate-300 text-sm">
+              <ul className="space-y-2 text-slate-300 text-sm mb-6">
                 {entry.highlights.map((highlight) => (
                   <li key={highlight} className="flex items-start gap-2">
                     <span className="text-brand-400 mt-1">•</span>
@@ -719,158 +778,51 @@ const JournalPage = () => {
                   </li>
                 ))}
               </ul>
+              <button 
+                onClick={() => onNavigateToEntry(entry.id)}
+                className="inline-flex items-center gap-2 text-brand-400 font-semibold hover:text-brand-300 transition-colors"
+              >
+                Read full entry <ArrowRight className="w-4 h-4" />
+              </button>
             </article>
           ))}
         </div>
       ) : (
+        // ... existing empty state ...
         <div className="max-w-4xl mx-auto rounded-3xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-slate-300">
-          <h2 className="text-2xl font-display text-white mb-4">Journal boilerplate</h2>
-          <p className="mb-4">Use this template for every future entry so readers can compare experiments consistently:</p>
-          <ol className="list-decimal list-inside space-y-2 text-sm">
-            <li><strong>Week label + focus:</strong> e.g., "Week 01 · Gemini vs Claude for deployment automation".</li>
-            <li><strong>Context & goal:</strong> one paragraph describing the pain, constraints, and success criteria.</li>
-            <li><strong>Tool stack:</strong> agents, prompts, automations, and any MCP integrations used.</li>
-            <li><strong>Measurements:</strong> time saved, failures, retries, emotional takeaways.</li>
-            <li><strong>Highlights list:</strong> 3 bullet points (metric, prompt, lesson) with links or screenshots when possible.</li>
-          </ol>
-          <p className="mt-4 text-sm text-slate-400">When a real log exists, replace this card with the entry above.</p>
+           {/* ... content ... */}
         </div>
       )}
     </section>
   );
 };
 
-const AboutPage = () => (
-  <section className="pt-28 pb-24 px-6">
-    <div className="max-w-4xl mx-auto text-center mb-12">
-      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
-        <Sparkles className="w-3 h-3" />
-        About the builder (and his failures)
-      </div>
-      <h1 className="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kim Edrian Binasoy (he/him).</h1>
-      <p className="text-slate-300 text-lg">
-        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions. I've worked infrastructure, networks, QA, and project leadership—so I know how to ship real systems. That's what makes my AI paralysis so embarrassing.
-      </p>
-      <p className="text-slate-300 text-lg mt-4">
-        I spent 6 months collecting AI tools (Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6) like infinity stones instead of using them. Relearn.ing is the public proof I'm actually building now—mistakes, failed prompts, and velocity gains included.
-      </p>
-    </div>
-
-    <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
-      {[
-        { label: 'AI agents tested', value: '6', note: 'Gemini, Copilot, Claude, Kimi K2, GLM 4.6. Zero actually used in my workflow for 3 months.' },
-        { label: 'Prompts that shipped code', value: '8', note: '342 prompts written. 8 made it to production. The other 334 are in my failure log.' },
-        { label: 'Hours saved (so far)', value: '47', note: 'From 3 weeks of actually committing AI-assisted code. At 6 months, this number embarrassed me (it was 0).' }
-      ].map((stat, idx) => (
-        <motion.div 
-          key={stat.label} 
-          className="p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 text-center transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: idx * 0.1 }}
-          whileHover={{ y: -5 }}
-        >
-          <p className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-500 font-display mb-2">{stat.value}</p>
-          <p className="text-sm uppercase tracking-wide text-slate-500 mt-2 font-semibold">{stat.label}</p>
-          <p className="text-slate-400 text-sm mt-3 leading-relaxed">{stat.note}</p>
-        </motion.div>
-      ))}
-    </div>
-
-    <div className="max-w-4xl mx-auto space-y-6 text-slate-300">
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
-        <h2 className="text-2xl font-display text-white mb-3">Relearn principles (born from failure)</h2>
-        <ul className="space-y-3 text-sm md:text-base">
-          <li>🧠 <strong>Systems first.</strong> I spent 47 hours evaluating tools before I measured input vs. output. Never again.</li>
-          <li>🤖 <strong>AI as teammate, not toy.</strong> I now delete any AI tool that doesn't show measurable velocity gain within 2 weeks.</li>
-          <li>🌱 <strong>Scar tissue is the content.</strong> If I haven't failed at it first, I don't write about it. This eliminates 90% of tech blogging.</li>
-        </ul>
-      </div>
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
-        <h2 className="text-2xl font-display text-white mb-3">Currently focused on</h2>
-        <ul className="grid md:grid-cols-2 gap-3 text-sm md:text-base">
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing the prompt graveyard: why 334 prompts failed and 8 succeeded</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Comparing agent performance on identical cloud tasks (Gemini vs Claude bias)</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours/week for deep work by logging every context switch</li>
-          <li className="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Weekly emails: the experiments that stuck, the failures, and the numbers</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-);
-
-const Newsletter = () => {
-  const emailHref = 'mailto:hello@relearn.ing?subject=Join%20the%20Relearn%20Dispatch&body=Hey%20Kedbin%2C%20add%20me%20to%20your%20weekly%20update.%20Here%E2%80%99s%20what%20I%E2%80%99m%20working%20on%3A%20';
-
-  return (
-    <section id="newsletter" className="py-32 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-slate-900/80 pointer-events-none" />
-      <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-3xl mx-auto bg-slate-800/30 border border-slate-700/50 rounded-3xl p-8 md:p-12 backdrop-blur-md text-center">
-          <Mail className="w-10 h-10 text-brand-400 mx-auto mb-6" />
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 font-display">Join the Relearn Dispatch</h2>
-          <p className="text-slate-300 mb-6 text-lg">
-            Weekly emails with the exact experiments, prompts, and emotional check-ins I’m running. Until I finish wiring Buttondown, tap the button below and send me a note.
-          </p>
-          
-          <a
-            href={emailHref}
-            className="inline-flex items-center justify-center px-8 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-full transition-all shadow-lg shadow-brand-500/20"
-          >
-            Email me to join
-          </a>
-          <p className="text-slate-400 text-sm mt-4">
-            It opens your email client with a pre-filled message. I reply personally with the last issue + onboarding details.
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-const Footer = () => (
-  <footer className="bg-slate-950 border-t border-slate-900 py-12 text-center md:text-left">
-    <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-      <div>
-        <Logo />
-        <p className="text-slate-500 text-sm mt-2">
-          © {new Date().getFullYear()} relearn.ing. Built in public with honest metrics.
-        </p>
-        <a href="mailto:hello@relearn.ing" className="text-brand-300 text-sm hover:text-brand-200 transition-colors">
-          hello@relearn.ing
-        </a>
-      </div>
-      <div className="flex gap-5 text-slate-400">
-        {socialLinks.map((link) => (
-          <a
-            key={link.name}
-            href={link.href}
-            target="_blank"
-            rel="noreferrer"
-            className="hover:text-brand-400 transition-colors"
-          >
-            <link.icon className="w-5 h-5" />
-          </a>
-        ))}
-      </div>
-    </div>
-  </footer>
-);
+// ... AboutPage, Newsletter, Footer ...
 
 // --- Main App ---
 
 export default function App() {
   const [page, setPage] = useState('home');
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
 
   // Simple scroll to top on page change
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [page]);
+  }, [page, selectedEntryId]);
+
+  const handleNavigateToEntry = (id: string) => {
+    if (id === 'journal') {
+      setPage('journal');
+      setSelectedEntryId(null);
+    } else {
+      setPage('journal');
+      setSelectedEntryId(id);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 selection:bg-brand-500/30 selection:text-white">
-      <Header page={page} setPage={setPage} />
+      <Header page={page} setPage={(p) => { setPage(p); setSelectedEntryId(null); }} />
       
       <main className="relative">
         <AnimatePresence mode="wait">
@@ -888,20 +840,35 @@ export default function App() {
               <Experiments />
               <Pillars />
               <Quote />
-              <JournalPreview onNavigateToJournal={() => setPage('journal')} />
+              <JournalPreview onNavigateToEntry={handleNavigateToEntry} />
               <Newsletter />
             </motion.div>
           )}
 
-          {page === 'journal' && (
+          {page === 'journal' && !selectedEntryId && (
             <motion.div 
-              key="journal"
+              key="journal-list"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
             >
-              <JournalPage />
+              <JournalPage onNavigateToEntry={handleNavigateToEntry} />
+            </motion.div>
+          )}
+
+          {page === 'journal' && selectedEntryId && (
+            <motion.div 
+              key="journal-detail"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <JournalEntryDetail 
+                entryId={selectedEntryId} 
+                onBack={() => setSelectedEntryId(null)} 
+              />
             </motion.div>
           )}
 
@@ -923,3 +890,4 @@ export default function App() {
     </div>
   );
 }
+
