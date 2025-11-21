@@ -1,0 +1,26 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Hero } from '../components/Hero';
+import { ProblemSection } from '../components/ProblemSection';
+import { JourneySection } from '../components/JourneySection';
+import { Experiments } from '../components/Experiments';
+import { Pillars } from '../components/Pillars';
+import { Quote } from '../components/Quote';
+import { JournalPreview } from '../components/JournalPreview';
+import { Newsletter } from '../components/Newsletter';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('journal');
+const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Layout title="Home">
+  <Hero client:load />
+  <ProblemSection client:visible />
+  <JourneySection client:visible />
+  <Experiments client:visible />
+  <Pillars client:visible />
+  <Quote client:visible />
+  <JournalPreview client:visible entries={sortedEntries} />
+  <Newsletter client:visible />
+</Layout>

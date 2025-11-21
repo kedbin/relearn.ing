@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { BookOpen, ArrowRight } from 'lucide-react';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('journal');
+const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Layout title="Journal">
+  <section class="pt-28 pb-24 px-6">
+    <div class="max-w-3xl mx-auto text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
+        <BookOpen className="w-3 h-3" />
+        Build log
+      </div>
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">Every relearn note, in order</h1>
+      <p class="text-slate-300">
+        This page becomes the permanent record of experiments once they ship. Log what you tried, what failed, what you kept, and why it matters.
+      </p>
+    </div>
+
+    {sortedEntries.length > 0 ? (
+      <div class="max-w-5xl mx-auto grid gap-6">
+        {sortedEntries.map((entry) => (
+          <article class="p-6 md:p-8 rounded-3xl bg-slate-900/70 border border-slate-800 hover:border-brand-500/30 transition-all">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+              <span class="text-sm font-semibold text-brand-300">{entry.data.date}</span>
+              <span class="text-xs uppercase tracking-wide text-slate-400">{entry.data.status}</span>
+            </div>
+            <h2 class="text-2xl font-display text-white mb-3">{entry.data.title}</h2>
+            <p class="text-slate-300 mb-4">{entry.data.summary}</p>
+            <ul class="space-y-2 text-slate-300 text-sm mb-6">
+              {entry.data.highlights.map((highlight) => (
+                <li class="flex items-start gap-2">
+                  <span class="text-brand-400 mt-1">•</span>
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+            <a
+              href={`/relearn.ing/journal/${entry.slug}`}
+              class="inline-flex items-center gap-2 text-brand-400 font-semibold hover:text-brand-300 transition-colors"
+            >
+              Read full entry <ArrowRight className="w-4 h-4" />
+            </a>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div class="max-w-4xl mx-auto rounded-3xl border border-dashed border-slate-700 bg-slate-900/40 p-8 text-slate-300 text-center">
+        <h3 class="text-xl font-display text-white mb-3">No entries found</h3>
+        <p>Check back soon!</p>
+      </div>
+    )}
+  </section>
+</Layout>

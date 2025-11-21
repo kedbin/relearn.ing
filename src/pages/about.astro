@@ -1,0 +1,60 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+// Static data for About page
+const stats = [
+  { label: 'AI agents tested', value: '6', note: 'Gemini, Copilot, Claude, Kimi K2, GLM 4.6. Zero actually used in my workflow for 3 months.' },
+  { label: 'Prompts that shipped code', value: '8', note: '342 prompts written. 8 made it to production. The other 334 are in my failure log.' },
+  { label: 'Hours saved (so far)', value: '47', note: 'From 3 weeks of actually committing AI-assisted code. At 6 months, this number embarrassed me (it was 0).' }
+];
+---
+
+<Layout title="About">
+  <section class="pt-28 pb-24 px-6">
+    <div class="max-w-4xl mx-auto text-center mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
+        <Sparkles className="w-3 h-3" />
+        About the builder (and his failures)
+      </div>
+      <h1 class="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kim Edrian Binasoy (he/him).</h1>
+      <p class="text-slate-300 text-lg">
+        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions. I've worked infrastructure, networks, QA, and project leadership—so I know how to ship real systems. That's what makes my AI paralysis so embarrassing.
+      </p>
+      <p class="text-slate-300 text-lg mt-4">
+        I spent 6 months collecting AI tools (Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6) like infinity stones instead of using them. Relearn.ing is the public proof I'm actually building now—mistakes, failed prompts, and velocity gains included.
+      </p>
+    </div>
+
+    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
+      {stats.map((stat, idx) => (
+        <div class="p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 text-center transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10 hover:-translate-y-1">
+          <p class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-500 font-display mb-2">{stat.value}</p>
+          <p class="text-sm uppercase tracking-wide text-slate-500 mt-2 font-semibold">{stat.label}</p>
+          <p class="text-slate-400 text-sm mt-3 leading-relaxed">{stat.note}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="max-w-4xl mx-auto space-y-6 text-slate-300">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
+        <h2 class="text-2xl font-display text-white mb-3">Relearn principles (born from failure)</h2>
+        <ul class="space-y-3 text-sm md:text-base">
+          <li>🧠 <strong>Systems first.</strong> I spent 47 hours evaluating tools before I measured input vs. output. Never again.</li>
+          <li>🤖 <strong>AI as teammate, not toy.</strong> I now delete any AI tool that doesn't show measurable velocity gain within 2 weeks.</li>
+          <li>🌱 <strong>Scar tissue is the content.</strong> If I haven't failed at it first, I don't write about it. This eliminates 90% of tech blogging.</li>
+        </ul>
+      </div>
+      <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
+        <h2 class="text-2xl font-display text-white mb-3">Currently focused on</h2>
+        <ul class="grid md:grid-cols-2 gap-3 text-sm md:text-base">
+          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing the prompt graveyard: why 334 prompts failed and 8 succeeded</li>
+          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Comparing agent performance on identical cloud tasks (Gemini vs Claude bias)</li>
+          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours/week for deep work by logging every context switch</li>
+          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Weekly emails: the experiments that stuck, the failures, and the numbers</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Layout>
