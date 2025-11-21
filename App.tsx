@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import Markdown from 'react-markdown';
 import {
   Brain,
   Code2,
@@ -297,7 +298,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             >
               <Sparkles className="w-3.5 h-3.5 text-brand-400" />
             </motion.div>
-            <span>Cloud engineer who got crushed by AI choice paralysis</span>
+            <span>Cloud engineer navigating the noise to find signal</span>
           </motion.div>
 
           <motion.h1
@@ -306,7 +307,7 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
           >
-            I spent 6 months drowning in{' '}
+            I stopped collecting{' '}
             <motion.span
               className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400"
               animate={{
@@ -319,9 +320,9 @@ const Hero = ({ onNavigateToJournal }: { onNavigateToJournal: () => void }) => {
               }}
               style={{ backgroundSize: "200% 200%" }}
             >
-              AI tutorials
+              AI tools.
             </motion.span>{' '}
-            instead of shipping.
+            I started building with them.
           </motion.h1>
 
           <motion.p
@@ -657,11 +658,6 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
         </h1>
 
         <div className="prose prose-invert prose-lg max-w-none">
-          {/* 
-            NOTE: In a real app, you'd use a Markdown renderer here (e.g., react-markdown).
-            For now, we'll render the summary and highlights as a placeholder for the full content 
-            until the markdown rendering is fully set up with the data layer.
-          */}
           <p className="lead text-xl text-slate-300 mb-8">{entry.summary}</p>
 
           <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-8">
@@ -676,10 +672,8 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
             </ul>
           </div>
 
-          <div className="whitespace-pre-wrap text-slate-300">
-            {/* This is where the full markdown content would go. 
-                 For now, we are displaying the raw content string if available, or a placeholder. */}
-            {entry.content || "Full content loading..."}
+          <div className="text-slate-300">
+             <Markdown>{entry.content}</Markdown>
           </div>
         </div>
       </div>
