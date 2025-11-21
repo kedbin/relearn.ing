@@ -28,7 +28,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
             </p>
           </div>
           <a
-            href="/relearn.ing/journal"
+            href="/journal"
             className="self-start md:self-auto px-6 py-3 border border-slate-700 text-white rounded-full hover:border-white/70 transition-colors"
           >
             Browse the journal
@@ -48,7 +48,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
                   <p className="text-slate-300 text-sm leading-relaxed">{entry.data.summary}</p>
                 </div>
                 <a
-                  href={`/relearn.ing/journal/${entry.slug}`}
+                  href={`/journal/${entry.slug}`}
                   className="mt-5 text-sm text-brand-300 flex items-center gap-2 font-semibold hover:text-brand-200 transition-colors text-left"
                 >
                   <ArrowRight className="w-4 h-4" /> Read log

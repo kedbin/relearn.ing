@@ -26,10 +26,10 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Normalize path to handle trailing slashes or base paths
+  // Normalize path to handle trailing slashes
   const isActive = (path: string) => {
-    if (path === '/' && (currentPath === '/' || currentPath === '/relearn.ing/' || currentPath === '')) return true;
-    return currentPath.includes(path);
+    if (path === '/' && (currentPath === '/')) return true;
+    return currentPath.startsWith(path) && path !== '/';
   };
 
   useEffect(() => {
@@ -41,10 +41,10 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
   const handleSubscribeClick = () => {
     setMobileMenuOpen(false);
     // If on home, scroll. If not, nav to home #newsletter
-    if (isActive('/') && !isActive('journal') && !isActive('about')) {
+    if (currentPath === '/') {
        document.getElementById('newsletter')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-       window.location.href = "/relearn.ing/#newsletter";
+       window.location.href = "/#newsletter";
     }
   };
 
@@ -62,9 +62,9 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
-          <NavLink href="/relearn.ing/" active={currentPath === '/relearn.ing/' || currentPath === '/'}>Home</NavLink>
-          <NavLink href="/relearn.ing/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
-          <NavLink href="/relearn.ing/about" active={currentPath.includes('/about')}>About</NavLink>
+          <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
+          <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
+          <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
@@ -109,9 +109,9 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
             className="md:hidden bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
-              <NavLink href="/relearn.ing/" active={currentPath === '/relearn.ing/'}>Home</NavLink>
-              <NavLink href="/relearn.ing/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
-              <NavLink href="/relearn.ing/about" active={currentPath.includes('/about')}>About</NavLink>
+              <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
+              <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
+              <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
               <hr className="border-slate-800" />
               <button
                 onClick={handleSubscribeClick}

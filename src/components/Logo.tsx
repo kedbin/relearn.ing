@@ -3,7 +3,7 @@ import { Zap } from 'lucide-react';
 
 export const Logo = () => (
   <a
-    href="/relearn.ing/"
+    href="/"
     className="text-2xl font-bold tracking-tighter font-display group flex items-center gap-2"
   >
     <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500/10 group-hover:bg-brand-500/20 transition-colors">

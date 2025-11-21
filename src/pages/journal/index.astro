@@ -39,7 +39,7 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
               ))}
             </ul>
             <a
-              href={`/relearn.ing/journal/${entry.slug}`}
+              href={`/journal/${entry.slug}`}
               class="inline-flex items-center gap-2 text-brand-400 font-semibold hover:text-brand-300 transition-colors"
             >
               Read full entry <ArrowRight className="w-4 h-4" />

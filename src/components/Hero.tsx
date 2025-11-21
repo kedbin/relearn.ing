@@ -153,7 +153,7 @@ export const Hero = () => {
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
             </motion.button>
             <a
-              href="/relearn.ing/journal"
+              href="/journal"
               className="px-8 py-4 border-2 border-slate-700/80 text-white font-semibold rounded-full hover:border-brand-400/60 hover:bg-brand-400/5 transition-all backdrop-blur-sm relative overflow-hidden group inline-flex items-center justify-center"
             >
               <motion.div
