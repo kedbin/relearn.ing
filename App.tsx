@@ -636,44 +636,102 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
   if (!entry) return <div>Entry not found</div>;
 
   return (
-    <section className="pt-28 pb-24 px-6 min-h-screen">
-      <div className="max-w-3xl mx-auto">
+    <section className="pt-28 pb-24 px-6 min-h-screen bg-slate-950">
+      <div className="max-w-4xl mx-auto">
         <button
           onClick={onBack}
-          className="group flex items-center gap-2 text-slate-400 hover:text-brand-300 transition-colors mb-8"
+          className="group flex items-center gap-2 text-slate-400 hover:text-brand-300 transition-colors mb-10"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           Back to Journal
         </button>
 
-        <div className="flex items-center gap-3 mb-6">
-          <span className="text-sm font-semibold text-brand-300">{entry.date}</span>
-          <span className="px-2 py-0.5 rounded-full bg-slate-800/50 border border-slate-700 text-xs uppercase tracking-wide text-slate-400">
-            {entry.status}
-          </span>
-        </div>
-
-        <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-8 leading-tight">
-          {entry.title}
-        </h1>
-
-        <div className="prose prose-invert prose-lg max-w-none">
-          <p className="lead text-xl text-slate-300 mb-8">{entry.summary}</p>
-
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 mb-8">
-            <h3 className="text-lg font-bold text-white mb-4">Key Highlights</h3>
-            <ul className="space-y-2">
-              {entry.highlights.map((highlight, i) => (
-                <li key={i} className="flex items-start gap-2 text-slate-300">
-                  <span className="text-brand-400 mt-1.5">•</span>
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
+        {/* Header Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 border-b border-slate-800/60 pb-8"
+        >
+          <div className="flex flex-wrap items-center gap-4 mb-6 text-sm">
+            <div className="flex items-center gap-2 text-brand-300 font-medium bg-brand-500/10 px-3 py-1 rounded-full border border-brand-500/20">
+               <Calendar className="w-3.5 h-3.5" />
+               <span>{entry.date}</span>
+            </div>
+            <div className="flex items-center gap-2 text-purple-300 font-medium bg-purple-500/10 px-3 py-1 rounded-full border border-purple-500/20">
+              <Tag className="w-3.5 h-3.5" />
+              <span>{entry.category}</span>
+            </div>
+             <span className="text-slate-500">•</span>
+            <span className="text-slate-400 uppercase tracking-wider text-xs font-semibold">{entry.status}</span>
           </div>
 
-          <div className="text-slate-300">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 leading-[1.1] tracking-tight">
+            {entry.title}
+          </h1>
+
+          <p className="text-xl md:text-2xl text-slate-300 leading-relaxed font-light max-w-3xl">
+            {entry.summary}
+          </p>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-[1fr_300px] gap-12 items-start">
+          {/* Main Content */}
+          <article className="prose prose-lg prose-invert prose-slate max-w-none 
+            prose-headings:font-display prose-headings:font-bold prose-headings:text-white
+            prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6 prose-h2:pb-4 prose-h2:border-b prose-h2:border-slate-800/50
+            prose-h3:text-xl prose-h3:text-brand-100 prose-h3:mt-8
+            prose-p:text-slate-300 prose-p:leading-relaxed
+            prose-a:text-brand-400 prose-a:no-underline hover:prose-a:underline
+            prose-strong:text-white prose-strong:font-semibold
+            prose-li:text-slate-300 prose-li:marker:text-brand-500
+            prose-blockquote:border-l-brand-500 prose-blockquote:bg-slate-900/50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-slate-400
+            ">
              <Markdown>{entry.content}</Markdown>
+          </article>
+
+          {/* Sidebar (Highlights) */}
+          <aside className="hidden lg:block sticky top-32 space-y-8">
+            <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-brand-300 font-bold mb-4 font-display">
+                <Sparkles className="w-4 h-4" />
+                <h3>TL;DR</h3>
+              </div>
+              <ul className="space-y-3">
+                {entry.highlights.map((highlight, i) => (
+                  <li key={i} className="text-sm text-slate-400 leading-relaxed flex gap-3">
+                    <span className="text-brand-500/50 mt-1">•</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+             <div className="bg-gradient-to-br from-slate-900/80 to-slate-900/40 border border-slate-800/80 rounded-2xl p-6">
+                <h4 className="text-white font-bold text-sm mb-2 font-display">Join the discussion</h4>
+                <p className="text-xs text-slate-400 mb-4">
+                  This log is part of a public experiment. Reply via email or Twitter.
+                </p>
+                <a href="https://twitter.com/kedbin" target="_blank" rel="noreferrer" className="text-xs font-bold text-brand-400 hover:text-brand-300 flex items-center gap-1">
+                  Discuss on Twitter <ArrowRight className="w-3 h-3" />
+                </a>
+            </div>
+          </aside>
+
+          {/* Mobile Highlights (Bottom) */}
+          <div className="lg:hidden mt-8 pt-8 border-t border-slate-800">
+             <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-brand-400" />
+                Key Takeaways
+              </h3>
+              <ul className="space-y-3">
+                {entry.highlights.map((highlight, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-300 text-sm">
+                    <span className="text-brand-500 mt-1">•</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
