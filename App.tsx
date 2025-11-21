@@ -678,13 +678,13 @@ const JournalEntryDetail = ({ entryId, onBack }: { entryId: string, onBack: () =
           {/* Main Content */}
           <article className="prose prose-lg prose-invert prose-slate max-w-none 
             prose-headings:font-display prose-headings:font-bold prose-headings:text-white
-            prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-8 prose-h2:pb-4 prose-h2:border-b prose-h2:border-slate-800/50
-            prose-h3:text-xl prose-h3:text-brand-100 prose-h3:mt-10 prose-h3:mb-6
-            prose-p:text-slate-300 prose-p:leading-8 prose-p:mb-8
+            prose-h2:text-3xl prose-h2:mt-24 prose-h2:mb-12 prose-h2:pb-6 prose-h2:border-b prose-h2:border-slate-800/50
+            prose-h3:text-2xl prose-h3:text-brand-100 prose-h3:mt-16 prose-h3:mb-8
+            prose-p:text-slate-300 prose-p:leading-9 prose-p:mb-12
             prose-a:text-brand-400 prose-a:no-underline hover:prose-a:underline
             prose-strong:text-white prose-strong:font-semibold
-            prose-li:text-slate-300 prose-li:marker:text-brand-500 prose-li:mb-4
-            prose-blockquote:border-l-brand-500 prose-blockquote:bg-slate-900/50 prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-slate-400 prose-blockquote:mb-8
+            prose-li:text-slate-300 prose-li:marker:text-brand-500 prose-li:mb-6
+            prose-blockquote:border-l-brand-500 prose-blockquote:bg-slate-900/50 prose-blockquote:py-6 prose-blockquote:px-8 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-slate-400 prose-blockquote:mb-12
             ">
              <Markdown>{entry.content}</Markdown>
           </article>
