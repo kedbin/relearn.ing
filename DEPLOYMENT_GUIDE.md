@@ -67,6 +67,10 @@ highlights:
     3.  **The Data:** Proof from the author's life (metrics, logs).
     4.  **The Protocol:** A specific algorithm for the reader to execute.
 
+### Technical Note: Special Symbols
+*   **Do not use LaTeX:** The site does not currently support LaTeX rendering (e.g., `$\rightarrow$`).
+*   **Use Unicode/HTML Entities:** For arrows or mathematical symbols, use standard Unicode characters (e.g., `→`) or HTML entities (e.g., `&rarr;`).
+
 ### Step 4: Verification & Build
 Before pushing, you must verify the build locally to ensure no markdown syntax errors break the pipeline.
 
