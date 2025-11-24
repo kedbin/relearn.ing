@@ -6,7 +6,7 @@ status: "Published"
 category: "Relearn Engineering / AI Augmentation"
 highlights:
   - "Velocity Delta: 3 hours with AI vs. 16 hours manual estimate (5.3x speedup)"
-  - "The Stack: Claude Code (CLI) + VS Code + AWS CDK"
+  - "The Stack: Claude Code (CLI) + VS Code + Terraform (GCP)"
   - "Error Rate: 2 logical bugs found by AI that human review missed"
   - "The Lesson: AI isn't just for writing code; it's for architectural reasoning"
 ---
@@ -15,14 +15,14 @@ highlights:
 
 I have a legacy Node.js application that handles user notifications. It's a classic "ball of mud"—express routes mixed with business logic, direct database calls, and zero unit tests.
 
-**The Goal:** Refactor a specific module (`email-sender.js`) into a standalone AWS Lambda function using the AWS CDK (Cloud Development Kit).
+**The Goal:** Refactor a specific module (`email-sender.js`) into a standalone **Google Cloud Function** using **Terraform**.
 
 **The Old Way (Manual):**
 1.  Read the code to understand dependencies (1 hour).
-2.  Set up a new CDK project (30 mins).
+2.  Set up a new Terraform project (30 mins).
 3.  Copy-paste logic, fix imports, install dependencies (2 hours).
 4.  Write the Infrastructure-as-Code (IaC) to deploy it (2 hours).
-5.  Debug permissions (IAM roles) because I always forget one (2 hours).
+5.  Debug permissions (Service Accounts) because I always forget one (2 hours).
 6.  **Total Time:** ~7-8 hours (best case).
 
 ## The New Way: AI-Augmented Refactoring
@@ -42,33 +42,34 @@ claude "Analyze src/legacy/email-sender.js. Map out all external dependencies an
 ### Step 2: The Refactor Prompt
 
 ```bash
-claude "Create a new directory /functions/email-service. Refactor the logic from email-sender.js into a clean, dependency-free Lambda handler in TypeScript. Use Zod for input validation. Mock the database call for now."
+claude "Create a new directory /functions/email-service. Refactor the logic from email-sender.js into a clean, dependency-free Cloud Function handler in TypeScript. Use Zod for input validation. Mock the database call for now."
 ```
 
 **The Output:**
 It didn't just copy the code. It:
 1.  Converted CommonJS (`require`) to ES Modules (`import`).
 2.  Added a Zod schema to validate the event payload (something the original code lacked).
-3.  Wrapped the logic in a `try/catch` block with proper structured logging.
+3.  Wrapped the logic in a `try/catch` block with proper structured logging (compatible with Cloud Logging).
 
 ### Step 3: The Infrastructure (The Real Magic)
 
-This is where I usually get stuck—writing the CDK code.
+This is where I usually get stuck—writing the Terraform code.
 
 ```bash
-claude "Now write the AWS CDK construct to deploy this lambda. Include the necessary IAM permissions to send SES emails. Use NodejsFunction construct."
+claude "Now write the main.tf to deploy this function to GCP. Include the necessary IAM bindings to invoke it. Use the google_cloudfunctions_function_v2 resource."
 ```
 
-It generated a file `lib/email-service-stack.ts`.
+It generated a file `main.tf`.
 Crucially, it added:
-```typescript
-emailLambda.addToRolePolicy(new iam.PolicyStatement({
-  actions: ['ses:SendEmail', 'ses:SendRawEmail'],
-  resources: ['*'], // It noted I should restrict this in prod
-}));
+```hcl
+resource "google_cloud_run_service_iam_member" "invoker" {
+  service  = google_cloudfunctions_function_v2.function.service_config[0].service
+  role     = "roles/run.invoker"
+  member   = "allUsers" # It noted I should restrict this in prod
+}
 ```
 
-It remembered the IAM permissions I usually forget.
+It remembered the IAM permissions I usually forget when deploying Gen 2 functions.
 
 ## The Diff: Human vs. AI
 
@@ -81,14 +82,14 @@ It remembered the IAM permissions I usually forget.
 
 ## The "Gotcha" Moment
 
-It wasn't perfect. Claude assumed I was using CDK v2 (correct), but tried to import a deprecated library for the Lambda construct.
+It wasn't perfect. Claude assumed I was using the older Gen 1 functions initially, but tried to use Gen 2 features.
 
-**My Role:** I wasn't the *typist*; I was the *reviewer*. I saw the red squiggly line in VS Code, told Claude "That import is deprecated in CDK v2.100," and it corrected itself immediately.
+**My Role:** I wasn't the *typist*; I was the *reviewer*. I saw the configuration mismatch in VS Code, told Claude "Use the google_cloudfunctions_function_v2 resource specifically," and it corrected itself immediately.
 
 ## Conclusion
 
 This wasn't "automated" coding. It was **augmented** engineering.
 *   **The AI** handled the boilerplate, the syntax conversion, and the IAM policy memory.
-*   **I** handled the architectural constraint (Lambda vs Fargate) and the code review.
+*   **I** handled the architectural constraint (Cloud Functions vs Cloud Run) and the code review.
 
 If you are a cloud engineer and you aren't using CLI-based AI tools that can read your file system, you are voluntarily coding with one hand tied behind your back.

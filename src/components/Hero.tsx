@@ -121,7 +121,7 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            I used to optimize AWS Lambda cold starts while letting my own habits crash. 
+            I used to optimize Cloud Run cold starts while letting my own habits crash. 
             Now, I apply the same rigorous systems thinking to both. 
             This is the log of unlearning inefficiencies in my infrastructure and my biology.
           </motion.p>

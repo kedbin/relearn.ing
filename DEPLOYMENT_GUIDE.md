@@ -7,7 +7,7 @@
 
 ## 1. Core Philosophy (The "Why")
 This is an **engineering log for both code and existence**.
-*   **The Dual Mission:** "Debugging the Cloud. Refactoring Life." We apply the same rigorous systems thinking to AWS architectures as we do to biological habits.
+*   **The Dual Mission:** "Debugging the Cloud. Refactoring Life." We apply the same rigorous systems thinking to GCP architectures as we do to biological habits.
 *   **Anti-Hype:** We do not celebrate tools; we celebrate *velocity* and *leverage*.
 *   **Failure-First:** We document the 50 failed prompts, not just the one that worked.
 *   **Grounded in Reality:** Arguments must be backed by economic models (e.g., Solow-Swan), cognitive science (e.g., Extended Mind), or hard metrics (e.g., "hours saved").
