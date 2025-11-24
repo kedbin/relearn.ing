@@ -27,18 +27,18 @@ export const Pillars = () => {
   const features = [
     {
       icon: Brain,
-      title: "Relearn Life: The OS Crash",
-      description: "Limiting belief: 'If I just push harder, I'll catch up.' Reality: I was doom-scrolling AI Twitter at 2am, sleeping 4 hours, and wondering why prompts felt overwhelming. These journaling and energy systems stopped the spiral."
+      title: "The Systems Mindset",
+      description: "The Bridge. Whether it's a distributed system or a daily routine, the principles are the same: Constraints, Feedback Loops, and Leverage. I use engineering models (like Solow-Swan or CAP Theorem) to solve human problems."
     },
     {
       icon: Code2,
-      title: "Relearn Cloud: Fossilized Workflows",
-      description: "The inefficiency: My deployment runbook had 47 manual steps from a 2019 wiki. AI could do it in 4. The emotional block: fear that AI-generated infrastructure code would break production. Proof: I shipped it anyway and it saved 12 minutes."
+      title: "Relearn Engineering",
+      description: "The Tech Stack. Moving from 'Tutorial Hell' to 'Production'. Documenting the specific prompts, AI agents (Claude/Gemini), and architectural decisions used to modernize legacy infrastructure and automate the boring stuff."
     },
     {
       icon: Cpu,
-      title: "Relearn AI: My First Real Augmentation",
-      description: "Without AI: 8 hours writing automation scripts, 3 errors in review. With Claude Code: 2.5 hours, zero errors. Exact prompt templates and the GitHub diff are in Week 01 log. This is proof—not hype."
+      title: "Relearn Life",
+      description: "The Biological Stack. treating the body and mind as a production environment. Optimizing sleep, focus, and decision-making using data and protocols, not just willpower. Debugging the 'Human OS' with the same rigor as a Linux kernel."
     }
   ];
 

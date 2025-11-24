@@ -96,7 +96,7 @@ export const Hero = () => {
             >
               <Sparkles className="w-3.5 h-3.5 text-brand-400" />
             </motion.div>
-            <span>Cloud engineer navigating the noise to find signal</span>
+            <span>Applying systems engineering to code and existence</span>
           </motion.div>
 
           <motion.h1
@@ -105,22 +105,14 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.2 }}
           >
-            I stopped collecting{' '}
-            <motion.span
-              className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400"
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-              style={{ backgroundSize: "200% 200%" }}
-            >
-              AI tools.
-            </motion.span>{' '}
-            I started building with them.
+            Debugging the{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400">
+              Cloud.
+            </span><br />
+            Refactoring{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-400 to-brand-400">
+              Life.
+            </span>
           </motion.h1>
 
           <motion.p
@@ -129,8 +121,9 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            I downloaded Gemini CLI, subscribed to Copilot, installed Claude Code, tested Kimi K2, tried GLM 4.6—and used exactly none of them well.
-            This is the rebuild: honest logs of failed prompts, tool comparisons that actually matter, and proof I'm finally shipping instead of scrolling.
+            I used to optimize AWS Lambda cold starts while letting my own habits crash. 
+            Now, I apply the same rigorous systems thinking to both. 
+            This is the log of unlearning inefficiencies in my infrastructure and my biology.
           </motion.p>
 
           <motion.div

@@ -5,30 +5,30 @@ import { AlertCircle } from 'lucide-react';
 export const ProblemSection = () => {
   const buckets = [
     {
-      title: 'Tool Hoarding',
-      subtitle: 'The choice paralysis that broke me',
+      title: 'The Sprawl',
+      subtitle: 'Too many tools, too many choices',
       bullets: [
-        'I collected 6 AI agents like Pokemon cards: Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6. Used zero of them in my actual workflow.',
-        'Every tutorial promised "10x productivity" but I was too scared to delete my manual processes.',
-        "I measured it: 47 hours spent 'evaluating' tools, 0 hours shipping with them. The shame was motivational."
+        'Tech: I collected 6 AI agents (Gemini, Claude, Copilot) but used none effectively. Result: Analysis Paralysis.',
+        'Life: I browsed 500 wedding dresses and research 10 diet protocols. Result: Decision Fatigue.',
+        "The Fix: Artificial Constraints. Pick one tool. Pick one plan. Execute."
       ]
     },
     {
-      title: 'The Hype Spiral',
-      subtitle: 'Drowning in potential, starving for proof',
+      title: 'The Illusion',
+      subtitle: 'Performing work vs. Shipping value',
       bullets: [
-        "I could quote every AI paper but couldn't show one feature I shipped using AI in my day job.",
-        'Each new model drop (Gemini Pro 3.0, Kimi K2) made me feel further behind, not more capable.',
-        'The breaking point: I caught myself doom-scrolling AI Twitter instead of writing the prompt that would actually fix my broken deployment script.'
+        "Tech: I spent 47 hours 'evaluating' vector databases but wrote 0 lines of code.",
+        'Life: I bought books on productivity but didn\'t sleep 8 hours.',
+        'The Fix: Input/Output Accounting. If the output (shipped code/health) is zero, the input (research) was wasted.'
       ]
     },
     {
-      title: 'Workflow Fossilization',
-      subtitle: 'The comfort zone that became a cage',
+      title: 'The Debt',
+      subtitle: 'Compounding interest on bad habits',
       bullets: [
-        'My brain still defaults to Google + Stack Overflow, even with Claude Code one terminal tab away.',
-        'Every time I typed the same bash command for the 100th time, I heard a voice: "You should automate this." I ignored it 99 times.',
-        'The real blocker was emotional: What if the AI-generated code breaks production? My manual scripts felt safe—even when they were slow and wrong.'
+        'Tech: My manual deployment scripts were \"comfortable\" but cost me 2 hours/week. That is 100 hours/year of waste.',
+        'Life: My chaotic environment drained willpower battery every morning.',
+        'The Fix: Refactoring. Stop paying interest. Invest time now to automate the future.'
       ]
     }
   ];
