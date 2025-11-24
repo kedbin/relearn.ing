@@ -6,10 +6,10 @@
 ---
 
 ## 1. Core Philosophy (The "Why")
-This is not a personal blog; it is an **engineering log**.
+This is an **engineering log for both code and existence**.
+*   **The Dual Mission:** "Debugging the Cloud. Refactoring Life." We apply the same rigorous systems thinking to AWS architectures as we do to biological habits.
 *   **Anti-Hype:** We do not celebrate tools; we celebrate *velocity* and *leverage*.
 *   **Failure-First:** We document the 50 failed prompts, not just the one that worked.
-*   **Systems Thinking:** Every personal problem (productivity, fitness, finance) is treated as a systems engineering problem (inputs, outputs, constraints, feedback loops).
 *   **Grounded in Reality:** Arguments must be backed by economic models (e.g., Solow-Swan), cognitive science (e.g., Extended Mind), or hard metrics (e.g., "hours saved").
 
 ---
@@ -34,7 +34,7 @@ We migrated from a Client-Side React SPA to **Astro (Static Site Generator)**.
 
 ## 3. Content Protocol: Adding a Journal Entry
 
-**Target Audience:** Engineers, Architects, and Systems Thinkers who are tired of fluff.
+**Target Audience:** Engineers, Architects, and Systems Thinkers.
 
 ### Step 1: The Source File
 Create a new Markdown file in:
@@ -42,18 +42,22 @@ Create a new Markdown file in:
 *   Naming convention: `entry-XXX.md` (e.g., `entry-003.md`).
 
 ### Step 2: Frontmatter (Metadata)
-You **must** include these fields or the build will fail (type-checked by `src/content/config.ts`).
+You **must** include these fields. The `category` field MUST start with one of the two supported buckets.
+
+**Supported Categories:**
+1.  `Relearn Life / [Topic]` (e.g., Behavioral Economics, Health, Habits)
+2.  `Relearn Engineering / [Topic]` (e.g., AI Augmentation, Cloud, DevOps)
 
 ```markdown
 ---
 title: "The Title: A Systems Engineering Metaphor"
 date: "YYYY-MM-DD"
-summary: "A 2-sentence hook. What is the engineering principle applied to daily life?"
+summary: "A 2-sentence hook. What is the engineering principle applied to this problem?"
 status: "Published"
-category: "Systems Thinking / [Field Name]"
+category: "Relearn Engineering / AI Augmentation"
 highlights:
-  - "Key Takeaway 1: The Metric"
-  - "Key Takeaway 2: The Model"
+  - "Key Takeaway 1: The Metric (e.g., 5.3x speedup)"
+  - "Key Takeaway 2: The Model (e.g., 90-90 Rule)"
   - "Key Takeaway 3: The Application"
 ---
 ```
@@ -63,9 +67,9 @@ highlights:
 *   **Do not use:** "Unlock your potential," "Journey," "Magic," "Believe in yourself."
 *   **Use:** "Optimize," "Leverage," "Constraint," "Latency," "Protocol," "Audit."
 *   **Structure:**
-    1.  **The Fallacy:** What does culture say? (e.g., "Work harder").
-    2.  **The Model:** What does science/engineering say? (e.g., "Diminishing Returns").
-    3.  **The Data:** Proof from the author's life (metrics, logs).
+    1.  **The Fallacy:** What does culture/legacy code say? (e.g., "Work harder" or "Monoliths are safe").
+    2.  **The Model:** What does science/engineering say? (e.g., "Diminishing Returns" or "Microservices").
+    3.  **The Data:** Proof from the author's life (metrics, logs, diffs).
     4.  **The Protocol:** A specific algorithm for the reader to execute.
 
 ### Technical Note: Special Symbols
@@ -73,7 +77,7 @@ highlights:
 *   **Use Unicode/HTML Entities:** For arrows or mathematical symbols, use standard Unicode characters (e.g., `→`) or HTML entities (e.g., `&rarr;`).
 
 ### Step 4: Verification & Build
-Before pushing, you must verify the build locally to ensure no markdown syntax errors break the pipeline.
+Before pushing, you must verify the build locally.
 
 1.  **Run Dev Server:** `npm run dev` (Access at http://localhost:3000).
 2.  **Check the Entry:** Navigate to `/journal/entry-XXX` and verify formatting.
