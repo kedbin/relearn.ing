@@ -16,7 +16,7 @@ We love the myth of the Lone Wolf. In the cinematic version of success, the prot
 
 But biology disagrees.
 
-If you look at the elite performers in any domain—from Roger Federer to a Fortune 500 CEO—you rarely find a Lone Wolf. You find a pack. You find a dense ecology of feedback loops, curated environments, and external regulators. The handwritten notes you provided ask a fundamental question: *"Why prevent yourself from growing because of social stigma?"*
+If you look at the elite performers in any domain—from Roger Federer to a Fortune 500 CEO—you rarely find a Lone Wolf. You find a pack. You find a dense ecology of feedback loops, curated environments, and external regulators. In my notes, I asked a fundamental question: *"Why prevent yourself from growing because of social stigma?"*
 
 The answer lies in **Unlearning** the idea that independence is strength. The **Relearn** is understanding that human performance is not an internal combustion engine fueled by willpower; it is a solar panel that draws energy from its environment.
 
@@ -29,7 +29,7 @@ Here is the science of why you cannot coach yourself, and how to build an ecolog
 **The Old Way:** "I can fix this myself if I just focus."
 **The New Way:** "I am biologically incapable of seeing my own blind spots."
 
-Your notes rightly point out the "Pro Athlete" paradox: The best in the world have the most coaches, while the amateur insists on figuring it out alone. Science calls this the **Illusion of Competence**.
+I've noticed the **"Pro Athlete" paradox**: The best in the world have the most coaches, while the amateur insists on figuring it out alone. Science calls this the **Illusion of Competence**.
 
 In 1993, psychologist K. Anders Ericsson published his foundational research on **Deliberate Practice**. He found that experience alone does not create expertise. Driving a car for 20 years doesn't make you a Formula 1 driver; it just makes you a habitual driver. True growth requires external feedback to disrupt homeostasis. You physically cannot perform a complex task and objectively critique it simultaneously; your cognitive load is maxed out.
 
@@ -43,7 +43,7 @@ In 1993, psychologist K. Anders Ericsson published his foundational research on 
 **The Old Way:** "I will resist the temptation to check my phone."
 **The New Way:** "I will design a space where the phone does not exist."
 
-You noted "Environment" as a concept with a "0" next to it—a blank slate. This is often where the battle is lost. We tend to believe we make rational choices, but behavioral economists Thaler and Sunstein (authors of *Nudge*) proved that we are victims of **Choice Architecture**. We take the path of least resistance.
+In my notes, I marked **"Environment"** with a **"0"**—a blank slate. This is often where the battle is lost. We tend to believe we make rational choices, but behavioral economists Thaler and Sunstein (authors of *Nudge*) proved that we are victims of **Choice Architecture**. We take the path of least resistance.
 
 If you are relying on willpower to ignore distractions, you are already losing cognitive horsepower.
 
@@ -59,7 +59,7 @@ If you are relying on willpower to ignore distractions, you are already losing c
 **The Old Way:** "Coaching is too expensive for me."
 **The New Way:** "I can use AI for accountability and humans for depth."
 
-Your notes ask a crucial question: *"Is this viable to be delegated to current AI models?"*
+This raises a crucial question: *"Is this viable to be delegated to current AI models?"*
 
 The financial barrier to human coaching is real, but recent research suggests we are entering an era of "Democratized Elite Performance."
 
