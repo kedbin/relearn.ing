@@ -5,9 +5,10 @@ summary: "Why the 'Lone Wolf' myth fails and how to build an ecology of growth u
 status: "Published"
 category: "Systems Thinking / Behavioral Economics"
 highlights:
-  - "The Illusion of Competence: Why you cannot coach yourself (Ericsson, 1993)"
-  - "Choice Architecture: Environment design beats willpower (Thaler & Sunstein)"
-  - "The Hybrid Protocol: Integrating AI for accountability and humans for depth"
+  - "Ericsson's Paradox (1993): You cannot self-correct what you cannot see; deliberate practice requires external feedback loops."
+  - "The 'Brain Drain' Effect: Mere presence of a smartphone reduces cognitive capacity even when powered off (Ward et al., 2017)."
+  - "Friction Design: Replace willpower with 'Choice Architecture' to automate good decisions (Thaler & Sunstein)."
+  - "AI Coaching Efficacy: Randomized trials show AI chatbots match human coaches for goal attainment (Terblanche et al., 2022)."
 ---
 
 ## The Ecology of Growth
