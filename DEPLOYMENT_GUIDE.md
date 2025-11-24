@@ -59,6 +59,7 @@ highlights:
 ```
 
 ### Step 3: The Voice (Style Guide)
+*   **Perspective:** **First Person ("I").** You are the engineer/author. Do not refer to "the notes," "the user," or "the author." Speak directly from your own experience and observations.
 *   **Do not use:** "Unlock your potential," "Journey," "Magic," "Believe in yourself."
 *   **Use:** "Optimize," "Leverage," "Constraint," "Latency," "Protocol," "Audit."
 *   **Structure:**
