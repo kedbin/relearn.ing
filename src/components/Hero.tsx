@@ -96,7 +96,7 @@ export const Hero = () => {
             >
               <Sparkles className="w-3.5 h-3.5 text-brand-400" />
             </motion.div>
-            <span>Applying systems engineering to code and existence</span>
+            <span>v0.1.0-beta // Continuous Integration for the Self</span>
           </motion.div>
 
           <motion.h1
@@ -121,9 +121,10 @@ export const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            I used to optimize Cloud Run cold starts while letting my own habits crash. 
-            Now, I apply the same rigorous systems thinking to both. 
-            This is the log of unlearning inefficiencies in my infrastructure and my biology.
+            I optimized Cloud Run cold starts to the millisecond, then let my own mornings crash with a null pointer exception.
+            I built systems that self-heal, yet ran my life on a single point of failure.
+            This isn't a guru’s guide. It’s a commit log. 
+            I’m porting the principles of distributed systems to the chaos of being human. The build is unstable, the tests are flaky, but we’re shipping to production anyway.
           </motion.p>
 
           <motion.div

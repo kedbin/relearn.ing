@@ -3,22 +3,34 @@ import { motion } from 'framer-motion';
 
 const journeyPhases = [
   {
-    phase: 'Phase 0',
-    title: 'Kill the Tutorial Habit',
-    description: 'Stop consuming, start building. Delete the bookmark folder of "AI tools to try" and pick exactly two that map to my actual day-job pain.',
-    commitments: ['Count hours spent on tools vs. tutorials (target: 80% building, 20% learning)', 'Document the emotional resistance when reaching for Google instead of AI', 'Publish the first embarrassing GitHub repo: AI-assisted code with all my mistakes visible']
+    phase: 'Loop 1',
+    title: 'Instrument the Black Box',
+    description: 'You can\'t optimize what you don\'t measure. I\'m replacing vague "feelings" with rigorous observability.',
+    commitments: [
+      'Distributed Tracing → For backend latency AND daily energy levels.',
+      'Log Aggregation → Centralizing cloud logs AND personal journal entries.',
+      'Metrics → Dashboarding error rates AND habit compliance.'
+    ]
   },
   {
-    phase: 'Phase 1',
-    title: 'Prove Augmentation Actually Works',
-    description: 'Turn AI from a toy into a teammate. Measure real velocity gains on actual cloud deployment tasks, not toy problems.',
-    commitments: ['Time every deployment: manual vs. AI-assisted (minimum 10 tasks each)', 'Publish specific prompt templates that failed vs. ones that shipped code', 'Share the bash script that AI wrote and I was too proud to commit—but finally did']
+    phase: 'Loop 2',
+    title: 'Refactor the Monolith',
+    description: 'Legacy code and bad habits share one trait: they resist change. I\'m decomposing big problems into atomic, shippable commits.',
+    commitments: [
+      'Decoupling → Separating concerns in Terraform modules AND work-life boundaries.',
+      'Atomic Commits → Shipping small code changes AND small habit adjustments.',
+      'Deprecation → Removing unused GCP resources AND toxic mental patterns.'
+    ]
   },
   {
-    phase: 'Phase 2',
-    title: 'Teach the Failure, Not the Success',
-    description: 'The market is flooded with "AI changed my life" content. I will document the specific friction points so others can skip my wasted hours.',
-    commitments: ['Open-source my prompt graveyard: 50+ failed attempts with error analysis', 'Host a live stream: "I\'m a cloud engineer who pretended to know AI for 6 months—here is what I actually learned"', 'Build a comparison matrix: when to use each agent (Gemini vs Claude vs Copilot) based on real tasks, not marketing']
+    phase: 'Loop 3',
+    title: 'Chaos Engineering',
+    description: 'Systems look great on a whiteboard but fail in production. I test my architectures (and routines) against reality.',
+    commitments: [
+      'Stress Testing → Pushing GCP limits AND my own focus endurance.',
+      'Disaster Recovery → Automating backups AND having a plan for "off" days.',
+      'Post-Mortems → Blameless analysis of server outages AND personal setbacks.'
+    ]
   }
 ];
 
@@ -27,14 +39,14 @@ export const JourneySection = () => (
     <div className="container mx-auto px-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-12">
         <div className="max-w-2xl">
-          <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">Roadmap</p>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">How I’m rewriting my operating system</h2>
+          <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">The CI/CD Pipeline</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">The Infinite Loop</h2>
           <p className="text-slate-300">
-            Structure keeps me honest. Each phase has specific deliverables, so I can measure whether I’m actually relearning—or just consuming content.
+            Relearning isn't a destination; it's a runtime environment. I treat personal growth like a continuous integration pipeline: commit, test, deploy, monitor, repeat.
           </p>
         </div>
         <p className="text-slate-400 text-sm max-w-sm">
-          Every log references these checkpoints, so you can trace experiment → lesson → habit.
+          This roadmap is recursive. As soon as I finish Loop 3, I start Loop 1 again with better data.
         </p>
       </div>
 
@@ -57,7 +69,7 @@ export const JourneySection = () => (
             <ul className="space-y-2.5 text-sm text-slate-300">
               {phase.commitments.map((commitment) => (
                 <li key={commitment} className="flex items-start gap-2.5">
-                  <span className="text-brand-400 mt-1 text-base">•</span>
+                  <span className="text-brand-400 mt-1 text-base">→</span>
                   <span className="group-hover:text-slate-200 transition-colors">{commitment}</span>
                 </li>
               ))}
