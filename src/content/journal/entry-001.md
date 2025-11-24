@@ -27,8 +27,8 @@ I identified **Manufacturing and IT** as sectors where this ratio has been maste
 
 Robert Solow (a Nobel laureate) demonstrated that long-term economic growth isn't achieved merely by piling up more capital and labor (Input). Eventually, you hit diminishing returns. Instead, sustained growth comes from *technological progress*—essentially, better tools and methods that allow the same input to generate exponentially more output. This "unaccounted for" growth is often called the **Solow Residual**.
 
-* **The Factory:** Input (Raw materials + Energy) $\rightarrow$ **Tool (Assembly Line)** $\rightarrow$ Output (Car).
-* **The Individual:** Input (Time + Attention) $\rightarrow$ **Tool (?)** $\rightarrow$ Output (Creative Work/Decisions).
+* **The Factory:** Input (Raw materials + Energy) → **Tool (Assembly Line)** → Output (Car).
+* **The Individual:** Input (Time + Attention) → **Tool (?)** → Output (Creative Work/Decisions).
 
 If you are trying to 10x your output by working 10x harder, you are violating the Solow-Swan principle. To increase your personal Solow Residual, you need a technological multiplier.
 
