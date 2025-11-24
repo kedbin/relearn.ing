@@ -51,6 +51,24 @@ const { Content } = await entry.render();
       </div>
 
       <div class="grid lg:grid-cols-[1fr_300px] gap-12 items-start">
+        {/* Mobile Highlights (Top) */}
+        <div class="lg:hidden mb-8">
+           <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-brand-400" />
+              Key Takeaways
+            </h3>
+            <ul class="space-y-3">
+              {entry.data.highlights.map((highlight) => (
+                <li class="flex items-start gap-3 text-slate-300 text-sm">
+                  <span class="text-brand-500 mt-1">•</span>
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
         {/* Main Content */}
         <article class="prose prose-lg prose-invert prose-slate max-w-none 
             prose-headings:font-display prose-headings:font-bold prose-headings:text-white
@@ -91,24 +109,6 @@ const { Content } = await entry.render();
               </a>
           </div>
         </aside>
-
-        {/* Mobile Highlights (Bottom) */}
-        <div class="lg:hidden mt-8 pt-8 border-t border-slate-800">
-           <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
-            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-brand-400" />
-              Key Takeaways
-            </h3>
-            <ul class="space-y-3">
-              {entry.data.highlights.map((highlight) => (
-                <li class="flex items-start gap-3 text-slate-300 text-sm">
-                  <span class="text-brand-500 mt-1">•</span>
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
       </div>
     </div>
   </section>
