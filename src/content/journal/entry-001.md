@@ -3,7 +3,7 @@ title: "The Physics of Productivity: Mastering the Input/Output Ratio Through To
 date: "2025-11-19"
 summary: "Exploring how tools serve as the fulcrum between input and output, applying economic models like Solow-Swan to personal productivity, and introducing the Relearn.ing Protocol for systematic leverage optimization."
 status: "Published"
-category: "Systems Thinking / Cognitive Science"
+category: "Relearn Life / Systems Thinking"
 highlights:
   - "Solow-Swan model applied to personal growth: technological progress (tools) creates sustainable growth beyond just increasing input"
   - "Extended Mind Thesis: tools become part of our cognitive circuit through cognitive offloading"

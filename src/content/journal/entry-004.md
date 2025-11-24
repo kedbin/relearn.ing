@@ -3,7 +3,7 @@ title: "Refactoring the Monolith: A Claude Code Case Study"
 date: "2025-11-23"
 summary: "How I used Claude Code to refactor a legacy Node.js monolith into serverless functions in 3 hours—a task that previously took me 2 days."
 status: "Published"
-category: "Engineering / AI Augmentation"
+category: "Relearn Engineering / AI Augmentation"
 highlights:
   - "Velocity Delta: 3 hours with AI vs. 16 hours manual estimate (5.3x speedup)"
   - "The Stack: Claude Code (CLI) + VS Code + AWS CDK"

@@ -3,7 +3,7 @@ title: "The Ecology of Growth: Why Willpower is Overrated and Systems are Mandat
 date: "2025-11-23"
 summary: "Why the 'Lone Wolf' myth fails and how to build an ecology of growth using coaching, environment design, and AI integration."
 status: "Published"
-category: "Systems Thinking / Behavioral Economics"
+category: "Relearn Life / Behavioral Economics"
 highlights:
   - "Ericsson's Paradox (1993): You cannot self-correct what you cannot see; deliberate practice requires external feedback loops."
   - "The 'Brain Drain' Effect: Mere presence of a smartphone reduces cognitive capacity even when powered off (Ward et al., 2017)."
