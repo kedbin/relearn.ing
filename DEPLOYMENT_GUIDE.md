@@ -7,7 +7,11 @@
 
 ## 1. Core Philosophy (The "Why")
 This is an **engineering log for both code and existence**.
+
+### "v0.1.0-beta // Continuous Integration for the Self"
+We treat personal growth as a DevOps pipeline, not a waterfall project.
 *   **The Dual Mission:** "Debugging the Cloud. Refactoring Life." We apply the same rigorous systems thinking to GCP architectures as we do to biological habits.
+*   **Eternal Beta:** We are not "v1.0" gurus. We are buggy, work-in-progress software. We ship "beta" habits, expecting failures (exceptions), patching them, and deploying the fix.
 *   **Anti-Hype:** We do not celebrate tools; we celebrate *velocity* and *leverage*.
 *   **Failure-First:** We document the 50 failed prompts, not just the one that worked.
 *   **Grounded in Reality:** Arguments must be backed by economic models (e.g., Solow-Swan), cognitive science (e.g., Extended Mind), or hard metrics (e.g., "hours saved").
@@ -19,6 +23,9 @@ We migrated from a Client-Side React SPA to **Astro (Static Site Generator)**.
 *   **Why?** Better SEO, performance, and significantly easier content management (Markdown files become pages automatically).
 *   **Routing:** handled by Astro's file-system routing (`src/pages`).
 *   **Styling:** Tailwind CSS + `@tailwindcss/typography` for markdown rendering.
+
+### Interactive Components (Islands)
+*   **Journal Search:** Implemented as a client-side React component (`JournalList.tsx`) hydrated with `client:load` to provide instant filtering without server roundtrips.
 
 ### The Deployment Pipeline
 1.  **Trigger:** Push to `main`.
@@ -93,6 +100,10 @@ Before pushing, you must verify the build locally.
 1.  **Respect the Astro Island Architecture:** Keep React components in `src/components`. Only hydrate them if necessary (`client:load` or `client:visible`). Default to static.
 2.  **Tailwind First:** Do not create `.css` files. Use utility classes. Use `src/styles/global.css` only for base layer resets.
 3.  **Type Safety:** All content collections are typed in `src/content/config.ts`. If you add a new data type (e.g., "Projects"), you must define its Zod schema there first.
+
+**Regression & Layout Safety:**
+*   **The Pre-Tag Blowout:** In `src/pages/journal/[...slug].astro`, the `<article>` tag MUST have `min-w-0`.
+    *   *Reason:* Tailwind/CSS Grid cannot compute the width of a child `<pre>` block (code snippet) if the parent does not have a constrained width. Without `min-w-0`, long code lines will force the mobile view to horizontal scroll or break the layout.
 
 **If asked to "Check why the site is broken":**
 1.  Check `astro.config.mjs` for `base` path misconfigurations.
