@@ -15,7 +15,7 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
 ---
 
 <Layout title="Home">
-  <Hero client:load />
+  <Hero />
   <ProblemSection client:visible />
   <JourneySection client:visible />
   <Experiments />
