@@ -96,6 +96,8 @@ Before pushing, you must verify the build locally.
 
 ## 4. Future Development Instructions (For AI Agents)
 
+> **Note:** For autonomous content ingestion and automation protocols, refer to `gemini.md`.
+
 **If asked to refactor or add features:**
 1.  **Respect the Astro Island Architecture:** Keep React components in `src/components`. Only hydrate them if necessary (`client:load` or `client:visible`). Default to static.
 2.  **Tailwind First:** Do not create `.css` files. Use utility classes. Use `src/styles/global.css` only for base layer resets.
