@@ -2,9 +2,7 @@ import React from 'react';
 import { ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
 
 export const Hero = () => {
-  const scrollToPlan = () => {
-    document.getElementById('journey')?.scrollIntoView({ behavior: 'smooth' });
-  };
+
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -38,13 +36,10 @@ export const Hero = () => {
             className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-white mb-8 leading-[1.05] drop-shadow-2xl opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.2s' }}
           >
-            Debugging the{' '}
+            System Architecture<br />
+            for the{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 via-brand-400 to-purple-400">
-              Cloud.
-            </span><br />
-            Refactoring{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-purple-400 to-brand-400">
-              Life.
+              Self.
             </span>
           </h1>
 
@@ -52,29 +47,27 @@ export const Hero = () => {
             className="text-lg md:text-xl text-slate-300/90 max-w-3xl mx-auto mb-12 leading-relaxed font-light opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.4s' }}
           >
-            I optimized cloud latency to the millisecond but let my own habits crash.
-            Now, I apply the same systems thinking to both code and existence.
-            A live debug log of the refactor.
+            Relearning how to work and live. Using engineering principles to debug sleep, focus, and decision making.
           </p>
 
           <div
             className="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-in-up"
             style={{ animationDelay: '0.6s' }}
           >
-            <button
-              onClick={scrollToPlan}
+            <a
+              href="#journey"
               className="group px-8 py-4 bg-gradient-to-r from-white to-slate-50 text-slate-950 font-bold rounded-full hover:shadow-2xl hover:shadow-brand-500/20 transition-all flex items-center gap-2 relative overflow-hidden hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-brand-400 to-purple-400 opacity-0 group-hover:opacity-10 transition-opacity" />
-              <span className="relative z-10">See the operating plan</span>
+              <span className="relative z-10">View Architecture</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform relative z-10" />
-            </button>
+            </a>
             <a
               href="/journal"
               className="px-8 py-4 border-2 border-slate-700/80 text-white font-semibold rounded-full hover:border-brand-400/60 hover:bg-brand-400/5 transition-all backdrop-blur-sm relative overflow-hidden group inline-flex items-center justify-center hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-brand-400/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="relative z-10">Read the latest build log</span>
+              <span className="relative z-10">Read Journal</span>
             </a>
           </div>
         </div>

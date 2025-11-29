@@ -3,18 +3,18 @@ import { ClipboardCheck, Compass, Target } from 'lucide-react';
 
 const experimentCadence = [
   {
-    title: 'The Friction Log',
-    description: 'I carry a small notebook to log every moment of resistance. If I sigh while doing a task, I write it down. This is my error log for life.',
+    title: 'Error Logging',
+    description: 'The Friction Log. Capturing every moment of resistance. My error log for life.',
     icon: ClipboardCheck
   },
   {
-    title: 'The Agent Duel',
-    description: 'I solve every significant coding problem twice: once with Gemini, once with Claude. The diff reveals the truth about the models, not the marketing.',
+    title: 'A/B Testing',
+    description: 'The Agent Duel. Solving problems twice (Gemini vs Claude). The diff reveals the truth.',
     icon: Compass
   },
   {
-    title: 'The Output Ratio',
-    description: 'Every Sunday, I calculate my Input (Hours researched) vs Output (Words/Code shipped). If the ratio is < 1, I treat it as a system failure.',
+    title: 'Throughput Metric',
+    description: 'Input vs Output. If ratio < 1, system failure.',
     icon: Target
   }
 ];
@@ -24,9 +24,9 @@ export const Experiments = () => (
     <div className="container mx-auto px-6">
       <div className="max-w-2xl mb-12">
         <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">Rituals</p>
-        <h2 className="text-3xl font-display font-bold text-white mb-4">The experiments that keep me honest</h2>
+        <h2 className="text-3xl font-display font-bold text-white mb-4">Active Protocols</h2>
         <p className="text-slate-300 leading-relaxed">
-          These are not fluffy ideas—they’re recurring rituals on my calendar. They create proof that I’m improving, or evidence that something needs to change.
+          Recurring rituals to generate proof of improvement.
         </p>
       </div>
 
@@ -44,7 +44,7 @@ export const Experiments = () => (
                 {experiment.title}
               </h3>
             </div>
-            
+
             <p className="text-slate-300 text-sm leading-relaxed">
               {experiment.description}
             </p>

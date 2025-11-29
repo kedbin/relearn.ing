@@ -3,33 +3,33 @@ import { motion } from 'framer-motion';
 
 const journeyPhases = [
   {
-    phase: 'Loop 1',
-    title: 'Instrument the Black Box',
-    description: 'You can\'t optimize what you don\'t measure. I\'m replacing vague "feelings" with rigorous observability.',
+    phase: 'Phase 1',
+    title: 'Observability',
+    description: 'Replacing vague "feelings" with rigorous metrics.',
     commitments: [
-      'Distributed Tracing → For backend latency AND daily energy levels.',
-      'Log Aggregation → Centralizing cloud logs AND personal journal entries.',
+      'Tracing → Backend latency AND daily energy levels.',
+      'Logs → Centralizing cloud logs AND journal entries.',
       'Metrics → Dashboarding error rates AND habit compliance.'
     ]
   },
   {
-    phase: 'Loop 2',
-    title: 'Refactor the Monolith',
-    description: 'Legacy code and bad habits share one trait: they resist change. I\'m decomposing big problems into atomic, shippable commits.',
+    phase: 'Phase 2',
+    title: 'Refactoring',
+    description: 'Decomposing big problems into atomic commits.',
     commitments: [
-      'Decoupling → Separating concerns in Terraform modules AND work-life boundaries.',
-      'Atomic Commits → Shipping small code changes AND small habit adjustments.',
-      'Deprecation → Removing unused GCP resources AND toxic mental patterns.'
+      'Decoupling → Terraform modules AND work-life boundaries.',
+      'Atomic Commits → Small code changes AND small habit adjustments.',
+      'Deprecation → Removing unused resources AND toxic patterns.'
     ]
   },
   {
-    phase: 'Loop 3',
+    phase: 'Phase 3',
     title: 'Chaos Engineering',
-    description: 'Systems look great on a whiteboard but fail in production. I test my architectures (and routines) against reality.',
+    description: 'Testing architectures against reality.',
     commitments: [
-      'Stress Testing → Pushing GCP limits AND my own focus endurance.',
-      'Disaster Recovery → Automating backups AND having a plan for "off" days.',
-      'Post-Mortems → Blameless analysis of server outages AND personal setbacks.'
+      'Stress Testing → Pushing limits AND focus endurance.',
+      'Disaster Recovery → Automating backups AND "off" day plans.',
+      'Post-Mortems → Blameless analysis of outages AND setbacks.'
     ]
   }
 ];
@@ -39,14 +39,14 @@ export const JourneySection = () => (
     <div className="container mx-auto px-6">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 mb-12">
         <div className="max-w-2xl">
-          <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">The CI/CD Pipeline</p>
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">The Infinite Loop</h2>
+          <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">The Roadmap</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">CI/CD Pipeline</h2>
           <p className="text-slate-300">
-            Relearning isn't a destination; it's a runtime environment. I treat personal growth like a continuous integration pipeline: commit, test, deploy, monitor, repeat.
+            Personal growth as a continuous integration pipeline: commit, test, deploy, monitor, repeat.
           </p>
         </div>
         <p className="text-slate-400 text-sm max-w-sm">
-          This roadmap is recursive. As soon as I finish Loop 3, I start Loop 1 again with better data.
+          Recursive. Finish Phase 3 -&gt; Return to Phase 1 with better data.
         </p>
       </div>
 

@@ -27,18 +27,18 @@ export const Pillars = () => {
   const features = [
     {
       icon: Brain,
-      title: "The Systems Mindset",
-      description: "The Bridge. Whether it's a distributed system or a daily routine, the principles are the same: Constraints, Feedback Loops, and Leverage. I use engineering models (like Solow-Swan or CAP Theorem) to solve human problems."
+      title: "Theory",
+      description: "The Bridge. Constraints, Feedback Loops, and Leverage. Using engineering models (Solow-Swan, CAP Theorem) to solve human problems."
     },
     {
       icon: Code2,
-      title: "Relearn Engineering",
-      description: "The Tech Stack. Moving from 'Tutorial Hell' to 'Production'. Documenting the specific prompts, AI agents (Claude/Gemini), and architectural decisions used to modernize legacy infrastructure and automate the boring stuff."
+      title: "Tech Stack",
+      description: "Modernizing legacy infra. Documenting prompts, agents, and architectural decisions to automate the boring stuff."
     },
     {
       icon: Cpu,
-      title: "Relearn Life",
-      description: "The Biological Stack. treating the body and mind as a production environment. Optimizing sleep, focus, and decision-making using data and protocols, not just willpower. Debugging the 'Human OS' with the same rigor as a Linux kernel."
+      title: "Bio Stack",
+      description: "Debugging the 'Human OS'. Optimizing sleep, focus, and decision-making via data and protocols, not willpower."
     }
   ];
 

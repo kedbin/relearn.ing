@@ -13,47 +13,49 @@ const stats = [
 
 <Layout title="About">
   <section class="pt-28 pb-24 px-6">
-    <div class="max-w-4xl mx-auto text-center mb-12">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-8">
         <Sparkles className="w-3 h-3" />
-        About the builder (and his failures)
+        The Engineer's Paradox
       </div>
-      <h1 class="text-4xl font-display font-bold text-white mb-4">Hey, I’m Kim Edrian Binasoy (he/him).</h1>
-      <p class="text-slate-300 text-lg">
-        Cloud Engineer | Developer and former Business Architecture Analyst with 3+ years shipping solutions. I've worked infrastructure, networks, QA, and project leadership—so I know how to ship real systems. That's what makes my AI paralysis so embarrassing.
+      
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4 leading-tight">
+        Hey, I'm Kim Edrian Binasoy.
+      </h1>
+      <p class="text-xl text-brand-200 mb-12 font-light">
+        Cloud Engineer. AI Enthusiast. Builder of Relearn.ing.
       </p>
-      <p class="text-slate-300 text-lg mt-4">
-        I spent 6 months collecting AI tools (Gemini CLI, Copilot, Claude Code, Kimi K2, GLM 4.6) like infinity stones instead of using them. Relearn.ing is the public proof I'm actually building now—mistakes, failed prompts, and velocity gains included.
-      </p>
-    </div>
 
-    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 mb-12">
-      {stats.map((stat, idx) => (
-        <div class="p-7 rounded-2xl bg-gradient-to-br from-slate-900/70 to-slate-900/50 border border-slate-800/80 hover:border-brand-400/50 text-center transition-all duration-300 hover:shadow-lg hover:shadow-brand-500/10 hover:-translate-y-1">
-          <p class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-brand-300 to-brand-500 font-display mb-2">{stat.value}</p>
-          <p class="text-sm uppercase tracking-wide text-slate-500 mt-2 font-semibold">{stat.label}</p>
-          <p class="text-slate-400 text-sm mt-3 leading-relaxed">{stat.note}</p>
+      <div class="prose prose-invert prose-lg text-slate-300 leading-relaxed space-y-8 mb-16">
+        <p>
+          I spent 4 years architecting automation for banks and transportation networks. I built systems that scaled, deployed Gen-AI bots to streamline knowledge transfer, and optimized workflows for hundreds of employees.
+        </p>
+        <p>
+          <strong>But I couldn't automate my own habits.</strong>
+        </p>
+        <p>
+          By day, I was a disciplined engineer. By night, my personal operating system was a mess of half-started projects and "productivity tools" that only added friction. I became a <strong>Tool Collector</strong>, hoarding AI agents like infinity stones, hoping they would magically fix my output.
+        </p>
+        <p>
+          They didn't. I had the best tech stack in the world, but I lacked the <em>system</em>.
+        </p>
+        <p>
+          <strong>Relearn.ing</strong> is my open-source attempt to fix that. It is not a blog; it is a documentation of debugging my own habits. It is the application of enterprise-grade engineering discipline—observability, refactoring, and automation—to the messy reality of being human.
+        </p>
+      </div>
+
+      <div class="border-t border-slate-800 pt-12">
+        <h2 class="text-sm uppercase tracking-widest text-slate-500 mb-6 font-semibold">The Toolkit</h2>
+        <p class="text-slate-400 mb-6">
+          I still use the tools I mastered in the industry—Azure, AWS, Python, TypeScript—but now I use them to build workflows that actually ship.
+        </p>
+        <div class="flex flex-wrap gap-2">
+            {['Azure', 'AWS', 'Python', 'TypeScript', 'Power Platform', 'React', 'Docker', 'Terraform'].map((tech) => (
+              <span class="px-3 py-1 bg-slate-900/50 border border-slate-800 rounded-lg text-sm text-slate-300 cursor-default">
+                {tech}
+              </span>
+            ))}
         </div>
-      ))}
-    </div>
-
-    <div class="max-w-4xl mx-auto space-y-6 text-slate-300">
-      <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
-        <h2 class="text-2xl font-display text-white mb-3">Relearn principles (born from failure)</h2>
-        <ul class="space-y-3 text-sm md:text-base">
-          <li>🧠 <strong>Systems first.</strong> I spent 47 hours evaluating tools before I measured input vs. output. Never again.</li>
-          <li>🤖 <strong>AI as teammate, not toy.</strong> I now delete any AI tool that doesn't show measurable velocity gain within 2 weeks.</li>
-          <li>🌱 <strong>Scar tissue is the content.</strong> If I haven't failed at it first, I don't write about it. This eliminates 90% of tech blogging.</li>
-        </ul>
-      </div>
-      <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
-        <h2 class="text-2xl font-display text-white mb-3">Currently focused on</h2>
-        <ul class="grid md:grid-cols-2 gap-3 text-sm md:text-base">
-          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Publishing the prompt graveyard: why 334 prompts failed and 8 succeeded</li>
-          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Comparing agent performance on identical cloud tasks (Gemini vs Claude bias)</li>
-          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Protecting 20 hours/week for deep work by logging every context switch</li>
-          <li class="bg-slate-950/60 border border-slate-800 rounded-2xl px-4 py-3">Weekly emails: the experiments that stuck, the failures, and the numbers</li>
-        </ul>
       </div>
     </div>
   </section>
