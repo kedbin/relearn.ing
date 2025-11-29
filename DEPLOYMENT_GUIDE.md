@@ -50,6 +50,7 @@ Create a new Markdown file in:
 
 ### Step 2: Frontmatter (Metadata)
 You **must** include these fields. The `category` field MUST start with one of the two supported buckets.
+*   **Date:** Use the date the entry was *written/created*, not necessarily the current date.
 
 **Supported Categories:**
 1.  `Relearn Life / [Topic]` (e.g., Behavioral Economics, Health, Habits)
@@ -70,7 +71,8 @@ highlights:
 ```
 
 ### Step 3: The Voice (Style Guide)
-*   **Perspective:** **First Person ("I").** You are the engineer/author. Do not refer to "the notes," "the user," or "the author." Speak directly from your own experience and observations.
+*   **Perspective:** **First Person ("I").** You are the engineer/author. Speak directly from your own experience.
+*   **Tone:** **Grounded & Concrete.** Avoid pretentious or purely abstract language. Every engineering metaphor must be anchored in a real-world, actionable example (e.g., "Don't just say 'optimize output'; say 'rewrite your resume to be shorter'").
 *   **Do not use:** "Unlock your potential," "Journey," "Magic," "Believe in yourself."
 *   **Use:** "Optimize," "Leverage," "Constraint," "Latency," "Protocol," "Audit."
 *   **Structure:**

@@ -17,7 +17,7 @@ This document serves as the standard operating procedure for AI agents (and huma
 
 3.  **Construct Frontmatter:**
     *   **Strict Type Checking:** Ensure all fields from `src/content/config.ts` are present.
-    *   **Date:** Use the current date (`YYYY-MM-DD`) unless the text specifies a historic event date.
+    *   **Date:** Use the **creation date** of the content (or the user-specified date), NOT necessarily the current system date.
     *   **Category:** Must match `Relearn Life / [Topic]` or `Relearn Engineering / [Topic]`.
     *   **Highlights:** Extract 3 specific metrics, models, or actionable takeaways.
 
@@ -35,13 +35,18 @@ This document serves as the standard operating procedure for AI agents (and huma
     ---
     ```
 
-4.  **Format Body:**
+4.  **Quality Assurance (Refinement):**
+    *   **Concrete Examples:** Ensure every abstract concept (e.g., "Signal Audit") has a concrete, real-world example (e.g., "Rewriting a resume").
+    *   **Tone Check:** Avoid overly pretentious or purely theoretical language. Ground the engineering metaphors in tangible reality.
+    *   **Actionability:** The solution must be something the reader can *do*, not just think about.
+
+5.  **Format Body:**
     *   Promote major sections to `##` (H2).
     *   Promote subsections to `###` (H3).
     *   Ensure no LaTeX is used (replace with Unicode/HTML entities).
     *   Verify code blocks have language tags (e.g., ```typescript).
 
-5.  **Verification:**
+6.  **Verification:**
     *   Run `npm run build` to validate the content schema.
     *   If the build fails, parse the error (usually a Zod validation error) and correct the frontmatter.
 
