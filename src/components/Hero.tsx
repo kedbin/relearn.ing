@@ -9,11 +9,10 @@ export const Hero = () => {
       {/* CSS Animation Background Elements - Optimized for Performance */}
       <div className="absolute inset-0 w-full h-full will-change-transform">
         <div
-          className="absolute top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-500/20 rounded-full blur-[100px] animate-blob mix-blend-screen"
+          className="absolute top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-500/10 rounded-full blur-[100px] mix-blend-screen"
         />
         <div
-          className="absolute top-1/3 right-1/4 w-[28rem] h-[28rem] bg-purple-500/15 rounded-full blur-[80px] animate-blob mix-blend-screen"
-          style={{ animationDelay: '2s' }}
+          className="absolute top-1/3 right-1/4 w-[28rem] h-[28rem] bg-purple-500/10 rounded-full blur-[80px] mix-blend-screen"
         />
       </div>
 

@@ -54,12 +54,11 @@ export const JourneySection = () => (
         {journeyPhases.map((phase, idx) => (
           <motion.div
             key={phase.phase}
-            className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10"
+            className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10 hover:-translate-y-1"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: idx * 0.15 }}
-            whileHover={{ y: -8 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: idx * 0.1 }}
           >
             <div className="inline-block px-3 py-1 rounded-lg bg-brand-500/10 text-sm font-bold text-brand-300 mb-3 border border-brand-500/20">
               {phase.phase}
