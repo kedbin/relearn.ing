@@ -25,6 +25,20 @@ const currentPath = Astro.url.pathname;
     <title>{title} | relearn.ing</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <ViewTransitions />
+    <script>
+      import posthog from 'posthog-js'
+
+      if (typeof window !== 'undefined') {
+        posthog.init(import.meta.env.PUBLIC_POSTHOG_API_KEY, {
+          api_host: import.meta.env.PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+          person_profiles: 'identified_only'
+        })
+      }
+
+      document.addEventListener('astro:page-load', () => {
+        posthog.capture('$pageview')
+      })
+    </script>
   </head>
   <body class="bg-slate-950 text-slate-200 selection:bg-brand-500/30 selection:text-white min-h-screen flex flex-col">
     <Header client:load currentPath={currentPath} />

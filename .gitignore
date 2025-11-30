@@ -25,3 +25,8 @@ dist-ssr
 
 # AI tooling configs
 .claude/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
