@@ -25,6 +25,9 @@ jobs:
       run: npx tsc --noEmit
 
     - name: Build
+      env:
+        PUBLIC_POSTHOG_API_KEY: ${{ secrets.PUBLIC_POSTHOG_API_KEY }}
+        PUBLIC_POSTHOG_HOST: ${{ secrets.PUBLIC_POSTHOG_HOST }}
       run: npm run build
 
     - name: Verify build
