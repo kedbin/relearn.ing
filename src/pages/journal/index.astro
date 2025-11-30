@@ -17,12 +17,12 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
       </div>
       <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">Every relearn note, in order</h1>
       <p class="text-slate-300">
-        A log of experiments. Some worked, some failed. Documenting the process of relearning professional and personal habits.
+        A log of real-world and thought experiments. Documenting the engineering of professional and personal protocols.
       </p>
     </div>
 
     <div class="max-w-6xl mx-auto">
-      <JournalList client:load entries={sortedEntries} />
+      <JournalList client:visible entries={sortedEntries} />
     </div>
   </section>
 </Layout>

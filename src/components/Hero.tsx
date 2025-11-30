@@ -6,18 +6,14 @@ export const Hero = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* CSS Animation Background Elements */}
-      <div className="absolute inset-0 w-full h-full">
+      {/* CSS Animation Background Elements - Optimized for Performance */}
+      <div className="absolute inset-0 w-full h-full will-change-transform">
         <div
-          className="absolute top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-500/30 rounded-full blur-[160px] animate-blob mix-blend-screen"
+          className="absolute top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-500/20 rounded-full blur-[100px] animate-blob mix-blend-screen"
         />
         <div
-          className="absolute top-1/3 right-1/4 w-[28rem] h-[28rem] bg-purple-500/25 rounded-full blur-[150px] animate-blob mix-blend-screen"
+          className="absolute top-1/3 right-1/4 w-[28rem] h-[28rem] bg-purple-500/15 rounded-full blur-[80px] animate-blob mix-blend-screen"
           style={{ animationDelay: '2s' }}
-        />
-        <div
-          className="absolute bottom-1/4 left-1/3 w-[24rem] h-[24rem] bg-cyan-500/20 rounded-full blur-[130px] animate-blob mix-blend-screen"
-          style={{ animationDelay: '4s' }}
         />
       </div>
 
