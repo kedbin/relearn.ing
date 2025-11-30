@@ -1,85 +1,39 @@
-<div align="center">
-<img width="1200" height="475" alt="relearn.ing - Rewrite Your Playbook" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# relearn.ing | The Public Log of a Recovering Perfectionist
 
-# relearn.ing | Rewrite Your Playbook
+> "I spent 4 years architecting automation for banks and transportation networks. But I couldn't automate my own habits."
 
-An honest build log from an entry-to-mid level cloud engineer relearning life, tooling, and AI workflows in public.
+This repository is **not** a tutorial. It is a **living artifact** of my attempt to apply enterprise-grade engineering discipline to the messy reality of being human.
 
-## About
+It serves as the public documentation of my journey from "AI Tool Collector" to actually shipping code. It is an open-source commitment to transparency, documenting the failures, the wasted hours, and the eventual breakthroughs.
 
-This is the public documentation of my journey from AI tool hoarder to actually shipping code with AI assistance. No hype, just honest metrics, failed prompts, and the occasional victory.
+## The Mission: The Engineer's Paradox
 
-### The Vision
-- **Stop consuming tutorials, start building**
-- **Document failures so others can skip my wasted hours**
-- **Measure actual velocity gains, not potential**
+I built reliable, fault-tolerant systems for a living. Yet, my personal operating system was a mess of half-started projects and "productivity tools" that only added friction.
 
-### The Three Pillars
-1. **Relearn Life**: Breaking the tutorial addiction and building sustainable systems
-2. **Relearn Cloud**: Turning AI from a toy into a teammate for actual deployment tasks
-3. **Relearn AI**: Teaching the failure, not the success
+**Relearn.ing** is the patch.
 
-## Run Locally
+- **The Goal**: To debug sleep, focus, and decision-making as if they were mission-critical infrastructure.
+- **The Method**: Treat personal growth as a CI/CD pipeline. Commit, test, deploy, monitor, repeat.
+- **The Promise**: No hype. Just honest metrics. If a prompt failed, I'll log it. If an agent hallucinated, I'll document it.
 
-**Prerequisites:** Node.js 18+
+## The Stack (The Toolkit)
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+I use these tools not because they are trendy, but because they provide the **leverage** I need to ship faster.
 
-2. Run the development server:
-   ```bash
-   npm run dev
-   ```
+- **Astro v5**: For performance and content-driven architecture.
+- **React 19**: For interactive islands where complexity is justified.
+- **Tailwind CSS**: For rapid UI development without context switching.
+- **GitHub Actions**: For continuous deployment and accountability.
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+## Transparency
 
-## Build for Production
+This repository is public because **accountability is a feature**. By building in public, I force myself to ship "v0.1.0" habits instead of waiting for "v1.0" perfection.
 
-```bash
-npm run build
-```
-
-The built files will be in the `dist` directory.
-
-## Deploy
-
-This site is automatically deployed to GitHub Pages. To deploy manually:
-
-```bash
-npm run deploy
-```
-
-## Tech Stack
-
-- **React 19** with TypeScript
-- **Vite** for fast development and building
-- **Tailwind CSS** for styling
-- **Framer Motion** for animations
-- **Lucide React** for icons
-
-## Project Structure
-
-```
-├── src/
-│   ├── App.tsx          # Main application component
-│   ├── index.tsx        # Application entry point
-│   └── main.css         # Global styles
-├── public/              # Static assets
-├── index.html           # HTML template
-└── package.json         # Dependencies and scripts
-```
-
-## Contributing
-
-This is a personal project, but feel free to fork it for your own relearning journey.
-
-## License
-
-MIT License - feel free to use this as a template for your own build-in-public project.
+You are free to fork this, critique it, or use it as a template for your own relearning journey.
 
 ---
 
-**Built in public with honest metrics.**  
+### Technical Documentation
+For instructions on how to run, build, or deploy this project, please refer to the [Deployment Guide](./DEPLOYMENT_GUIDE.md).
+
+**Built in public. Deployed on Fridays. Debugged daily.**
