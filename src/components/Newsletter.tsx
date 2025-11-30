@@ -2,7 +2,7 @@ import React from 'react';
 import { Mail } from 'lucide-react';
 
 export const Newsletter = () => {
-  const emailHref = 'mailto:hello@relearn.ing?subject=Join%20the%20Relearn%20Dispatch&body=Hey%20Kedbin%2C%20add%20me%20to%20your%20weekly%20update.%20Here%E2%80%99s%20what%20I%E2%80%99m%20working%20on%3A%20';
+  const emailHref = 'mailto:newsletter@relearn.ing?subject=Join%20the%20Relearn%20Dispatch&body=Hey%20Kedbin%2C%20add%20me%20to%20your%20weekly%20update.%20Here%E2%80%99s%20what%20I%E2%80%99m%20working%20on%3A%20';
 
   return (
     <section id="newsletter" className="py-32 relative">

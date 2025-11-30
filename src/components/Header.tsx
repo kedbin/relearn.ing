@@ -7,7 +7,7 @@ import { Logo } from './Logo';
 const socialLinks = [
   { name: 'GitHub', href: 'https://github.com/kedbin', icon: Github },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/in/kedbin/', icon: Linkedin },
-  { name: 'Twitter', href: 'https://twitter.com/kedbin', icon: Twitter }
+  { name: 'Twitter', href: 'https://x.com/relearn_ing', icon: Twitter }
 ];
 
 const NavLink = ({ children, href, active }: { children: React.ReactNode; href: string; active?: boolean }) => (
@@ -42,9 +42,9 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
     setMobileMenuOpen(false);
     // If on home, scroll. If not, nav to home #newsletter
     if (currentPath === '/') {
-       document.getElementById('newsletter')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('newsletter')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-       window.location.href = "/#newsletter";
+      window.location.href = "/#newsletter";
     }
   };
 

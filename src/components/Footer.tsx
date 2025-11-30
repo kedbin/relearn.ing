@@ -5,7 +5,7 @@ import { Logo } from './Logo';
 const socialLinks = [
   { name: 'GitHub', href: 'https://github.com/kedbin', icon: Github },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/in/kedbin/', icon: Linkedin },
-  { name: 'Twitter', href: 'https://twitter.com/kedbin', icon: Twitter }
+  { name: 'Twitter', href: 'https://x.com/relearn_ing', icon: Twitter }
 ];
 
 export const Footer = () => (
