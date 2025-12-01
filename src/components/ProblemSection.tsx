@@ -43,11 +43,11 @@ export const ProblemSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {buckets.map((bucket, idx) => (
             <motion.div
               key={bucket.title}
-              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl backdrop-blur-sm hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300"
+              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
