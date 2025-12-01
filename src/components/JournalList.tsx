@@ -55,7 +55,7 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   return (
     <div className="w-full">
       {/* Controls */}
-      <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between bg-slate-900/40 p-6 rounded-2xl border border-slate-800/50 backdrop-blur-sm">
+      <div className="flex flex-col md:flex-row gap-6 mb-12 items-center justify-between bg-slate-900/40 p-6 rounded-2xl border border-slate-800/50">
          {/* Search */}
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
