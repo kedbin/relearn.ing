@@ -48,7 +48,6 @@ export const ProblemSection = () => {
             <motion.div
               key={bucket.title}
               className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300 h-full flex flex-col"
-              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
