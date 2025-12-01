@@ -43,7 +43,7 @@ export const ProblemSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6">
           {buckets.map((bucket, idx) => (
             <motion.div
               key={bucket.title}
