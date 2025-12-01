@@ -53,8 +53,8 @@ export const ProblemSection = () => {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
             >
-              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-red-100 transition-colors">
-                <AlertCircle className="w-5 h-5 text-red-400 group-hover:text-red-300" />
+              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-brand-100 transition-colors">
+                <AlertCircle className="w-5 h-5 text-brand-400 group-hover:text-brand-300" />
                 {bucket.title}
               </h3>
               <p className="text-sm uppercase tracking-wide text-slate-500 mb-5">{bucket.subtitle}</p>
