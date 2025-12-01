@@ -45,7 +45,7 @@ export const JourneySection = () => (
             Personal growth as a continuous integration pipeline: commit, test, deploy, monitor, repeat.
           </p>
         </div>
-        <p className="text-slate-400 text-sm max-w-[30rem]">
+        <p className="text-slate-400 text-sm max-w-md">
           Recursive. Finish Phase 3 -&gt; Return to Phase 1 with better data.
         </p>
       </div>
