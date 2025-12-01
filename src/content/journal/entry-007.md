@@ -1,6 +1,6 @@
 ---
 title: "Biological Big O: Why 'Brute Force' Success is a System Failure"
-date: "2025-10-24"
+date: "2025-12-01"
 summary: "Society audits results, but physics audits energy. We apply algorithmic time-complexity analysis to biological performance to distinguish between sustainable success and system overheat."
 status: "Published"
 category: "Relearn Life / Behavioral Engineering"
