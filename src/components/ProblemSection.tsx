@@ -43,11 +43,11 @@ export const ProblemSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {buckets.map((bucket, idx) => (
             <motion.div
               key={bucket.title}
-              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl backdrop-blur-sm hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300"
+              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300 h-full flex flex-col"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -59,7 +59,7 @@ export const ProblemSection = () => {
                 {bucket.title}
               </h3>
               <p className="text-sm uppercase tracking-wide text-slate-500 mb-5">{bucket.subtitle}</p>
-              <ul className="space-y-3.5 text-slate-300 text-sm">
+              <ul className="space-y-3.5 text-slate-300 text-sm flex-grow">
                 {bucket.bullets.map((bullet) => (
                   <li key={bullet} className="flex items-start gap-3 group-hover:text-slate-200 transition-colors">
                     <span className="text-brand-400 mt-1">•</span>

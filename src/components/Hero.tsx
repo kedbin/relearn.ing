@@ -21,7 +21,7 @@ export const Hero = () => {
       <div className="container mx-auto px-6 relative z-10 text-center">
         <div className="opacity-0 animate-fade-in-up">
           <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-slate-900/90 to-slate-800/90 border border-brand-400/30 backdrop-blur-sm text-xs font-medium text-brand-100 mb-8 shadow-lg shadow-brand-500/10 hover:scale-105 transition-transform duration-300"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-slate-900/90 to-slate-800/90 border border-brand-400/30 text-xs font-medium text-brand-100 mb-8 shadow-lg shadow-brand-500/10 hover:scale-105 transition-transform duration-300"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-400" />
             <span>v0.1.0-beta // Continuous Integration for the Self</span>
@@ -59,7 +59,7 @@ export const Hero = () => {
             </a>
             <a
               href="/journal"
-              className="px-8 py-4 border-2 border-slate-700/80 text-white font-semibold rounded-full hover:border-brand-400/60 hover:bg-brand-400/5 transition-all backdrop-blur-sm relative overflow-hidden group inline-flex items-center justify-center hover:scale-105 active:scale-95"
+              className="px-8 py-4 border-2 border-slate-700/80 text-white font-semibold rounded-full hover:border-brand-400/60 hover:bg-brand-400/5 transition-all relative overflow-hidden group inline-flex items-center justify-center hover:scale-105 active:scale-95"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-brand-400/10 to-purple-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <span className="relative z-10">Read Journal</span>
