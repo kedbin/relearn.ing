@@ -69,6 +69,12 @@ This document serves as the standard operating procedure for AI agents (and huma
 *   **Styles:** `src/styles/global.css` (Tailwind).
 *   **Components:** `src/components/` (React/Astro).
 
-## 4. Current State (Memory)
-*   **Last Entry:** `entry-006.md`
-*   **Theme:** Engineering/Systems Thinking applied to Life.
+## Current State
+*   **Last Entry:** `src/content/journal/entry-007.md` ("Biological Big O").
+*   **Raw Drafts:** None.
+*   **Next Entry Number:** `entry-008.md`.
+
+## Protocol for New Content
+1.  **Ingest Raw Draft:**
+    *   Read the raw markdown file provided by the user (e.g., `eighthjournal.md`).
+    *   Determine the next entry number (e.g., `entry-008.md`).
