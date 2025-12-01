@@ -52,7 +52,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-        scrolled ? "bg-slate-950/80 backdrop-blur-md border-slate-800/50 py-3" : "bg-transparent border-transparent py-5"
+        scrolled ? "bg-slate-950/80 border-slate-800/50 py-3" : "bg-transparent border-transparent py-5"
       )}
     >
       <div className="container mx-auto px-6 flex items-center justify-between">
@@ -106,7 +106,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-900/95 backdrop-blur-xl border-b border-slate-800 overflow-hidden"
+            className="md:hidden bg-slate-900/95 border-b border-slate-800 overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
               <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
