@@ -47,12 +47,11 @@ export const ProblemSection = () => {
           {buckets.map((bucket, idx) => (
             <motion.div
               key={bucket.title}
-              className="group bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 p-8 rounded-2xl hover:border-red-500/30 hover:shadow-xl hover:shadow-red-500/5 transition-all duration-300 h-full flex flex-col"
+              className="group p-7 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10 hover:-translate-y-1 h-full flex flex-col"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
-              whileHover={{ y: -5 }}
             >
               <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2 group-hover:text-red-100 transition-colors">
                 <AlertCircle className="w-5 h-5 text-red-400 group-hover:text-red-300" />
