@@ -45,12 +45,12 @@ export const JourneySection = () => (
             Personal growth as a continuous integration pipeline: commit, test, deploy, monitor, repeat.
           </p>
         </div>
-        <p className="text-slate-400 text-sm max-w-md">
+        <p className="text-slate-400 text-sm max-w-sm">
           Recursive. Finish Phase 3 -&gt; Return to Phase 1 with better data.
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         {journeyPhases.map((phase, idx) => (
           <motion.div
             key={phase.phase}
