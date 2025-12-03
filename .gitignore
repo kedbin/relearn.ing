@@ -30,3 +30,7 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Deprecated documentation
+DEPLOYMENT_GUIDE.md
+WEBSITE_CRITIQUE.md
