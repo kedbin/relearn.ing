@@ -10,7 +10,6 @@ This document serves as the standard operating procedure for AI agents (and huma
 1.  **Read Context:**
     *   Target Directory: `src/content/journal/`
     *   Schema Definition: `src/content/config.ts`
-    *   Style Guide: `DEPLOYMENT_GUIDE.md` (Section 3)
 
 2.  **Generate Slug:**
     *   Find the next available entry number (e.g., if `entry-004.md` exists, create `entry-005.md`).
@@ -63,7 +62,20 @@ This document serves as the standard operating procedure for AI agents (and huma
     *   Push to `main`.
     *   The GitHub Action (`.github/workflows/ci.yml`) will automatically build and deploy to `gh-pages`.
 
-## 3. System Maintenance
+## 3. Analytics & Tracking
+
+*   **PostHog Integration:** All pages, including individual journal entries, are automatically tracked via PostHog.
+*   **Implementation:** PostHog is initialized in `src/layouts/Layout.astro` and captures pageviews on every route.
+*   **Configuration:**
+    *   Environment variables: `PUBLIC_POSTHOG_API_KEY` and `PUBLIC_POSTHOG_HOST` (see `.env.example`).
+    *   The tracking captures all page visits, including individual journal entry pages (e.g., `/journal/entry-001`).
+    *   No additional configuration needed for new journal entries - tracking is automatic.
+*   **How it works:**
+    *   PostHog is initialized on page load with the API key from environment variables.
+    *   The `astro:page-load` event listener captures every pageview, including client-side navigation.
+    *   Each journal entry page automatically inherits this tracking via `Layout.astro`.
+
+## 4. System Maintenance
 
 *   **Config:** `astro.config.mjs` controls the site build.
 *   **Styles:** `src/styles/global.css` (Tailwind).
