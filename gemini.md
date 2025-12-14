@@ -82,9 +82,9 @@ This document serves as the standard operating procedure for AI agents (and huma
 *   **Components:** `src/components/` (React/Astro).
 
 ## Current State
-*   **Last Entry:** `src/content/journal/entry-007.md` ("Biological Big O").
+*   **Last Entry:** `src/content/journal/entry-008.md` ("Memoization: The Architecture of Cognitive Caching").
 *   **Raw Drafts:** None.
-*   **Next Entry Number:** `entry-008.md`.
+*   **Next Entry Number:** `entry-009.md`.
 
 ## Protocol for New Content
 1.  **Ingest Raw Draft:**
