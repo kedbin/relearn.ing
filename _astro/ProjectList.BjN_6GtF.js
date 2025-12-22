@@ -1,0 +1,1 @@
+import{j as s}from"./jsx-runtime.D_zvdyIk.js";import"./index.Cd_vQiNd.js";import{P as o}from"./ProjectCard.CU5On1Jd.js";import"./github.BanavQeN.js";import"./createLucideIcon.BYiIDVK1.js";const l=({projects:i})=>s.jsx("div",{className:"grid md:grid-cols-2 lg:grid-cols-3 gap-6",children:i.map(r=>s.jsx(o,{slug:r.slug,...r.data},r.slug))});export{l as ProjectList};
