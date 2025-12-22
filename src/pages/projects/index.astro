@@ -2,25 +2,29 @@
 import Layout from '../../layouts/Layout.astro';
 import { ProjectList } from '../../components/ProjectList';
 import { getCollection } from 'astro:content';
+import { Cpu } from 'lucide-react';
 
 const projects = await getCollection('projects');
 const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <Layout title="Projects | relearn.ing">
-  <div className="pt-32 pb-24">
-    <div className="container mx-auto px-6">
-      <div className="max-w-2xl mb-16">
-        <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">Portfolio</p>
-        <h1 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
-          Engineering Artifacts
-        </h1>
-        <p className="text-lg text-slate-300 leading-relaxed">
-          Tangible proof of concept. These are not just codebases; they are attempts to instantiate specific cognitive models into software.
-        </p>
+  <section class="pt-28 pb-24 px-6">
+    <div class="max-w-3xl mx-auto text-center mb-16">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
+        <Cpu className="w-3 h-3" />
+        Portfolio
       </div>
+      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+        Engineering Artifacts
+      </h1>
+      <p class="text-slate-300">
+        Tangible proof of concept. These are not just codebases; they are attempts to instantiate specific cognitive models into software.
+      </p>
+    </div>
 
+    <div class="max-w-6xl mx-auto">
       <ProjectList client:load projects={sortedProjects} />
     </div>
-  </div>
+  </section>
 </Layout>

@@ -55,7 +55,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
         scrolled ? "bg-slate-950/80 border-slate-800/50 py-3" : "bg-transparent border-transparent py-5"
       )}
     >
-      <div className="container w-full mx-auto px-6 flex items-center justify-between">
+      <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
         <div className="cursor-pointer">
           <Logo />
         </div>
