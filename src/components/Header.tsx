@@ -64,6 +64,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
         <nav className="hidden md:flex items-center gap-1">
           <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
           <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
+          <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
           <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
         </nav>
 
@@ -111,6 +112,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
             <div className="px-6 py-4 flex flex-col gap-4">
               <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
               <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
+              <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
               <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
               <hr className="border-slate-800" />
               <button

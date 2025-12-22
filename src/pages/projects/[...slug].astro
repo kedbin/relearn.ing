@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { ArrowLeft, ArrowUpRight, Github, Calendar, Code2 } from 'lucide-react';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(project => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+---
+
+<Layout title={project.data.title}>
+  <section class="pt-28 pb-24 px-6 min-h-screen bg-slate-950">
+    <div class="max-w-4xl mx-auto">
+      <a
+        href="/projects"
+        class="group flex items-center gap-2 text-slate-400 hover:text-brand-300 transition-colors mb-10"
+      >
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        Back to Projects
+      </a>
+
+      {/* Header Section */}
+      <div class="mb-12 border-b border-slate-800/60 pb-8">
+        <div class="flex flex-wrap items-center gap-4 mb-6 text-sm">
+          <div class="flex items-center gap-2 text-brand-300 font-medium bg-brand-500/10 px-3 py-1 rounded-full border border-brand-500/20">
+             <Calendar className="w-3.5 h-3.5" />
+             <span>{project.data.date}</span>
+          </div>
+          
+          {/* Tech Stack Pills */}
+          {project.data.techStack.map(tech => (
+             <div class="flex items-center gap-2 text-slate-400 font-medium bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700/50">
+                <Code2 className="w-3.5 h-3.5" />
+                <span>{tech}</span>
+             </div>
+          ))}
+        </div>
+
+        <h1 class="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 leading-[1.1] tracking-tight">
+          {project.data.title}
+        </h1>
+
+        <p class="text-xl md:text-2xl text-slate-300 leading-relaxed font-light max-w-3xl mb-8">
+          {project.data.description}
+        </p>
+
+        {/* Links */}
+        <div class="flex flex-wrap gap-4">
+          {project.data.demoUrl && (
+            <a href={project.data.demoUrl} target="_blank" rel="noreferrer" 
+               class="flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg transition-colors">
+              <span>View Live Demo</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </a>
+          )}
+          {project.data.repoUrl && (
+            <a href={project.data.repoUrl} target="_blank" rel="noreferrer" 
+               class="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg transition-colors border border-slate-700">
+              <Github className="w-4 h-4" />
+              <span>Source Code</span>
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-[1fr_200px] gap-12 items-start">
+        {/* Main Content */}
+        <article class="min-w-0 prose prose-lg prose-invert prose-slate max-w-none 
+            prose-headings:font-display prose-headings:font-bold prose-headings:text-white
+            prose-h2:text-3xl prose-h2:mt-24 prose-h2:mb-12 prose-h2:pb-6 prose-h2:border-b prose-h2:border-slate-800/50
+            prose-h3:text-2xl prose-h3:text-brand-100 prose-h3:mt-16 prose-h3:mb-8
+            prose-p:text-slate-300 prose-p:leading-9 prose-p:mb-12
+            prose-a:text-brand-400 prose-a:no-underline hover:prose-a:underline
+            prose-strong:text-white prose-strong:font-semibold
+            prose-li:text-slate-300 prose-li:marker:text-brand-500 prose-li:mb-6
+            prose-blockquote:border-l-brand-500 prose-blockquote:bg-slate-900/50 prose-blockquote:py-6 prose-blockquote:px-8 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-slate-400 prose-blockquote:mb-12
+            prose-pre:bg-slate-900 prose-pre:border prose-pre:border-slate-800
+          ">
+           <Content />
+        </article>
+
+        {/* Sidebar (Empty for now, but keeping structure for future meta) */}
+        <aside class="hidden lg:block sticky top-32 space-y-8">
+           {/* Placeholder for future specific project metadata or TOC */}
+        </aside>
+      </div>
+    </div>
+  </section>
+</Layout>

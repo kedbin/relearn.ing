@@ -7,11 +7,15 @@ import { Experiments } from '../components/Experiments';
 import { Pillars } from '../components/Pillars';
 import { Quote } from '../components/Quote';
 import { JournalPreview } from '../components/JournalPreview';
+import { SelectedProjects } from '../components/SelectedProjects';
 import { Newsletter } from '../components/Newsletter';
 import { getCollection } from 'astro:content';
 
 const entries = await getCollection('journal');
 const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+const projects = await getCollection('projects');
+const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <Layout title="Home">
@@ -21,6 +25,7 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
   <Experiments />
   <Pillars client:visible />
   <Quote client:visible />
+  <SelectedProjects client:visible projects={sortedProjects} />
   <JournalPreview client:visible entries={sortedEntries} />
   <Newsletter client:visible />
 </Layout>
