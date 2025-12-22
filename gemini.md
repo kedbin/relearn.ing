@@ -122,6 +122,7 @@ This document serves as the standard operating procedure for AI agents (and huma
 *   **Config:** `astro.config.mjs` controls the site build.
 *   **Styles:** `src/styles/global.css` (Tailwind).
 *   **Components:** `src/components/` (React/Astro).
+*   **Fixes:** Ensured `h2` elements in project detail pages (`src/pages/projects/[...slug].astro`) align correctly with the sidebar by overriding default `prose` top margins for the first `h2` element (`[&>h2:first-child]:!mt-0`).
 
 ## Current State
 *   **Last Journal Entry:** `src/content/journal/entry-009.md` ("The Probability of Reality: Engineering Your Priors").
