@@ -1,6 +1,6 @@
 ---
 title: "OpenCode Skills: The AI-Augmented Developer Toolkit"
-date: "2025-01-20"
+date: "2025-12-22"
 description: "A modular skill system for OpenCode that extends AI capabilities through domain-specific tools. Built with Python and designed for cognitive leverage."
 repoUrl: "https://github.com/kedbin/opencode-skills"
 demoUrl: "https://youtu.be/jS_E62vAzuM"
