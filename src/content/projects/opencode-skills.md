@@ -3,6 +3,7 @@ title: "OpenCode Skills: The AI-Augmented Developer Toolkit"
 date: "2025-01-20"
 description: "A modular skill system for OpenCode that extends AI capabilities through domain-specific tools. Built with Python and designed for cognitive leverage."
 repoUrl: "https://github.com/kedbin/opencode-skills"
+demoUrl: "https://youtu.be/jS_E62vAzuM"
 techStack: ["Python", "OpenCode", "Trello API", "CLI"]
 ---
 
@@ -55,11 +56,13 @@ IDs in brackets allow the AI to extract and reuse them without parsing complex J
 
 ## Engineering Decisions
 
-**Why CLI over SDK?** The CLI approach provides zero coupling with OpenCode internals. Skills work with any AI that can execute shell commands. Update skills without updating OpenCode. Test commands manually for debugging.
+**Why Skills over Direct API Calls?** LLMs can technically call APIs directly—they know the syntax. But raw API interaction burns context tokens on authentication boilerplate, error handling, and response parsing. Skills **pre-compile** this knowledge. The AI doesn't waste reasoning cycles on "how to authenticate with Trello"—it simply invokes the skill and focuses on the user's actual intent.
 
-**Why Python?** Universal availability, minimal dependencies (only `requests`), and readable by AI—Python's clarity makes it easier for the AI to understand and modify.
+**Why Structured Output over JSON?** When an AI parses a 50-line JSON response, it consumes tokens understanding the structure before extracting the one field it needs. The `Name [id]` format is **token-efficient by design**—the AI instantly pattern-matches IDs without traversing nested objects. This is prompt engineering applied to output design.
 
-**Why .env Files?** Environment-based configuration following the 12-factor app methodology. Credentials never touch source control. Easy rotation without code changes.
+**Why Trigger Descriptions?** The `description` field in SKILL.md isn't documentation—it's a **semantic router**. OpenCode pattern-matches user intent against skill descriptions to decide which tool to activate. Writing a good description is writing a classifier. Vague descriptions cause false activations; overly specific ones cause missed opportunities.
+
+**Why CLI as the Interface?** Shell commands are the **universal language** of AI tool use. Every major AI coding assistant (OpenCode, Cursor, Copilot) can execute bash. By building skills as CLI tools, they work across any AI system without integration code. The skill becomes portable knowledge.
 
 ## Current Skills
 
