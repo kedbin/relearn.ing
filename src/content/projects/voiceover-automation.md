@@ -1,73 +1,49 @@
 ---
-title: "Voiceover Automation: Voice Cloning as a Developer Tool"
+title: "Voiceover Automation: Extending Reach Through Voice Cloning"
 date: "2025-12-24"
-description: "A skill-based pipeline for transforming written content into high-fidelity voice narration. Built on Chatterbox TTS and designed for frictionless audio production."
+description: "A skill-based pipeline for transforming written content into narrated audio. Built to make ideas more accessible."
 repoUrl: "https://github.com/kedbin/chatterbox-skills"
-techStack: ["Python", "OpenCode", "Chatterbox TTS", "uv"]
+techStack: ["Python", "OpenCode", "Chatterbox TTS"]
 ---
 
 ## The Objective
 
-Build a **voice cloning pipeline** that transforms written content into narrated audio with minimal friction. The goal: reduce the distance between "I wrote something" and "I have a voiceover of it" to a single command.
+Make written content **listenable**. Journals, essays, technical notes—all locked behind the requirement to sit and read. Voice cloning removes that barrier.
 
-This extends the [OpenCode Skills](/projects/opencode-skills) philosophy—teaching an AI to operate domain-specific tools so I don't have to context-switch between writing and audio production.
+This extends the [OpenCode Skills](/projects/opencode-skills) philosophy into a new medium: audio.
 
-## The Philosophy: Voice as an Interface Layer
+## Why Voice Cloning?
 
-Written content has reach. Spoken content has presence.
+Written content has reach. Spoken content has **presence**.
 
-The friction of traditional voiceover work:
-1. Write the script
-2. Open audio software
-3. Configure microphone settings
-4. Record takes (multiple)
-5. Edit, clean, export
-6. Match output format to project needs
+But recording voiceovers is friction-heavy: microphone setup, multiple takes, editing, exporting. The overhead kills momentum. Voice cloning eliminates this entirely—the AI handles production while I focus on ideas.
 
-With this pipeline:
-1. Point at the content
-2. Done
+The deeper reason: **accessibility**. Not everyone can read long-form content. Some prefer audio while commuting, cooking, or resting their eyes. Voice cloning turns every journal entry into a podcast episode without the production cost.
 
-The AI handles script adaptation, TTS execution, and file management. I focus on the ideas.
+This is AI leverage applied to distribution—extending the reach of ideas beyond those who have time to read.
 
-## Implementation: The Skill Architecture
+## Why Chatterbox?
 
-Two skills handle the complete workflow:
+Open-source, runs locally, clones from a single voice sample. No cloud dependencies, no API costs, no data leaving the machine.
 
-### Create Script
+Most importantly: it supports paralinguistic tags (`[laugh]`, `[chuckle]`, `[sigh]`). This enables expressive narration—not robotic text-to-speech, but something that sounds human.
 
-The **narrative compiler**. Takes raw content (URLs, text files, notes) and transforms it into voiceover-ready scripts.
+## Current Use
 
-Key design decisions:
-- **Acronym preservation**: Keeps "AI" as "AI" instead of expanding to "Artificial Intelligence"—TTS handles abbreviations better than spelled-out versions
-- **Conversational adaptation**: Restructures written prose into natural speech patterns
-- **Paralinguistic awareness**: Identifies moments for `[laugh]`, `[chuckle]`, or pauses based on content tone
+Two OpenCode skills handle the workflow:
 
-### Voiceover
+1. **Create Script** — Transforms raw content into voiceover-ready text. Preserves acronyms, adapts written prose for natural speech, and identifies moments for expression.
 
-The **execution layer**. Interfaces directly with Chatterbox TTS to generate audio.
+2. **Voiceover** — Executes the TTS pipeline. Points at a script, outputs a WAV file named to match the source.
 
-```bash
-uv run voiceover_script.py --text script.txt --voice clone.wav --output narration.wav
-```
+The result: content to audio in one command.
 
-Design principles:
-- **Portable execution**: Uses `uv run` for dependency isolation—no manual venv activation
-- **Chunked processing**: Long scripts are segmented for consistent quality
-- **Naming conventions**: Output files match source slugs (`entry-009.txt` → `entry-009.wav`)
+## Future Directions
 
-## Engineering Decisions
-
-**Why Chatterbox TTS?** Open-source, runs locally, supports voice cloning from a single reference sample. Most importantly: it handles paralinguistic tags (`[laugh]`, `[sigh]`) natively. This enables expressive narration without post-processing.
-
-**Why Skills over Direct Execution?** Raw TTS invocation requires remembering CLI arguments, managing file paths, handling chunking for long texts. Skills **pre-compile** this workflow knowledge. The AI doesn't waste context on "how to call the TTS model"—it focuses on what the user actually wants narrated.
-
-**Why uv over pip/venv?** Speed and isolation. `uv run` creates ephemeral environments on demand without polluting the global Python installation. The skill becomes portable across machines without setup scripts.
-
-**Why Acronym Preservation?** TTS models pronounce "AI" naturally as a word. Expanding to "Artificial Intelligence" sounds robotic and wastes audio time. This is prompt engineering applied to speech synthesis—optimizing for the output medium.
+- **Multi-language narration** — Clone the voice, generate in other languages. Same presence, wider reach.
+- **Embedded audio on entries** — Each journal entry gets a "listen" option. No external podcast platform needed.
+- **Conversational formats** — Two-voice dialogues for explaining complex topics. AI-generated back-and-forth that makes dense material approachable.
 
 ## The Meta-Lesson
 
-The best automation is invisible. When this pipeline works correctly, there's no awareness of TTS models, audio codecs, or script formatting. There's just: content → voice.
-
-This is the cognitive architecture goal: **make the tools disappear so only the work remains**.
+Voice cloning isn't about replacing human speech. It's about **scaling presence**. The ideas in these journals can now reach people who wouldn't otherwise encounter them—because now they can listen.
