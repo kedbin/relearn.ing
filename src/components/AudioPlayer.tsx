@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Headphones } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Headphones, Loader2 } from 'lucide-react';
 
 interface AudioPlayerProps {
   src: string;
@@ -12,7 +12,9 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [canPlay, setCanPlay] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -20,7 +22,11 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
-      setIsLoaded(true);
+    };
+
+    const handleCanPlay = () => {
+      setCanPlay(true);
+      setIsLoading(false);
     };
 
     const handleTimeUpdate = () => {
@@ -32,27 +38,60 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
       setCurrentTime(0);
     };
 
+    const handleError = () => {
+      setError(true);
+      setIsLoading(false);
+      setIsPlaying(false);
+    };
+
+    const handleWaiting = () => {
+      setIsLoading(true);
+    };
+
+    const handlePlaying = () => {
+      setIsLoading(false);
+      setIsPlaying(true);
+    };
+
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
+    audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+    audio.addEventListener('waiting', handleWaiting);
+    audio.addEventListener('playing', handlePlaying);
 
     return () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      audio.removeEventListener('canplay', handleCanPlay);
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('waiting', handleWaiting);
+      audio.removeEventListener('playing', handlePlaying);
     };
   }, []);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || error) return;
 
     if (isPlaying) {
       audio.pause();
+      setIsPlaying(false);
     } else {
-      audio.play();
+      setIsLoading(true);
+      try {
+        await audio.play();
+        setIsPlaying(true);
+      } catch (err) {
+        // Play was interrupted or failed - this is often fine (e.g., user paused quickly)
+        console.warn('Audio play interrupted:', err);
+        setIsPlaying(false);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    setIsPlaying(!isPlaying);
   };
 
   const toggleMute = () => {
@@ -81,6 +120,18 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
 
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  if (error) {
+    return (
+      <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
+        <div className="flex items-center gap-2 text-slate-500 font-bold mb-2 font-display">
+          <Headphones className="w-4 h-4" />
+          <h3>{title}</h3>
+        </div>
+        <p className="text-xs text-slate-600">Audio unavailable</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
       <div className="flex items-center gap-2 text-brand-300 font-bold mb-4 font-display">
@@ -95,10 +146,13 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
         <div className="flex items-center gap-3">
           <button
             onClick={togglePlay}
-            className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-brand-600 hover:bg-brand-500 text-white rounded-full transition-colors shadow-lg shadow-brand-900/30"
-            aria-label={isPlaying ? 'Pause' : 'Play'}
+            disabled={isLoading}
+            className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-brand-600 hover:bg-brand-500 disabled:bg-brand-700 disabled:cursor-wait text-white rounded-full transition-colors shadow-lg shadow-brand-900/30"
+            aria-label={isLoading ? 'Loading' : isPlaying ? 'Pause' : 'Play'}
           >
-            {isPlaying ? (
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : isPlaying ? (
               <Pause className="w-4 h-4" />
             ) : (
               <Play className="w-4 h-4 ml-0.5" />
