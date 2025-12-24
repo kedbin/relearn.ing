@@ -1,35 +1,73 @@
 ---
-title: "Voiceover Automation: Narrative Engineering with Chatterbox"
+title: "Voiceover Automation: Voice Cloning as a Developer Tool"
 date: "2025-12-24"
-description: "A specialized OpenCode skill-set for transforming raw content into high-fidelity voice clones using Chatterbox Turbo."
+description: "A skill-based pipeline for transforming written content into high-fidelity voice narration. Built on Chatterbox TTS and designed for frictionless audio production."
 repoUrl: "https://github.com/kedbin/chatterbox-skills"
-techStack: ["Python", "OpenCode", "Chatterbox TTS", "Bayesian Mechanics"]
+techStack: ["Python", "OpenCode", "Chatterbox TTS", "uv"]
 ---
 
 ## The Objective
 
-Extend the [OpenCode Skills](/projects/opencode-skills) framework to automate the production of audio content. This project transforms the "Probability of Reality" philosophy into a functional engineering workflow, allowing an AI agent to read, script, and narrate content in near real-time.
+Build a **voice cloning pipeline** that transforms written content into narrated audio with minimal friction. The goal: reduce the distance between "I wrote something" and "I have a voiceover of it" to a single command.
 
-## The Workflow: Scripting to Synthesis
+This extends the [OpenCode Skills](/projects/opencode-skills) philosophy—teaching an AI to operate domain-specific tools so I don't have to context-switch between writing and audio production.
 
-The system relies on two interconnected skills that manage the transition from raw data to processed audio.
+## The Philosophy: Voice as an Interface Layer
 
-### 1. Create Script
-This skill acts as the **narrative compiler**. It fetches raw content (like a journal entry URL) and transforms it into a conversational script. 
-- **Acronym Preservation**: Unlike standard LLM summaries, it maintains technical terms like "AI" to ensure natural TTS pronunciation.
-- **Paralinguistic Injection**: It strategically places tags like `[chuckle]` or `[laugh]` based on the content's tone.
+Written content has reach. Spoken content has presence.
 
-### 2. Voiceover
-The execution layer that interfaces with **Chatterbox Turbo**. It handles:
-- **Environment Management**: Utilizing `uv run` to ensure all dependencies (torch, scipy, etc.) are correctly loaded without manual venv activation.
-- **Chunked Processing**: To maintain high fidelity and speed, longer scripts are broken into manageable chunks before being merged into the final WAV.
+The friction of traditional voiceover work:
+1. Write the script
+2. Open audio software
+3. Configure microphone settings
+4. Record takes (multiple)
+5. Edit, clean, export
+6. Match output format to project needs
 
-## Engineering the "Lens"
+With this pipeline:
+1. Point at the content
+2. Done
 
-This project is a direct application of the Bayesian Mechanics described in [Entry 009](/journal/entry-009). By defining a "Strong Prior" through the `SEARCH_QUERY` variable in the script generation phase, the agent filters out the "noise" of raw web content and focuses on the "signal" needed for a compelling narration.
+The AI handles script adaptation, TTS execution, and file management. I focus on the ideas.
 
-## Directory & Automation
+## Implementation: The Skill Architecture
 
-The skills are stored in a modular structure within the `.opencode/skill/` directory, making them portable and easily integrable into any project. The automation handles its own troubleshooting—if a path is missing or an environment is not initialized, the agent autonomously re-scans the directory and corrects the execution path.
+Two skills handle the complete workflow:
 
-This reduces the distance between **Intention** (writing an article) and **Execution** (narrating it for the website) to near zero.
+### Create Script
+
+The **narrative compiler**. Takes raw content (URLs, text files, notes) and transforms it into voiceover-ready scripts.
+
+Key design decisions:
+- **Acronym preservation**: Keeps "AI" as "AI" instead of expanding to "Artificial Intelligence"—TTS handles abbreviations better than spelled-out versions
+- **Conversational adaptation**: Restructures written prose into natural speech patterns
+- **Paralinguistic awareness**: Identifies moments for `[laugh]`, `[chuckle]`, or pauses based on content tone
+
+### Voiceover
+
+The **execution layer**. Interfaces directly with Chatterbox TTS to generate audio.
+
+```bash
+uv run voiceover_script.py --text script.txt --voice clone.wav --output narration.wav
+```
+
+Design principles:
+- **Portable execution**: Uses `uv run` for dependency isolation—no manual venv activation
+- **Chunked processing**: Long scripts are segmented for consistent quality
+- **Naming conventions**: Output files match source slugs (`entry-009.txt` → `entry-009.wav`)
+
+## Engineering Decisions
+
+**Why Chatterbox TTS?** Open-source, runs locally, supports voice cloning from a single reference sample. Most importantly: it handles paralinguistic tags (`[laugh]`, `[sigh]`) natively. This enables expressive narration without post-processing.
+
+**Why Skills over Direct Execution?** Raw TTS invocation requires remembering CLI arguments, managing file paths, handling chunking for long texts. Skills **pre-compile** this workflow knowledge. The AI doesn't waste context on "how to call the TTS model"—it focuses on what the user actually wants narrated.
+
+**Why uv over pip/venv?** Speed and isolation. `uv run` creates ephemeral environments on demand without polluting the global Python installation. The skill becomes portable across machines without setup scripts.
+
+**Why Acronym Preservation?** TTS models pronounce "AI" naturally as a word. Expanding to "Artificial Intelligence" sounds robotic and wastes audio time. This is prompt engineering applied to speech synthesis—optimizing for the output medium.
+
+## The Meta-Lesson
+
+The best automation is invisible. When this pipeline works correctly, there's no awareness of TTS models, audio codecs, or script formatting. There's just: content → voice.
+
+This is the cognitive architecture goal: **make the tools disappear so only the work remains**.
