@@ -8,6 +8,7 @@ highlights:
   - "Metric: Achieving an O(1) outcome with O(n²) effort is a system crash, not a victory."
   - "Model: Signaling Theory reveals that social 'messiness' is often just a high-load system stack trace."
   - "Action: Use 'Complexity Tagging' to audit your calendar for efficiency, not just completion."
+audioUrl: "/audio/entry-007.mp3"
 ---
 
 ## The Fallacy: Outcome Bias

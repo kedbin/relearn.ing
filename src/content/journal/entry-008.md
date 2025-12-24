@@ -8,6 +8,7 @@ highlights:
   - "Key Takeaway 1: The Metric (20% Energy Drain)"
   - "Key Takeaway 2: The Model (Epistemic Action)"
   - "Key Takeaway 3: The Protocol (Write-Through Caching)"
+audioUrl: "/audio/entry-008.mp3"
 ---
 
 I recently conducted an audit of my own daily logs and discovered a critical failure in my system architecture. I was acting like a poorly optimized script running inside an infinite loop. I found myself solving the same problems, looking up the same flight numbers, and traversing the same decision trees day after day. In software engineering, we call this redundant computation. In life, we call it "stress."

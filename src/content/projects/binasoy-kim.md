@@ -5,6 +5,7 @@ description: "The central hub for my digital identity. A portfolio documenting t
 repoUrl: "https://github.com/kedbin/binasoy.kim"
 demoUrl: "https://binasoy.kim/"
 techStack: ["SCSS", "HTML", "JavaScript", "Webpack"]
+audioUrl: "/audio/binasoy-kim.mp3"
 ---
 
 ## The Objective

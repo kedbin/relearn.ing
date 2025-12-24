@@ -5,6 +5,7 @@ description: "A modular skill system for OpenCode that extends AI capabilities t
 repoUrl: "https://github.com/kedbin/opencode-skills"
 demoUrl: "https://youtu.be/jS_E62vAzuM"
 techStack: ["Python", "OpenCode", "Trello API", "CLI"]
+audioUrl: "/audio/opencode-skills.mp3"
 ---
 
 ## The Objective

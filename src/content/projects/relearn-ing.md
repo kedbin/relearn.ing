@@ -5,6 +5,7 @@ description: "A digital garden built to track the re-engineering of human cognit
 repoUrl: "https://github.com/kedbin/relearn.ing"
 demoUrl: "https://relearn.ing"
 techStack: ["Astro", "React", "Tailwind CSS", "TypeScript"]
+audioUrl: "/audio/relearn-ing.mp3"
 ---
 
 ## The Objective

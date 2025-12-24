@@ -8,6 +8,7 @@ highlights:
   - "The Metric: Context switching costs 40% of productivity and 23 minutes of focus."
   - "The Model: Your brain is a single-core processor that thrashes without a scheduler."
   - "The Protocol: Implementation Intentions (d=0.65) and the Premack Principle."
+audioUrl: "/audio/entry-005.mp3"
 ---
 
 ## The Fallacy: The "Unbound" Delusion
