@@ -3,6 +3,7 @@ title: "Voiceover Automation: Extending Reach Through Voice Cloning"
 date: "2025-12-24"
 description: "A skill-based pipeline for transforming written content into narrated audio. Built to make ideas more accessible."
 repoUrl: "https://github.com/kedbin/chatterbox-skills"
+demoUrl: "https://www.youtube.com/shorts/27Zac0A6V84"
 techStack: ["Python", "OpenCode", "Chatterbox TTS"]
 ---
 
