@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Play, Pause, Volume2, VolumeX, Headphones, Loader2 } from 'lucide-react';
 
 interface AudioPlayerProps {
@@ -7,74 +7,80 @@ interface AudioPlayerProps {
 }
 
 export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlayerProps) {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [canPlay, setCanPlay] = useState(false);
   const [error, setError] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handleLoadedMetadata = () => {
+  // Lazy initialization - only create audio element on first user interaction
+  const initializeAudio = useCallback(() => {
+    if (audioRef.current || isInitialized) return audioRef.current;
+    
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    audio.src = src;
+    
+    audio.addEventListener('loadedmetadata', () => {
       setDuration(audio.duration);
-    };
+    });
 
-    const handleCanPlay = () => {
-      setCanPlay(true);
+    audio.addEventListener('canplay', () => {
       setIsLoading(false);
-    };
+    });
 
-    const handleTimeUpdate = () => {
+    audio.addEventListener('timeupdate', () => {
       setCurrentTime(audio.currentTime);
-    };
+    });
 
-    const handleEnded = () => {
+    audio.addEventListener('ended', () => {
       setIsPlaying(false);
       setCurrentTime(0);
-    };
+    });
 
-    const handleError = () => {
+    audio.addEventListener('error', () => {
       setError(true);
       setIsLoading(false);
       setIsPlaying(false);
-    };
+    });
 
-    const handleWaiting = () => {
+    audio.addEventListener('waiting', () => {
       setIsLoading(true);
-    };
+    });
 
-    const handlePlaying = () => {
+    audio.addEventListener('playing', () => {
       setIsLoading(false);
       setIsPlaying(true);
-    };
+    });
 
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-    audio.addEventListener('waiting', handleWaiting);
-    audio.addEventListener('playing', handlePlaying);
+    audio.addEventListener('pause', () => {
+      setIsPlaying(false);
+    });
 
+    audioRef.current = audio;
+    setIsInitialized(true);
+    return audio;
+  }, [src, isInitialized]);
+
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-      audio.removeEventListener('waiting', handleWaiting);
-      audio.removeEventListener('playing', handlePlaying);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+        audioRef.current = null;
+      }
     };
   }, []);
 
   const togglePlay = async () => {
-    const audio = audioRef.current;
-    if (!audio || error) return;
+    if (error) return;
+
+    const audio = initializeAudio();
+    if (!audio) return;
 
     if (isPlaying) {
       audio.pause();
@@ -83,12 +89,9 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
       setIsLoading(true);
       try {
         await audio.play();
-        setIsPlaying(true);
       } catch (err) {
-        // Play was interrupted or failed - this is often fine (e.g., user paused quickly)
-        console.warn('Audio play interrupted:', err);
+        // Silently handle - user may have paused quickly or audio not ready
         setIsPlaying(false);
-      } finally {
         setIsLoading(false);
       }
     }
@@ -112,7 +115,7 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
   };
 
   const formatTime = (time: number) => {
-    if (isNaN(time)) return '0:00';
+    if (isNaN(time) || time === 0) return '0:00';
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -138,8 +141,6 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
         <Headphones className="w-4 h-4" />
         <h3>{title}</h3>
       </div>
-
-      <audio ref={audioRef} src={src} preload="metadata" />
 
       <div className="space-y-4">
         {/* Play Button and Progress */}
@@ -187,7 +188,8 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
           {/* Mute Button */}
           <button
             onClick={toggleMute}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-slate-800/50"
+            disabled={!isInitialized}
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white disabled:text-slate-600 transition-colors rounded-lg hover:bg-slate-800/50"
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? (
