@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { ArrowLeft, ArrowUpRight, Github, Calendar, Code2, Link, ArrowRight } from 'lucide-react';
+import AudioPlayer from '../../components/AudioPlayer';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -48,6 +49,11 @@ const { Content } = await project.render();
         
         {/* Mobile Metadata (Top) */}
         <div class="lg:hidden mb-8 space-y-6">
+          {/* Mobile Audio Player */}
+          {project.data.audioUrl && (
+            <AudioPlayer src={project.data.audioUrl} title="Listen to Overview" client:load />
+          )}
+
            <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
             <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <Link className="w-4 h-4 text-brand-400" />
@@ -104,6 +110,11 @@ const { Content } = await project.render();
 
         {/* Sidebar (Desktop) */}
         <aside class="hidden lg:block sticky top-32 space-y-8">
+          {/* Audio Player - shown if audioUrl exists */}
+          {project.data.audioUrl && (
+            <AudioPlayer src={project.data.audioUrl} title="Listen to Overview" client:load />
+          )}
+
           <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
             <div class="flex items-center gap-2 text-brand-300 font-bold mb-6 font-display">
               <Link className="w-4 h-4" />

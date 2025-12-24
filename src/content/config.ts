@@ -9,6 +9,7 @@ const journalCollection = defineCollection({
     highlights: z.array(z.string()),
     status: z.string(),
     category: z.string(),
+    audioUrl: z.string().optional(), // Audio overview URL
   }),
 });
 
@@ -21,6 +22,7 @@ const projectsCollection = defineCollection({
     demoUrl: z.string().optional(),
     repoUrl: z.string().optional(),
     techStack: z.array(z.string()),
+    audioUrl: z.string().optional(), // Audio overview URL
   }),
 });
 
