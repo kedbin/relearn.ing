@@ -33,7 +33,3 @@ You are free to fork this, critique it, or use it as a template for your own rel
 
 ---
 
-### Technical Documentation
-For instructions on how to run, build, or deploy this project, please refer to the [Deployment Guide](./DEPLOYMENT_GUIDE.md).
-
-**Built in public. Deployed on Fridays. Debugged daily.**
