@@ -8,12 +8,12 @@ highlights:
   - "The Expiation Interrupt: Guilt functions as a blocking I/O operation that compounds system latency without repairing the initial error."
   - "The Bellman Principle: Optimal future decisions are mathematically independent of the path taken to reach the current state."
   - "Atomic Recovery Protocol: A three-phase framework for transitioning from an error state to optimal execution without double-taxing the system."
-audioUrl: ""
+audioUrl: "/audio/entry-015.mp3"
 ---
 
 ### The Jackie Chan Debugging Session
 
-In the filming of the 1985 classic *Police Story*, Jackie Chan famously insisted on "real" hits to maintain the integrity of the visual data. During one scene, an actress was required to deliver a sharp slap. She executed the move, but immediately after the contact, she broke character. Overwhelmed by guilt, she stopped the scene to apologize and check if he was okay.
+In the filming of the 2003 action-comedy *The Medallion*, actress Claire Forlani was required to deliver a slap to Jackie Chan. She executed the move, but hit him harder than intended. Immediately after the contact, she broke character. Overwhelmed by guilt, she stopped the scene to apologize and check if he was okay.
 
 From a systems engineering perspective, this was a catastrophic failure. 
 
