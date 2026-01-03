@@ -1,6 +1,6 @@
 ---
 title: "The Compilation of Self: Engineering the Tool-Body Union"
-date: "2025-01-27"
+date: "2026-01-03"
 summary: "Mastery is not skill acquisition—it is the gradual compilation of external tools into your internal operating system until the boundary between operator and instrument dissolves."
 status: "Published"
 category: "Relearn Life / Cognitive Architecture"
