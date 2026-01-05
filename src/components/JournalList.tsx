@@ -17,63 +17,52 @@ interface JournalEntry {
   body: string; // Raw markdown content for searching
 }
 
+// Fuse.js configuration - single source of truth
+const FUSE_OPTIONS = {
+  keys: [
+    { name: 'data.title', weight: 2 },
+    { name: 'data.summary', weight: 1.5 },
+    { name: 'data.category', weight: 1 },
+    { name: 'data.highlights', weight: 1 },
+    { name: 'body', weight: 0.8 },
+  ],
+  threshold: 0.4,
+  ignoreLocation: true,
+  includeScore: true,
+  minMatchCharLength: 2,
+};
+
 export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'All' | 'Life' | 'Engineering'>('All');
 
-  // Create Fuse instance for fuzzy search (memoized)
-  const fuse = useMemo(() => {
-    return new Fuse(entries, {
-      keys: [
-        { name: 'data.title', weight: 2 },
-        { name: 'data.summary', weight: 1.5 },
-        { name: 'data.category', weight: 1 },
-        { name: 'data.highlights', weight: 1 },
-        { name: 'body', weight: 0.8 }, // Content body - lower weight to prioritize metadata matches
-      ],
-      threshold: 0.4, // 0 = exact match, 1 = match anything
-      ignoreLocation: true, // Search entire content, not just beginning
-      includeScore: true,
-      minMatchCharLength: 2,
+  // Memoized filtered entries - only recreated when entries or filter change
+  const filteredByCategory = useMemo(() => {
+    if (filter === 'All') {
+      return entries;
+    }
+    
+    return entries.filter((entry) => {
+      const { category } = entry.data;
+      if (filter === 'Life') return category.startsWith('Relearn Life');
+      if (filter === 'Engineering') return category.startsWith('Relearn Engineering');
+      return true;
     });
-  }, [entries]);
+  }, [entries, filter]);
+
+  // Memoized Fuse instance - only recreated when filtered entries change
+  const fuse = useMemo(() => new Fuse(filteredByCategory, FUSE_OPTIONS), [filteredByCategory]);
 
   const filteredEntries = useMemo(() => {
-    // First, apply category filter
-    let filtered = entries;
-    
-    if (filter !== 'All') {
-      filtered = entries.filter((entry) => {
-        const { category } = entry.data;
-        if (filter === 'Life') return category.startsWith('Relearn Life');
-        if (filter === 'Engineering') return category.startsWith('Relearn Engineering');
-        return true;
-      });
-    }
-
     // If no search query, return filtered results
     if (!search.trim()) {
-      return filtered;
+      return filteredByCategory;
     }
 
-    // Use Fuse for fuzzy search on the filtered set
-    const fuseFiltered = new Fuse(filtered, {
-      keys: [
-        { name: 'data.title', weight: 2 },
-        { name: 'data.summary', weight: 1.5 },
-        { name: 'data.category', weight: 1 },
-        { name: 'data.highlights', weight: 1 },
-        { name: 'body', weight: 0.8 },
-      ],
-      threshold: 0.4,
-      ignoreLocation: true,
-      includeScore: true,
-      minMatchCharLength: 2,
-    });
-
-    const results = fuseFiltered.search(search);
+    // Use memoized Fuse instance
+    const results = fuse.search(search);
     return results.map(result => result.item);
-  }, [entries, search, filter, fuse]);
+  }, [filteredByCategory, search, fuse]);
 
   return (
     <div className="w-full">

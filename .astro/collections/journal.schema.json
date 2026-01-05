@@ -25,6 +25,9 @@
         "category": {
           "type": "string"
         },
+        "audioUrl": {
+          "type": "string"
+        },
         "$schema": {
           "type": "string"
         }
