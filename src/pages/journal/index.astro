@@ -6,6 +6,14 @@ import { JournalList } from '../../components/JournalList';
 
 const entries = await getCollection('journal');
 const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Extract body content for full-text search (build-time only)
+const entriesWithContent = sortedEntries.map(entry => ({
+  id: entry.id,
+  slug: entry.slug,
+  data: entry.data,
+  body: entry.body, // Raw markdown body for searching
+}));
 ---
 
 <Layout title="Journal">
@@ -22,7 +30,7 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
     </div>
 
     <div class="max-w-6xl mx-auto">
-      <JournalList client:visible entries={sortedEntries} />
+      <JournalList client:visible entries={entriesWithContent} />
     </div>
   </section>
 </Layout>

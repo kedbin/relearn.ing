@@ -6,6 +6,13 @@ import { Cpu } from 'lucide-react';
 
 const projects = await getCollection('projects');
 const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+
+// Extract body content for full-text search (build-time only)
+const projectsWithContent = sortedProjects.map(project => ({
+  slug: project.slug,
+  data: project.data,
+  body: project.body, // Raw markdown body for searching
+}));
 ---
 
 <Layout title="Projects | relearn.ing">
@@ -24,7 +31,7 @@ const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() -
     </div>
 
     <div class="max-w-6xl mx-auto">
-      <ProjectList client:load projects={sortedProjects} />
+      <ProjectList client:load projects={projectsWithContent} />
     </div>
   </section>
 </Layout>
