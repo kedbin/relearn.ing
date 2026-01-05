@@ -17,26 +17,24 @@ interface JournalEntry {
   body: string; // Raw markdown content for searching
 }
 
+// Fuse.js configuration - single source of truth
+const FUSE_OPTIONS = {
+  keys: [
+    { name: 'data.title', weight: 2 },
+    { name: 'data.summary', weight: 1.5 },
+    { name: 'data.category', weight: 1 },
+    { name: 'data.highlights', weight: 1 },
+    { name: 'body', weight: 0.8 },
+  ],
+  threshold: 0.4,
+  ignoreLocation: true,
+  includeScore: true,
+  minMatchCharLength: 2,
+};
+
 export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'All' | 'Life' | 'Engineering'>('All');
-
-  // Create Fuse instance for fuzzy search (memoized)
-  const fuse = useMemo(() => {
-    return new Fuse(entries, {
-      keys: [
-        { name: 'data.title', weight: 2 },
-        { name: 'data.summary', weight: 1.5 },
-        { name: 'data.category', weight: 1 },
-        { name: 'data.highlights', weight: 1 },
-        { name: 'body', weight: 0.8 }, // Content body - lower weight to prioritize metadata matches
-      ],
-      threshold: 0.4, // 0 = exact match, 1 = match anything
-      ignoreLocation: true, // Search entire content, not just beginning
-      includeScore: true,
-      minMatchCharLength: 2,
-    });
-  }, [entries]);
 
   const filteredEntries = useMemo(() => {
     // First, apply category filter
@@ -56,24 +54,11 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
       return filtered;
     }
 
-    // Use Fuse for fuzzy search on the filtered set
-    const fuseFiltered = new Fuse(filtered, {
-      keys: [
-        { name: 'data.title', weight: 2 },
-        { name: 'data.summary', weight: 1.5 },
-        { name: 'data.category', weight: 1 },
-        { name: 'data.highlights', weight: 1 },
-        { name: 'body', weight: 0.8 },
-      ],
-      threshold: 0.4,
-      ignoreLocation: true,
-      includeScore: true,
-      minMatchCharLength: 2,
-    });
-
-    const results = fuseFiltered.search(search);
+    // Create Fuse instance and search
+    const fuse = new Fuse(filtered, FUSE_OPTIONS);
+    const results = fuse.search(search);
     return results.map(result => result.item);
-  }, [entries, search, filter, fuse]);
+  }, [entries, search, filter]);
 
   return (
     <div className="w-full">

@@ -16,33 +16,32 @@ interface Project {
   body: string; // Raw markdown content for searching
 }
 
+// Fuse.js configuration
+const FUSE_OPTIONS = {
+  keys: [
+    { name: 'data.title', weight: 2 },
+    { name: 'data.description', weight: 1.5 },
+    { name: 'data.techStack', weight: 1.2 },
+    { name: 'body', weight: 0.8 },
+  ],
+  threshold: 0.4,
+  ignoreLocation: true,
+  includeScore: true,
+  minMatchCharLength: 2,
+};
+
 export const ProjectList = ({ projects }: { projects: Project[] }) => {
   const [search, setSearch] = useState('');
-
-  // Create Fuse instance for fuzzy search
-  const fuse = useMemo(() => {
-    return new Fuse(projects, {
-      keys: [
-        { name: 'data.title', weight: 2 },
-        { name: 'data.description', weight: 1.5 },
-        { name: 'data.techStack', weight: 1.2 },
-        { name: 'body', weight: 0.8 },
-      ],
-      threshold: 0.4,
-      ignoreLocation: true,
-      includeScore: true,
-      minMatchCharLength: 2,
-    });
-  }, [projects]);
 
   const filteredProjects = useMemo(() => {
     if (!search.trim()) {
       return projects;
     }
 
+    const fuse = new Fuse(projects, FUSE_OPTIONS);
     const results = fuse.search(search);
     return results.map(result => result.item);
-  }, [projects, search, fuse]);
+  }, [projects, search]);
 
   return (
     <div className="w-full">
