@@ -1,14 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { Sparkles } from 'lucide-react';
-import { motion } from 'framer-motion';
-
-// Static data for About page
-const stats = [
-  { label: 'AI agents tested', value: '6', note: 'Gemini, Copilot, Claude, Kimi K2, GLM 4.6. Zero actually used in my workflow for 3 months.' },
-  { label: 'Prompts that shipped code', value: '8', note: '342 prompts written. 8 made it to production. The other 334 are in my failure log.' },
-  { label: 'Hours saved (so far)', value: '47', note: 'From 3 weeks of actually committing AI-assisted code. At 6 months, this number embarrassed me (it was 0).' }
-];
 ---
 
 <Layout title="About">
@@ -16,38 +8,32 @@ const stats = [
     <div class="max-w-3xl mx-auto">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-8">
         <Sparkles className="w-3 h-3" />
-        The Engineer's Paradox
+        About
       </div>
       
       <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4 leading-tight">
-        Hey, I'm Kim Edrian Binasoy.
+        Kim Edrian Binasoy
       </h1>
       <p class="text-xl text-brand-200 mb-12 font-light">
-        Cloud Engineer. AI Enthusiast. Builder of Relearn.ing.
+        Cloud Engineer building systems that work.
       </p>
 
       <div class="prose prose-invert prose-lg text-slate-300 leading-relaxed space-y-8 mb-16">
         <p>
-          I spent 4 years architecting automation for banks and transportation networks. I built systems that scaled, deployed Gen-AI bots to streamline knowledge transfer, and optimized workflows for hundreds of employees.
+          I'm a cloud engineer with 4 years of experience building automation systems for financial services and transportation. My work focuses on infrastructure, AI integration, and workflow optimization.
         </p>
         <p>
-          <strong>But I couldn't automate my own habits.</strong>
+          <strong>Relearn.ing</strong> is where I document my experiments in cognitive engineering—applying systematic approaches to learning, productivity, and personal development. It's part lab notebook, part reference, and fully open source.
         </p>
         <p>
-          By day, I was a disciplined engineer. By night, my personal operating system was a mess of half-started projects and "productivity tools" that only added friction. I became a <strong>Tool Collector</strong>, hoarding AI agents like infinity stones, hoping they would magically fix my output.
-        </p>
-        <p>
-          They didn't. I had the best tech stack in the world, but I lacked the <em>system</em>.
-        </p>
-        <p>
-          <strong>Relearn.ing</strong> is my open-source attempt to fix that. It is not a blog; it is a documentation of debugging my own habits. It is the application of enterprise-grade engineering discipline—observability, refactoring, and automation—to the messy reality of being human.
+          For my professional work and portfolio, visit <a href="https://binasoy.kim" target="_blank" rel="noopener noreferrer" class="text-brand-300 hover:text-brand-200 underline underline-offset-2">binasoy.kim</a>.
         </p>
       </div>
 
       <div class="border-t border-slate-800 pt-12">
-        <h2 class="text-sm uppercase tracking-widest text-slate-500 mb-6 font-semibold">The Toolkit</h2>
+        <h2 class="text-sm uppercase tracking-widest text-slate-500 mb-6 font-semibold">Technical Stack</h2>
         <p class="text-slate-400 mb-6">
-          I still use the tools I mastered in the industry—Azure, AWS, Python, TypeScript—but now I use them to build workflows that actually ship.
+          Core technologies I work with professionally and for personal projects.
         </p>
         <div class="flex flex-wrap gap-2">
             {['Azure', 'AWS', 'Python', 'TypeScript', 'Power Platform', 'React', 'Docker', 'Terraform'].map((tech) => (
