@@ -1,11 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Hero } from '../components/Hero';
-import { ProblemSection } from '../components/ProblemSection';
-import { JourneySection } from '../components/JourneySection';
-import { Experiments } from '../components/Experiments';
-import { Pillars } from '../components/Pillars';
-import { Quote } from '../components/Quote';
 import { JournalPreview } from '../components/JournalPreview';
 import { SelectedProjects } from '../components/SelectedProjects';
 import { Newsletter } from '../components/Newsletter';
@@ -19,13 +13,39 @@ const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() -
 ---
 
 <Layout title="Home">
-  <Hero />
-  <ProblemSection client:visible />
-  <JourneySection client:visible />
-  <Experiments />
-  <Pillars client:visible />
-  <Quote client:visible />
-  <SelectedProjects client:visible projects={sortedProjects} />
+  <!-- Minimal Hero -->
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-display tracking-tight text-white mb-6 leading-[1.1]">
+        Debugging the self.
+      </h1>
+      <p class="text-lg md:text-xl text-slate-300 leading-relaxed mb-8 max-w-2xl">
+        Engineering principles applied to sleep, focus, and decision-making. 
+        No hype. Just honest metrics and documented failures.
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a
+          href="/journal"
+          class="px-6 py-3 bg-white text-slate-950 font-semibold rounded-full hover:bg-slate-100 transition-colors"
+        >
+          Read the journal
+        </a>
+        <a
+          href="/about"
+          class="px-6 py-3 border border-slate-700 text-white rounded-full hover:border-slate-500 transition-colors"
+        >
+          About this project
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Journal Entries -->
   <JournalPreview client:visible entries={sortedEntries} />
+
+  <!-- Projects -->
+  <SelectedProjects client:visible projects={sortedProjects} />
+
+  <!-- Newsletter -->
   <Newsletter client:visible />
 </Layout>

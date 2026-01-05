@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
+import Fuse from 'fuse.js';
 import { JournalCard } from './JournalCard';
 
 interface JournalEntry {
@@ -11,31 +12,68 @@ interface JournalEntry {
     status: string;
     summary: string;
     category: string;
+    highlights: string[];
   };
+  body: string; // Raw markdown content for searching
 }
 
 export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'All' | 'Life' | 'Engineering'>('All');
 
-  const filteredEntries = useMemo(() => {
-    return entries.filter((entry) => {
-      const { title, summary, category } = entry.data;
-      const searchLower = search.toLowerCase();
-      
-      const matchesSearch = 
-        title.toLowerCase().includes(searchLower) ||
-        summary.toLowerCase().includes(searchLower) ||
-        category.toLowerCase().includes(searchLower);
-      
-      const matchesFilter = 
-        filter === 'All' ? true : 
-        filter === 'Life' ? category.startsWith('Relearn Life') :
-        filter === 'Engineering' ? category.startsWith('Relearn Engineering') : true;
-
-      return matchesSearch && matchesFilter;
+  // Create Fuse instance for fuzzy search (memoized)
+  const fuse = useMemo(() => {
+    return new Fuse(entries, {
+      keys: [
+        { name: 'data.title', weight: 2 },
+        { name: 'data.summary', weight: 1.5 },
+        { name: 'data.category', weight: 1 },
+        { name: 'data.highlights', weight: 1 },
+        { name: 'body', weight: 0.8 }, // Content body - lower weight to prioritize metadata matches
+      ],
+      threshold: 0.4, // 0 = exact match, 1 = match anything
+      ignoreLocation: true, // Search entire content, not just beginning
+      includeScore: true,
+      minMatchCharLength: 2,
     });
-  }, [entries, search, filter]);
+  }, [entries]);
+
+  const filteredEntries = useMemo(() => {
+    // First, apply category filter
+    let filtered = entries;
+    
+    if (filter !== 'All') {
+      filtered = entries.filter((entry) => {
+        const { category } = entry.data;
+        if (filter === 'Life') return category.startsWith('Relearn Life');
+        if (filter === 'Engineering') return category.startsWith('Relearn Engineering');
+        return true;
+      });
+    }
+
+    // If no search query, return filtered results
+    if (!search.trim()) {
+      return filtered;
+    }
+
+    // Use Fuse for fuzzy search on the filtered set
+    const fuseFiltered = new Fuse(filtered, {
+      keys: [
+        { name: 'data.title', weight: 2 },
+        { name: 'data.summary', weight: 1.5 },
+        { name: 'data.category', weight: 1 },
+        { name: 'data.highlights', weight: 1 },
+        { name: 'body', weight: 0.8 },
+      ],
+      threshold: 0.4,
+      ignoreLocation: true,
+      includeScore: true,
+      minMatchCharLength: 2,
+    });
+
+    const results = fuseFiltered.search(search);
+    return results.map(result => result.item);
+  }, [entries, search, filter, fuse]);
 
   return (
     <div className="w-full">
@@ -46,7 +84,7 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input 
             type="text" 
-            placeholder="Search journals..." 
+            placeholder="Search titles, content, keywords..." 
             className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500/50 transition-colors placeholder:text-slate-600"
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -70,6 +108,13 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
           ))}
         </div>
       </div>
+
+      {/* Results count when searching */}
+      {search.trim() && (
+        <p className="text-sm text-slate-500 mb-6">
+          {filteredEntries.length} result{filteredEntries.length !== 1 ? 's' : ''} for "{search}"
+        </p>
+      )}
 
       {/* Grid */}
       {filteredEntries.length > 0 ? (

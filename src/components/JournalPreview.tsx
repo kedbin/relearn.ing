@@ -21,10 +21,10 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 mb-10">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">Build Log</p>
-            <h2 className="text-3xl font-display font-bold text-white">Latest journal entries</h2>
+            <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3">Journal</p>
+            <h2 className="text-3xl font-display font-bold text-white">Latest entries</h2>
             <p className="text-slate-300 mt-3 max-w-xl">
-              This section will hold honest build logs once they exist. Each post should include the experiment, metrics, tool stack, and emotional takeaways.
+              Research-backed essays on productivity, cognition, and self-engineering.
             </p>
           </div>
           <a
