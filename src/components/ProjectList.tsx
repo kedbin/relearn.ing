@@ -33,15 +33,17 @@ const FUSE_OPTIONS = {
 export const ProjectList = ({ projects }: { projects: Project[] }) => {
   const [search, setSearch] = useState('');
 
+  // Memoized Fuse instance - only recreated when projects change
+  const fuse = useMemo(() => new Fuse(projects, FUSE_OPTIONS), [projects]);
+
   const filteredProjects = useMemo(() => {
     if (!search.trim()) {
       return projects;
     }
 
-    const fuse = new Fuse(projects, FUSE_OPTIONS);
     const results = fuse.search(search);
     return results.map(result => result.item);
-  }, [projects, search]);
+  }, [projects, search, fuse]);
 
   return (
     <div className="w-full">

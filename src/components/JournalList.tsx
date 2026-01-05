@@ -36,29 +36,33 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'All' | 'Life' | 'Engineering'>('All');
 
-  const filteredEntries = useMemo(() => {
-    // First, apply category filter
-    let filtered = entries;
-    
-    if (filter !== 'All') {
-      filtered = entries.filter((entry) => {
-        const { category } = entry.data;
-        if (filter === 'Life') return category.startsWith('Relearn Life');
-        if (filter === 'Engineering') return category.startsWith('Relearn Engineering');
-        return true;
-      });
+  // Memoized filtered entries - only recreated when entries or filter change
+  const filteredByCategory = useMemo(() => {
+    if (filter === 'All') {
+      return entries;
     }
+    
+    return entries.filter((entry) => {
+      const { category } = entry.data;
+      if (filter === 'Life') return category.startsWith('Relearn Life');
+      if (filter === 'Engineering') return category.startsWith('Relearn Engineering');
+      return true;
+    });
+  }, [entries, filter]);
 
+  // Memoized Fuse instance - only recreated when filtered entries change
+  const fuse = useMemo(() => new Fuse(filteredByCategory, FUSE_OPTIONS), [filteredByCategory]);
+
+  const filteredEntries = useMemo(() => {
     // If no search query, return filtered results
     if (!search.trim()) {
-      return filtered;
+      return filteredByCategory;
     }
 
-    // Create Fuse instance and search
-    const fuse = new Fuse(filtered, FUSE_OPTIONS);
+    // Use memoized Fuse instance
     const results = fuse.search(search);
     return results.map(result => result.item);
-  }, [entries, search, filter]);
+  }, [filteredByCategory, search, fuse]);
 
   return (
     <div className="w-full">
