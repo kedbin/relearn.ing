@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence, LazyMotion, domAnimation } from 'framer-motion';
 import { Menu, X, Github, Linkedin, Twitter } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Logo } from './Logo';
@@ -101,30 +101,32 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
       </div>
 
       {/* Mobile Nav */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-900/95 border-b border-slate-800 overflow-hidden"
-          >
-            <div className="px-6 py-4 flex flex-col gap-4">
-              <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
-              <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
-              <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
-              <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
-              <hr className="border-slate-800" />
-              <button
-                onClick={handleSubscribeClick}
-                className="w-full py-3 bg-brand-600 text-white rounded-lg font-semibold"
-              >
-                Newsletter
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <LazyMotion features={domAnimation}>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <m.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-slate-900/95 border-b border-slate-800 overflow-hidden"
+            >
+              <div className="px-6 py-4 flex flex-col gap-4">
+                <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
+                <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
+                <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
+                <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
+                <hr className="border-slate-800" />
+                <button
+                  onClick={handleSubscribeClick}
+                  className="w-full py-3 bg-brand-600 text-white rounded-lg font-semibold"
+                >
+                  Newsletter
+                </button>
+              </div>
+            </m.div>
+          )}
+        </AnimatePresence>
+      </LazyMotion>
     </header>
   );
 };

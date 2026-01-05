@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m, LazyMotion, domAnimation } from 'framer-motion';
 
 const journeyPhases = [
   {
@@ -50,32 +50,34 @@ export const JourneySection = () => (
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {journeyPhases.map((phase, idx) => (
-          <motion.div
-            key={phase.phase}
-            className="group p-8 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10 hover:-translate-y-1 h-full flex flex-col"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: idx * 0.1 }}
-          >
-            <div className="inline-block px-3 py-1 rounded-lg bg-brand-500/10 text-sm font-bold text-brand-300 mb-3 border border-brand-500/20">
-              {phase.phase}
-            </div>
-            <h3 className="text-2xl font-display text-white mb-3 group-hover:text-brand-100 transition-colors">{phase.title}</h3>
-            <p className="text-slate-300 text-sm mb-5 leading-relaxed">{phase.description}</p>
-            <ul className="space-y-2.5 text-sm text-slate-300 flex-grow">
-              {phase.commitments.map((commitment) => (
-                <li key={commitment} className="flex items-start gap-2.5">
-                  <span className="text-brand-400 mt-1 text-base">→</span>
-                  <span className="group-hover:text-slate-200 transition-colors">{commitment}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        ))}
-      </div>
+      <LazyMotion features={domAnimation}>
+        <div className="grid lg:grid-cols-3 gap-6">
+          {journeyPhases.map((phase, idx) => (
+            <m.div
+              key={phase.phase}
+              className="group p-8 rounded-2xl bg-gradient-to-br from-slate-900/60 to-slate-900/40 border border-slate-800/80 hover:border-brand-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-brand-500/10 hover:-translate-y-1 h-full flex flex-col"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+            >
+              <div className="inline-block px-3 py-1 rounded-lg bg-brand-500/10 text-sm font-bold text-brand-300 mb-3 border border-brand-500/20">
+                {phase.phase}
+              </div>
+              <h3 className="text-2xl font-display text-white mb-3 group-hover:text-brand-100 transition-colors">{phase.title}</h3>
+              <p className="text-slate-300 text-sm mb-5 leading-relaxed">{phase.description}</p>
+              <ul className="space-y-2.5 text-sm text-slate-300 flex-grow">
+                {phase.commitments.map((commitment) => (
+                  <li key={commitment} className="flex items-start gap-2.5">
+                    <span className="text-brand-400 mt-1 text-base">→</span>
+                    <span className="group-hover:text-slate-200 transition-colors">{commitment}</span>
+                  </li>
+                ))}
+              </ul>
+            </m.div>
+          ))}
+        </div>
+      </LazyMotion>
     </div>
   </section>
 );
