@@ -23,7 +23,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
           <div>
             <p className="text-sm uppercase tracking-[0.3em] text-brand-300 mb-3 flex items-center gap-2">
               <BookOpen className="w-4 h-4" />
-              Journals
+              Journal
             </p>
             <h2 className="text-3xl font-display font-bold text-white">Latest entries</h2>
             <p className="text-slate-300 mt-3 max-w-xl">
