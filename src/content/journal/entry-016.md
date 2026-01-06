@@ -11,8 +11,6 @@ highlights:
 audioUrl: "/audio/entry-016.mp3"
 ---
 
-## The Opening Hook
-
 Last week, I picked up a deck of cards to perform a classic 'Pass'—a move I had spent hundreds of hours perfecting. The result was catastrophic. My fingers were sluggish, the timing was off, and the 'invisible' move was glaringly obvious. 
 
 I hadn't 'forgotten' how to do it; the mental blueprint was there. But the hardware had been de-prioritized. Because I hadn't allocated CPU cycles to this specific subroutine in months, the system had begun a process of background deallocation. Like a garden left to the elements, the weeds of entropy had overgrown the path.
