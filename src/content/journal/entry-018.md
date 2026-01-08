@@ -5,9 +5,9 @@ summary: "A new wave of 'chaos presentations' in China is turning public speakin
 status: "Published"
 category: "Relearn Work / Psychology"
 highlights:
-  - "Key Takeaway 1: Performance anxiety is often a 'runtime error' caused by Intolerance of Uncertainty (IU)."
-  - "Key Takeaway 2: 'Chaos presentations' act as fuzz testing for the human social operating system."
-  - "Key Takeaway 3: Competence is not the absence of errors, but the speed of recovery."
+  - "Intolerance of Uncertainty: Performance anxiety is not fear of the audience—it is fear of the unhandled exception, the input you have no script for [1]."
+  - "Social Fuzz Testing: Chaos presentations strip the format of its authority; when accuracy is impossible, the metric shifts from correctness to resilience."
+  - "The Chaos Monkey Protocol: Competence is not the absence of errors, but the bandwidth to metabolize the unexpected."
 audioUrl: "/audio/entry-018.mp3"
 ---
 
