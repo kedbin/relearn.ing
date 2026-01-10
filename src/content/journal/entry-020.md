@@ -1,5 +1,5 @@
 ---
-title: "The Visceral Anomaly: Debugging the Inflammatory Kernel"
+title: "The Belly Fat Bug: Why Crunches Won't Fix Your Kernel"
 date: "2026-01-09"
 summary: "Visceral fat is not passive storage; it is a rogue endocrine server executing inflammatory subroutines that crash your metabolic operating system. The fix requires hormonal signaling, not caloric starvation."
 status: "Published"

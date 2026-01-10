@@ -1,9 +1,9 @@
 ---
-title: "The Inflection Point: Five Fork Conditions in the Developer Runtime"
+title: "The Developer Fork: Five Career Branches in the AI Era"
 date: "2026-01-09"
 summary: "The software industry is executing a branch statement with no clear merge path. AI agents, economic contraction, and generational shifts have created five critical fork conditions that will determine whether your career process runs or terminates."
 status: "Published"
-category: "Relearn Work / Career Engineering"
+category: "Relearn Engineering / Career"
 highlights:
   - "The Pipeline Collapse: Harvard data shows junior developer hiring drops 9-10 percent within six quarters of AI adoption; Big Tech hired 50 percent fewer fresh graduates over three years [1]."
   - "The Deskilling Paradox: 84 percent of developers now use AI assistance regularly, but the engineers who know when to distrust AI become the most valuable [2]."

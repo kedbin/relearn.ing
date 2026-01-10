@@ -1,9 +1,9 @@
 ---
-title: "The Sandbox: Debugging Performance Anxiety with Chaos"
+title: "Chaos Presentations: Stress-Testing Your Social Runtime"
 date: "2026-01-08"
 summary: "A new wave of 'chaos presentations' in China is turning public speaking into a stress-testing game, proving that the best way to fix performance anxiety is to crash the system on purpose."
 status: "Published"
-category: "Relearn Work / Psychology"
+category: "Relearn Engineering / Psychology"
 highlights:
   - "Intolerance of Uncertainty: Performance anxiety is not fear of the audience—it is fear of the unhandled exception, the input you have no script for [1]."
   - "Social Fuzz Testing: Chaos presentations strip the format of its authority; when accuracy is impossible, the metric shifts from correctness to resilience."

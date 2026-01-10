@@ -1,5 +1,5 @@
 ---
-title: "The Economics of Biology: An Algorithmic Approach to Body Composition"
+title: "The Calorie Market: Economic Policy for Your Body"
 date: "2026-01-08"
 summary: "Your body is not a moral agent; it is a biological market seeking equilibrium. Apply microeconomic policy—not willpower—to manage the input/output variables of your physiology."
 status: "Published"
