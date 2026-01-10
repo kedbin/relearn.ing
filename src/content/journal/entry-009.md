@@ -1,5 +1,5 @@
 ---
-title: "The Probability of Reality: Engineering Your Priors"
+title: "The Probability of Reality: Updating What You Believe"
 date: "2025-12-17"
 summary: "We don't see reality; we see a statistical prediction of it. Here is the math behind how your intent changes the physical structure of your attention."
 status: "Published"

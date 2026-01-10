@@ -1,5 +1,5 @@
 ---
-title: "The Physics of Productivity: Mastering the Input/Output Ratio Through Tool-Driven Growth"
+title: "The Physics of Productivity: Mastering Your Input/Output Ratio"
 date: "2025-11-19"
 summary: "Exploring how tools serve as the fulcrum between input and output, applying economic models like Solow-Swan to personal productivity, and introducing the Relearn.ing Protocol for systematic leverage optimization."
 status: "Published"

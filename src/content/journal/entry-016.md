@@ -1,5 +1,5 @@
 ---
-title: "The Biological Sandbox: Mitigating Entropy in High-Value Subroutines"
+title: "The Biological Sandbox: Protecting What Matters Most"
 date: "2026-01-06"
 summary: "A systems-engineering approach to skill retention, framing time as a finite compute budget and neglect as a trigger for neural garbage collection."
 status: "Published"

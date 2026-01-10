@@ -1,5 +1,5 @@
 ---
-title: "Intertemporal Optimization: Shifting from Scalar Wants to Vector Trajectories"
+title: "Intertemporal Optimization: Trading Today for Tomorrow"
 date: "2025-12-31"
 summary: "Most resolutions fail because they are static destinations, not dynamic functions. We apply Hyperbolic Discounting and Vector Calculus to prove that long-term success requires directional consistency over intensity."
 status: "Published"

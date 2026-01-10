@@ -1,5 +1,5 @@
 ---
-title: "The Deprecation of Syntax: Engineering the Pivot to 'Builder'"
+title: "The Deprecation of Syntax: From Coder to Builder"
 date: "2025-11-25"
 summary: "When AI commoditizes code, the engineer's value shifts from syntax generation to system synthesis. Here is the algorithm for the pivot."
 status: "Published"

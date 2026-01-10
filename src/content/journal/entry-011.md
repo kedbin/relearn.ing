@@ -1,5 +1,5 @@
 ---
-title: "The Vector Alignment Problem: Engineering Constraints Against Biological Entropy"
+title: "The Vector Alignment Problem: Why Goals Drift Without Constraints"
 date: "2026-01-01"
 summary: "New Year's resolutions fail at 80% because motivation is a scalar—it has magnitude but no direction. To achieve lasting change, you must engineer constraints that align your trajectory, not amplify your effort."
 status: "Published"

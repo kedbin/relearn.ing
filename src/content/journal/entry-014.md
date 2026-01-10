@@ -1,5 +1,5 @@
 ---
-title: "The Antipattern: Debugging the Invisible Blockers of Long-Term Growth"
+title: "The Antipattern: Finding Your Invisible Blockers"
 date: "2026-01-03"
 summary: "A system optimized for immediate output while ignoring systemic feedback is not growing - it is accruing compound technical debt."
 status: "Published"

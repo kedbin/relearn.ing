@@ -1,5 +1,5 @@
 ---
-title: "The Idempotent Slap: Forward-Looking Recovery in High-Latency Systems"
+title: "The Idempotent Slap: How to Recover Without Breaking Things"
 date: "2026-01-03"
 summary: "When a system error occurs, the most inefficient response is a blocking process of guilt. We must treat past costs as immutable state and optimize for the next instruction."
 status: "Published"

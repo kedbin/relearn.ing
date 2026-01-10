@@ -1,5 +1,5 @@
 ---
-title: "The Asymptote of Effort: Overcoming the Iron Law of Diminishing Returns"
+title: "The Asymptote of Effort: When More Work Stops Working"
 date: "2025-11-21"
 summary: "Analyzing the paralysis of perfectionism through the lens of the 90-90 rule and Herbert Simon's bounded rationality, with a protocol for defining 'done'."
 status: "Published"
