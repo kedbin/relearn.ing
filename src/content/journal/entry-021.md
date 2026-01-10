@@ -11,7 +11,7 @@ highlights:
 audioUrl: "/audio/entry-021.mp3"
 ---
 
-Addy Osmani, a Software Engineer at Google working on Cloud and Gemini, recently published a framework that stopped me cold. Not because it was optimistic or pessimistic about AI, but because it treated the future of software engineering the way an engineer should: as a set of branching conditions with different execution paths.
+Addy Osmani, Director of Google Cloud AI, recently published a framework that stopped me cold. Not because it was optimistic or pessimistic about AI, but because it treated the future of software engineering the way an engineer should: as a set of branching conditions with different execution paths.
 
 The premise is stark. The software industry sits at an inflection point. AI coding has evolved from autocomplete to autonomous agents. The economic boom that fueled hiring sprees has given way to an efficiency mandate. Companies now favor profitability over growth, experienced hires over fresh graduates, and smaller teams armed with better tools.
 
