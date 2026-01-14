@@ -34,3 +34,6 @@ dist-ssr
 # Deprecated documentation
 DEPLOYMENT_GUIDE.md
 WEBSITE_CRITIQUE.md
+
+# Audio files (hosted on Cloudflare R2 at audio.relearn.ing)
+public/audio/*.mp3

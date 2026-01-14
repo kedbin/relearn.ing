@@ -5,7 +5,7 @@ description: "A skill-based pipeline for transforming written content into narra
 repoUrl: "https://github.com/kedbin/chatterbox-skills"
 demoUrl: "https://www.youtube.com/shorts/27Zac0A6V84"
 techStack: ["Python", "OpenCode", "Chatterbox TTS"]
-audioUrl: "/audio/voiceover-automation.mp3"
+audioUrl: "https://audio.relearn.ing/voiceover-automation.mp3"
 ---
 
 ## The Objective

@@ -8,7 +8,7 @@ highlights:
   - "The Rogue Server Model: Visceral adipose tissue has 4x more cortisol receptors than subcutaneous fat—it is not stored energy, it is stored stress [1]."
   - "The Carotenoid Patch: Beta-cryptoxanthin intake shows inverse correlation with visceral fat mass; orange vegetables are not cosmetic, they are pharmaceutical [2]."
   - "The S.F.S. Protocol: Sprint-Fast-Sleep outperforms chronic cardio; 45-minute sessions at moderate-vigorous intensity preferentially mobilize visceral reserves [3]."
-audioUrl: "/audio/entry-020.mp3"
+audioUrl: "https://audio.relearn.ing/entry-020.mp3"
 ---
 
 You look in the mirror and see a softness around the midsection. The cultural interface labels it a "Dad Bod" or "stubborn belly fat." It feels benign—a cosmetic bug in an otherwise functional system.

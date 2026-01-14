@@ -8,7 +8,7 @@ highlights:
   - "The Mundanity of Excellence: Olympic swimmers succeed not by doing more, but by executing qualitatively different routines; success compounds from invisible protocol changes [1]."
   - "Transfer Learning in Careers: Skills from unrelated domains (motorcycle repair to hospital management) do not reset; they recompile for new environments [2]."
   - "Forward-Only Commits: You cannot rollback past decisions without corrupting your ledger; the only valid operation is appending better transactions [3]."
-audioUrl: "/audio/entry-022.mp3"
+audioUrl: "https://audio.relearn.ing/entry-022.mp3"
 ---
 
 I recently watched Jason, a streamer with a physique that clearly demanded years of discipline, and it struck me: I was not looking at a person, but at a lagging indicator. His physical state was the rendered output of thousands of invisible iterations: hours in the gym, calculated nutrition, and sleep protocols. The visible body is just the UI. The real system is the infrastructure running underneath.

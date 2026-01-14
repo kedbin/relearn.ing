@@ -8,7 +8,7 @@ highlights:
   - "Key Takeaway 1: Perception is not a passive camera feed; it is an active statistical simulation (Predictive Coding)."
   - "Key Takeaway 2: Your 'Intent' is mathematically equivalent to a Bayesian Prior P(A), which dictates the calculation of reality."
   - "Key Takeaway 3: You can hack your brain's 'Gain' control through Precision Weighting to physically alter signal detection."
-audioUrl: "/audio/entry-009.mp3"
+audioUrl: "https://audio.relearn.ing/entry-009.mp3"
 ---
 
 I used to think my eyes were cameras. I assumed that if I walked into a room, my brain simply recorded the video feed to a hard drive, and "thinking" was just processing that file later.

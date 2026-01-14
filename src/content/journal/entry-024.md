@@ -8,7 +8,7 @@ highlights:
   - "The Zeigarnik Effect: Incomplete tasks consume cognitive RAM until resolved—waiters forget orders the moment the bill is paid [1]"
   - "The DMN Daemon: Your brain's idle cycle doesn't rest; it scans for open tickets flagged as UNRESOLVED [2]"
   - "The Planning Patch: You don't need to complete tasks to stop intrusive thoughts—just make a specific plan [3]"
-audioUrl: "/audio/entry-024.mp3"
+audioUrl: "https://audio.relearn.ing/entry-024.mp3"
 ---
 
 It happened again this morning. I was standing in the shower, the water running, my mind idling, when suddenly—*that underprepared Teams call from last month*.

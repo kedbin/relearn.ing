@@ -8,7 +8,7 @@ highlights:
   - "The Invisible Work Fallacy: Heads-down execution without visibility is a career antipattern; without a presentation layer, your throughput is invisible to the network [1]."
   - "Signal Theory: Publishing is not vanity; it is a credible signal that reduces information asymmetry between you and your audience [2]."
   - "Pub/Sub Decoupling: Fan-out architectures separate content creation from distribution, enabling async scaling without tight coupling to any single platform [3]."
-audioUrl: "/audio/entry-023.mp3"
+audioUrl: "https://audio.relearn.ing/entry-023.mp3"
 ---
 
 I recently wired up a connector to automatically publish my journal entries to LinkedIn and Threads via their APIs. The architecture is a fan-out pattern using Google Pub/Sub: when a journal is ready, a single publish event triggers multiple subscribers, each handling distribution to a different platform.

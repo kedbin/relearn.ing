@@ -8,7 +8,7 @@ highlights:
   - "The GDP Protocol: You cannot optimize a system that runs in the dark; become the Central Bank of your own physiology by tracking every caloric input [1]."
   - "Diminishing Marginal Utility: The first slice of pizza is heaven, the sixth is regret—front-load low-utility, high-volume inputs to crash the market value of junk food."
   - "Architectural Friction: Engineer high transaction costs for maladaptive behaviors; make being unhealthy logistically difficult [2]."
-audioUrl: "/audio/entry-019.mp3"
+audioUrl: "https://audio.relearn.ing/entry-019.mp3"
 ---
 
 Dr. Matt Hill, a PhD researcher who applies economic theory to human behavior, recently shared a personal observation that crystallized something I've been thinking about:

@@ -8,7 +8,7 @@ highlights:
   - "Greedy algorithms sacrifice long-term outcomes for short-term outputs - brute force today creates repair jobs tomorrow."
   - "Isolation is an open-loop system: without external feedback, error correction becomes impossible (Maxwell, Control Theory)."
   - "Boundaries are not constraints - they are the garbage collection that prevents resource leaks from consuming your growth capacity."
-audioUrl: "/audio/entry-014.mp3"
+audioUrl: "https://audio.relearn.ing/entry-014.mp3"
 ---
 
 Last week, I destroyed two things: the cover of my light fixture and a door roller. The goal was simple—unstick them. The method was simpler—brute force. The result was predictable: a repair job that now takes three times longer than if I had methodically diagnosed the root cause. I optimized for output (immediate unsticking) while ignoring outcome (a functioning, undamaged system).

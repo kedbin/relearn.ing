@@ -8,7 +8,7 @@ highlights:
   - "The Expiation Interrupt: Guilt functions as a blocking I/O operation that compounds system latency without repairing the initial error."
   - "The Bellman Principle: Optimal future decisions are mathematically independent of the path taken to reach the current state."
   - "Atomic Recovery Protocol: A three-phase framework for transitioning from an error state to optimal execution without double-taxing the system."
-audioUrl: "/audio/entry-015.mp3"
+audioUrl: "https://audio.relearn.ing/entry-015.mp3"
 ---
 
 ### The Jackie Chan Debugging Session

@@ -5,7 +5,7 @@ description: "A public repository of scrubbed OpenCode skills and agents that po
 repoUrl: "https://github.com/kedbin/relearning-flow"
 demoUrl: "https://youtube.com/shorts/iHz7Bp5lUJs"
 techStack: ["OpenCode", "Chatterbox TTS", "Markdown", "Python"]
-audioUrl: "/audio/relearning-flow.mp3"
+audioUrl: "https://audio.relearn.ing/relearning-flow.mp3"
 ---
 
 ## The Objective

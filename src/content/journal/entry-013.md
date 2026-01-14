@@ -8,7 +8,7 @@ highlights:
   - "The Model: Mastery is the process of compiling external interfaces into cached subroutines—what martial artists call the 'sword-body union.'"
   - "The Dual Protocol: Efficiency requires two complementary operations—externalizing the internal (cognitive offloading) and internalizing the external (tool integration)."
   - "The Maintenance Principle: Neural pathways corrode without use. Deliberate practice is not skill-building—it is systems maintenance."
-audioUrl: "/audio/entry-013.mp3"
+audioUrl: "https://audio.relearn.ing/entry-013.mp3"
 ---
 
 ## The Blindfolded Baker

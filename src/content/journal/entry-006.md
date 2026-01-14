@@ -8,7 +8,7 @@ highlights:
   - "Metric: The Toronto Walkman has 5 years uptime but near-zero throughput due to channel saturation."
   - "Model: Shannon's Limit (Signal-to-Noise Ratio) proves that exceeding bandwidth spikes error rates to 100%."
   - "Action: Use 'Agentic Simulation' (mental or AI-based) to test outcomes before committing to long-term effort."
-audioUrl: "/audio/entry-006.mp3"
+audioUrl: "https://audio.relearn.ing/entry-006.mp3"
 ---
 
 ## The Incident Report

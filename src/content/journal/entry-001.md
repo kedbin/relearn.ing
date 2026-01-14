@@ -9,7 +9,7 @@ highlights:
   - "Extended Mind Thesis: tools become part of our cognitive circuit through cognitive offloading"
   - "Surgical checklist study: 36% reduction in complications, 47% reduction in deaths through simple process tools"
   - "Relearn.ing Protocol: 3-phase framework (Friction Log → Tool Selection → J-Curve Implementation)"
-audioUrl: "/audio/entry-001.mp3"
+audioUrl: "https://audio.relearn.ing/entry-001.mp3"
 ---
 
 ## The Modern Imbalance

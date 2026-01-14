@@ -8,7 +8,7 @@ highlights:
   - "Metcalfe's Law: Network value scales with connections squared—a weak node with strong edges beats a strong node with none."
   - "Holistic vs Analytic Cognition: Architectural thinking is a measurable cognitive shift from object-focus to relationship-focus [1]."
   - "Diagram-as-Code: D2 forces you to articulate relationships—if you can't code the diagram, you don't understand the system."
-audioUrl: "/audio/entry-026.mp3"
+audioUrl: "https://audio.relearn.ing/entry-026.mp3"
 ---
 
 I have a Virtual Private Server with 32GB of RAM and 8 vCPUs sitting in a data center in Frankfurt. It has an uptime of 400 days. It runs the latest kernel. It is a beast of a machine.

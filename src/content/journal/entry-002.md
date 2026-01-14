@@ -9,7 +9,7 @@ highlights:
   - "Maximizers vs Satisficers: Why 'better' choices lead to less happiness (The Paradox of Choice)"
   - "Opportunity Cost of Attention: The negative ROI of compulsive checking"
   - "Stop-Loss Protocol: Using artificial constraints and biological signals to defeat perfectionism"
-audioUrl: "/audio/entry-002.mp3"
+audioUrl: "https://audio.relearn.ing/entry-002.mp3"
 ---
 
 ## The Curve That Rules Your Life

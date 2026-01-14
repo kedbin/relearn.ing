@@ -8,7 +8,7 @@ highlights:
   - "The Metric: Lambda—the 'shadow price' of a constraint—measures how much your success would increase with one more unit of resource. If resources are infinite, Lambda equals zero."
   - "The Model: Life History Theory (Stearns, 1992) dictates that organisms must trade off growth, reproduction, and maintenance because energy is finite—finiteness forces complex cognition."
   - "The Protocol: The Lambda Protocol—a three-phase system for auditing constraints, applying Pareto Optimization, and using difficulty as a tuning parameter."
-audioUrl: "/audio/entry-010.mp3"
+audioUrl: "https://audio.relearn.ing/entry-010.mp3"
 ---
 
 ## The Incident Report

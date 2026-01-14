@@ -8,7 +8,7 @@ highlights:
   - "The Physics: Entropy (the Second Law of Thermodynamics) means your brain defaults to minimum energy states. Reverting to the status quo is not laziness—it is thermodynamic optimization."
   - "The Model: Ulysses Pacts (Jon Elster) demonstrate that rationality is the ability to bind your future self through pre-commitment devices."
   - "The Protocol: The Vector Alignment Protocol—audit your trajectory, architect constraints, implement PID-style feedback loops for weekly course correction."
-audioUrl: "/audio/entry-011.mp3"
+audioUrl: "https://audio.relearn.ing/entry-011.mp3"
 ---
 
 ## The Introduction

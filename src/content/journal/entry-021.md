@@ -8,7 +8,7 @@ highlights:
   - "The Pipeline Collapse: Harvard data shows junior developer hiring drops 9-10 percent within six quarters of AI adoption; Big Tech hired 50 percent fewer fresh graduates over three years [1]."
   - "The Deskilling Paradox: 84 percent of developers now use AI assistance regularly, but the engineers who know when to distrust AI become the most valuable [2]."
   - "The T-Shaped Specification: 45 percent of engineering roles now expect proficiency in multiple domains; narrow specialists risk finding their niche automated into obsolescence [3]."
-audioUrl: "/audio/entry-021.mp3"
+audioUrl: "https://audio.relearn.ing/entry-021.mp3"
 ---
 
 Addy Osmani, Director of Google Cloud AI, recently published a framework that stopped me cold. Not because it was optimistic or pessimistic about AI, but because it treated the future of software engineering the way an engineer should: as a set of branching conditions with different execution paths.

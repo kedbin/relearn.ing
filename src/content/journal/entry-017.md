@@ -8,7 +8,7 @@ highlights:
   - "Temporal Discounting: The brain devalues distant rewards, making five more minutes in bed seem 'worth it' against the invisible cost of 360 remaining days"
   - "Yerkes-Dodson Law: Performance peaks at optimal arousal—too little stress means stagnation, too much means breakdown"
   - "The Zero-Decisions Protocol: Pre-load your morning tasks the night before to eliminate the cognitive load that groggy brains cannot afford"
-audioUrl: "/audio/entry-017.mp3"
+audioUrl: "https://audio.relearn.ing/entry-017.mp3"
 ---
 
 I woke up this morning and looked at a visual representation of the year—360 small shapes, only a handful filled in. The realization hit: the year is already in motion, and I am still in bed, groggy, feeling the pull of "five more minutes."

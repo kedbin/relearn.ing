@@ -9,7 +9,7 @@ highlights:
   - "The 'Brain Drain' Effect: Mere presence of a smartphone reduces cognitive capacity even when powered off (Ward et al., 2017)."
   - "Friction Design: Replace willpower with 'Choice Architecture' to automate good decisions (Thaler & Sunstein)."
   - "AI Coaching Efficacy: Randomized trials show AI chatbots match human coaches for goal attainment (Terblanche et al., 2022)."
-audioUrl: "/audio/entry-003.mp3"
+audioUrl: "https://audio.relearn.ing/entry-003.mp3"
 ---
 
 ## The Ecology of Growth

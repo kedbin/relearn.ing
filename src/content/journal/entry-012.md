@@ -8,7 +8,7 @@ highlights:
   - "The Model: Hyperbolic Discounting (George Ainslie) explains procrastination as an equation where the delay variable crashes the subjective value of future rewards toward zero."
   - "The Physics: Speed is scalar (magnitude only); Velocity is vector (magnitude plus direction). High effort with changing strategy equals zero net displacement."
   - "The Protocol: The Vector Alignment Protocol—audit directional consistency, reduce the delay variable through sprints, and measure trajectory ratio instead of outcomes."
-audioUrl: "/audio/entry-012.mp3"
+audioUrl: "https://audio.relearn.ing/entry-012.mp3"
 ---
 
 ## The Incident Report

@@ -8,7 +8,7 @@ highlights:
   - "Intolerance of Uncertainty: Performance anxiety is not fear of the audience—it is fear of the unhandled exception, the input you have no script for [1]."
   - "Social Fuzz Testing: Chaos presentations strip the format of its authority; when accuracy is impossible, the metric shifts from correctness to resilience."
   - "The Chaos Monkey Protocol: Competence is not the absence of errors, but the bandwidth to metabolize the unexpected."
-audioUrl: "/audio/entry-018.mp3"
+audioUrl: "https://audio.relearn.ing/entry-018.mp3"
 ---
 
 The slide on the screen shows a blurry photo of a cat wearing a tie, captioned "Q3 Financial Projections." The speaker, a 20-something software engineer who has never seen this image before, doesn't blink. "As you can see," he says with grave seriousness, "our vertical integration strategy has reached maximum saturation. We are officially... the cat's pajamas." The audience erupts in laughter. This is not a corporate boardroom meltdown. It is a Friday night in Shanghai, and this is *ppt乱讲* (chaos presentation)—a growing trend where strangers deliver improvised lectures on random, nonsensical slides they are seeing for the first time.

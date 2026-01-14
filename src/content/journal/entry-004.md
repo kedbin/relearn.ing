@@ -8,7 +8,7 @@ highlights:
   - "The Metric: AI closes the skill gap by 34% for novices (Brynjolfsson et al.)."
   - "The Model: The 'Math-Social' Quadrant (Deming) as the new stability."
   - "The Protocol: Moving from 'Code Monkey' to 'Product Operator'."
-audioUrl: "/audio/entry-004.mp3"
+audioUrl: "https://audio.relearn.ing/entry-004.mp3"
 ---
 
 ### The Input

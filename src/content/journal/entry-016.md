@@ -8,7 +8,7 @@ highlights:
   - "The 28-Day Decay: Complex skills show significant degradation after just four weeks of non-use [1]."
   - "Neural Garbage Collection: Synaptic pruning is a resource-optimization feature, not a bug; the brain deallocates 'unused' hardware to save energy [2]."
   - "The Bastiat Constraint: Every 'Yes' to a new project is a silent 'No' to the maintenance of existing systems [3]."
-audioUrl: "/audio/entry-016.mp3"
+audioUrl: "https://audio.relearn.ing/entry-016.mp3"
 ---
 
 Last week, I picked up a deck of cards to perform a classic 'Pass'—a move I had spent hundreds of hours perfecting. The result was catastrophic. My fingers were sluggish, the timing was off, and the 'invisible' move was glaringly obvious. 

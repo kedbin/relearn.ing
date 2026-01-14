@@ -8,7 +8,7 @@ highlights:
   - "The Productivity Frontier: When everyone adopts the same tools, collective productivity rises but individual advantage disappears [1]."
   - "The Ransom Note Era: Desktop publishing in 1985 proved that tool access doesn't confer taste—it just multiplies noise."
   - "The Taste Metric: Apple captures 28% of PC profits with 6% market share by refusing to compete on the commodity layer [2]."
-audioUrl: "/audio/entry-025.mp3"
+audioUrl: "https://audio.relearn.ing/entry-025.mp3"
 ---
 
 The euphoria is undeniable. You type a prompt, the terminal whirls, and a fully functional React app materializes. Andrej Karpathy calls it "Vibe Coding"—the shift from writing rigid syntax to managing natural language "vibes."
