@@ -27,7 +27,7 @@ linkedin: |
   AFTER (Cloudflare R2):
   - Deploy time: 8 seconds
   - Migration: 31 files uploaded in 4.3 seconds
-  - Cost: $0.002/month (yes, that's a fifth of a penny)
+  - Cost: $0/month (free tier covers 10GB)
   
   The meta-lesson: The most dangerous technical debt is the kind that "works."
   
@@ -46,7 +46,7 @@ threads: |
   moved to cloudflare R2:
   → 31 files migrated in 4.3 seconds
   → deploys now take 8 seconds
-  → cost: $0.002/month
+  → cost: $0/month (free tier)
   
   the most dangerous tech debt is the kind that "works"
   
