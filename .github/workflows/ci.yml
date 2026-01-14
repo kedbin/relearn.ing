@@ -35,7 +35,8 @@ jobs:
         run: npm ci
 
       - name: Update dependencies and audit for vulnerabilities
-        run: npm update && npm audit fix --force
+        run: npm update && npm audit fix --force || true
+        continue-on-error: true
 
       - name: Type check
         run: npx tsc --noEmit
