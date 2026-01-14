@@ -1,0 +1,186 @@
+name: Publish to Social Media
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/content/journal/**'
+
+permissions:
+  contents: read
+  id-token: write  # Required for Workload Identity Federation
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit to detect changes
+
+      - name: Get changed journal entries
+        id: changed
+        run: |
+          # Get list of changed journal entries
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'src/content/journal/*.md' 2>/dev/null | head -1)
+          
+          if [ -z "$CHANGED" ]; then
+            echo "No journal entries changed"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "Changed file: $CHANGED"
+            echo "file=$CHANGED" >> $GITHUB_OUTPUT
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check publish_social flag and extract content
+        if: steps.changed.outputs.skip != 'true'
+        id: check
+        run: |
+          FILE="${{ steps.changed.outputs.file }}"
+          
+          echo "Checking file: $FILE"
+          
+          # Read the file content
+          CONTENT=$(cat "$FILE")
+          
+          # Extract frontmatter (between first two ---)
+          FRONTMATTER=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | sed '1d;$d')
+          
+          echo "Frontmatter extracted, checking for publish_social flag..."
+          
+          # Check for publish_social: true
+          if echo "$FRONTMATTER" | grep -q "^publish_social: true"; then
+            echo "publish_social flag is TRUE - will publish to social media"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            
+            # Extract linkedin content (multiline YAML block)
+            # This handles the | syntax for multiline strings
+            LINKEDIN=$(echo "$FRONTMATTER" | awk '
+              /^linkedin:/ { 
+                flag=1
+                if ($0 ~ /\|/) { next }  # Skip the "linkedin: |" line
+                gsub(/^linkedin: */, "")  # Or get inline value
+                if (length > 0) print
+                next
+              }
+              /^[a-zA-Z_]+:/ && flag { flag=0 }
+              flag { gsub(/^  /, ""); print }
+            ')
+            
+            # Extract threads content
+            THREADS=$(echo "$FRONTMATTER" | awk '
+              /^threads:/ { 
+                flag=1
+                if ($0 ~ /\|/) { next }
+                gsub(/^threads: */, "")
+                if (length > 0) print
+                next
+              }
+              /^[a-zA-Z_]+:/ && flag { flag=0 }
+              flag { gsub(/^  /, ""); print }
+            ')
+            
+            # Extract audio URL
+            AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')
+            
+            # Debug output
+            echo "LinkedIn content length: ${#LINKEDIN}"
+            echo "Threads content length: ${#THREADS}"
+            echo "Audio URL: $AUDIO_URL"
+            
+            # Save to files for proper multiline handling
+            echo "$LINKEDIN" > /tmp/linkedin.txt
+            echo "$THREADS" > /tmp/threads.txt
+            
+            # For GitHub outputs, we need to handle multiline differently
+            {
+              echo 'linkedin<<EOF'
+              cat /tmp/linkedin.txt
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
+            
+            {
+              echo 'threads<<EOF'
+              cat /tmp/threads.txt
+              echo 'EOF'
+            } >> $GITHUB_OUTPUT
+            
+            echo "audio_url=https://relearn.ing$AUDIO_URL" >> $GITHUB_OUTPUT
+            
+          else
+            echo "publish_social flag is not true, skipping social media publish"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Authenticate to Google Cloud
+        if: steps.check.outputs.should_publish == 'true'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        if: steps.check.outputs.should_publish == 'true'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Publish to Pub/Sub
+        if: steps.check.outputs.should_publish == 'true'
+        env:
+          LINKEDIN_CONTENT: ${{ steps.check.outputs.linkedin }}
+          THREADS_CONTENT: ${{ steps.check.outputs.threads }}
+          AUDIO_URL: ${{ steps.check.outputs.audio_url }}
+        run: |
+          echo "Publishing to social media via Pub/Sub..."
+          
+          # Build the JSON payload using jq for proper escaping
+          PAYLOAD=$(jq -n \
+            --arg linkedin "$LINKEDIN_CONTENT" \
+            --arg threads "$THREADS_CONTENT" \
+            --arg audio_url "$AUDIO_URL" \
+            '{
+              content: "New journal entry published",
+              linkedin_content: $linkedin,
+              threads_content: $threads,
+              audio_url: $audio_url
+            }')
+          
+          echo "Payload:"
+          echo "$PAYLOAD" | jq .
+          
+          # Publish to Pub/Sub
+          gcloud pubsub topics publish social-publish-events \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --message="$PAYLOAD"
+          
+          echo ""
+          echo "✅ Published to Pub/Sub successfully!"
+          echo "The Cloud Workflow will now post to LinkedIn and Threads."
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Social Media Publishing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.changed.outputs.skip }}" == "true" ]; then
+            echo "⏭️ **Skipped**: No journal entries were changed" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.check.outputs.should_publish }}" != "true" ]; then
+            echo "⏭️ **Skipped**: \`publish_social\` flag is not set to \`true\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "To enable social publishing, add this to your entry's frontmatter:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`yaml" >> $GITHUB_STEP_SUMMARY
+            echo "publish_social: true" >> $GITHUB_STEP_SUMMARY
+            echo "linkedin: |" >> $GITHUB_STEP_SUMMARY
+            echo "  Your LinkedIn content here..." >> $GITHUB_STEP_SUMMARY
+            echo "threads: |" >> $GITHUB_STEP_SUMMARY
+            echo "  Your Threads content here..." >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Published**: Content sent to Pub/Sub for distribution" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Platforms**: LinkedIn, Threads" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check [Cloud Workflows](https://console.cloud.google.com/workflows) for execution status." >> $GITHUB_STEP_SUMMARY
+          fi
