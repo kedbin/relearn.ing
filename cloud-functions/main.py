@@ -242,3 +242,4 @@ if __name__ == "__main__":
     )
     print("\nThese functions are called by the Workflow, not directly.")
     print("Deploy with: ./scripts/deploy.sh")
+# Deployed via Cloud Build
