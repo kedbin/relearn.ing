@@ -82,7 +82,7 @@ jobs:
               flag { gsub(/^  /, ""); print }
             ')
             
-            # Extract audio URL
+            # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
             AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')
             
             # Debug output
@@ -107,7 +107,7 @@ jobs:
               echo 'EOF'
             } >> $GITHUB_OUTPUT
             
-            echo "audio_url=https://relearn.ing$AUDIO_URL" >> $GITHUB_OUTPUT
+            echo "audio_url=$AUDIO_URL" >> $GITHUB_OUTPUT
             
           else
             echo "publish_social flag is not true, skipping social media publish"
