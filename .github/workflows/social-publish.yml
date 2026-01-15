@@ -66,6 +66,7 @@ jobs:
                 next
               }
               /^[a-zA-Z_]+:/ && flag { flag=0 }
+              /^---$/ && flag { flag=0 }
               flag { gsub(/^  /, ""); print }
             ')
             
@@ -79,6 +80,7 @@ jobs:
                 next
               }
               /^[a-zA-Z_]+:/ && flag { flag=0 }
+              /^---$/ && flag { flag=0 }
               flag { gsub(/^  /, ""); print }
             ')
             
