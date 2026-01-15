@@ -171,3 +171,4 @@ References
 [2] Cloudflare. (2022). R2 Object Storage: Zero Egress Fees. Cloudflare Documentation.
 
 [3] Chacon, S. and Straub, B. (2014). Pro Git: Git Internals - Packfiles. Apress.
+
