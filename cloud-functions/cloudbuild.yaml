@@ -1,0 +1,41 @@
+steps:
+  # Deploy publish-linkedin
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'publish-linkedin'
+      - '--source=./cloud-functions'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--no-allow-unauthenticated'
+      - '--memory=512Mi'
+      - '--timeout=60s'
+      - '--service-account=social-fanout-sa@${PROJECT_ID}.iam.gserviceaccount.com'
+      - '--set-env-vars=GCP_PROJECT=${PROJECT_ID},FUNCTION_TARGET=publish_linkedin'
+      - '--quiet'
+    id: 'deploy-linkedin'
+
+  # Deploy publish-threads
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'publish-threads'
+      - '--source=./cloud-functions'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--no-allow-unauthenticated'
+      - '--memory=512Mi'
+      - '--timeout=60s'
+      - '--service-account=social-fanout-sa@${PROJECT_ID}.iam.gserviceaccount.com'
+      - '--set-env-vars=GCP_PROJECT=${PROJECT_ID},FUNCTION_TARGET=publish_threads'
+      - '--quiet'
+    id: 'deploy-threads'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '1200s'
