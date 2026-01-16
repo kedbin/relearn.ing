@@ -1,6 +1,6 @@
 ---
 title: "Social Fan-Out Pipeline: One Push, Everywhere"
-date: "2025-01-15"
+date: "2026-01-16"
 description: "A serverless event-driven architecture applying the fan-out pattern to distribute content from a single git push to LinkedIn and Threads simultaneously. Zero long-lived keys. Parallel execution with independent retry."
 repoUrl: "https://github.com/kedbin/social-fanout-pipeline"
 demoUrl: "https://youtu.be/Qz-S72zR6qk"
