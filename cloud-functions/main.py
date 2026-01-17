@@ -90,7 +90,7 @@ def publish_linkedin(request):
             headers={
                 "Authorization": f"Bearer {access_token}",
                 "X-Restli-Protocol-Version": "2.0.0",
-                "LinkedIn-Version": "202501",
+                "LinkedIn-Version": "202601",
                 "Content-Type": "application/json",
             },
             json={
