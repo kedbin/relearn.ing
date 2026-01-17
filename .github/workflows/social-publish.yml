@@ -52,8 +52,7 @@ jobs:
           
           # Check for publish_social: true
           if echo "$FRONTMATTER" | grep -q "^publish_social: true"; then
-            echo "publish_social flag is TRUE - will publish to social media"
-            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "publish_social flag is TRUE"
             
             # Extract linkedin content (multiline YAML block)
             # This handles the | syntax for multiline strings
@@ -83,6 +82,42 @@ jobs:
               /^---$/ && flag { flag=0 }
               flag { gsub(/^  /, ""); print }
             ')
+            
+            # Check if linkedin/threads content actually changed (idempotency check)
+            # Get previous version of the file
+            git show HEAD~1:"$FILE" > /tmp/prev_file.md 2>/dev/null || echo "" > /tmp/prev_file.md
+            
+            PREV_FRONTMATTER=$(cat /tmp/prev_file.md | sed -n '/^---$/,/^---$/p' | sed '1d;$d')
+            
+            PREV_LINKEDIN=$(echo "$PREV_FRONTMATTER" | awk '
+              /^linkedin:/ { flag=1; if ($0 ~ /\|/) { next }; gsub(/^linkedin: */, ""); if (length > 0) print; next }
+              /^[a-zA-Z_]+:/ && flag { flag=0 }
+              /^---$/ && flag { flag=0 }
+              flag { gsub(/^  /, ""); print }
+            ')
+            
+            PREV_THREADS=$(echo "$PREV_FRONTMATTER" | awk '
+              /^threads:/ { flag=1; if ($0 ~ /\|/) { next }; gsub(/^threads: */, ""); if (length > 0) print; next }
+              /^[a-zA-Z_]+:/ && flag { flag=0 }
+              /^---$/ && flag { flag=0 }
+              flag { gsub(/^  /, ""); print }
+            ')
+            
+            # Compare content hashes
+            CURR_HASH=$(echo "$LINKEDIN$THREADS" | md5sum | cut -d' ' -f1)
+            PREV_HASH=$(echo "$PREV_LINKEDIN$PREV_THREADS" | md5sum | cut -d' ' -f1)
+            
+            echo "Current hash: $CURR_HASH"
+            echo "Previous hash: $PREV_HASH"
+            
+            if [ "$CURR_HASH" = "$PREV_HASH" ] && [ -n "$PREV_HASH" ]; then
+              echo "Social content unchanged - skipping to prevent duplicate posts"
+              echo "should_publish=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            
+            echo "Social content changed or new - will publish to social media"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
             
             # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
             AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')

@@ -9,7 +9,7 @@ highlights:
   - "The Markov Property: Current state is the only truth—past context breeds hallucination [2]"
   - "Sequential Monte Carlo: Discarding unpromising outputs early is mathematically superior to planning [3]"
 audioUrl: "https://audio.relearn.ing/entry-028.mp3"
-publish_social: true
+publish_social: false
 linkedin: |
   There's a pattern in agentic AI called the "Ralph Wiggum Loop" — named after the Simpsons kid who gets thrown through a window and cheerfully says "I'm helping!"
   
