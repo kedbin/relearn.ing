@@ -21,7 +21,7 @@ linkedin: |
   
   It's the Infinite Monkey Theorem, industrialized. The monkeys just have a spell-checker now.
   
-  Wrote up the research and a practical framework on relearn.ing \(with audio\):
+  Wrote up the research and a practical framework on relearn.ing (with audio):
   
   https://relearn.ing/journal/entry-028/
 threads: |
@@ -31,7 +31,7 @@ threads: |
   
   The genius froze at Act 3. The monkey shipped.
   
-  Full write-up \(or listen\) → relearn.ing/journal/entry-028/
+  Full write-up (or listen) → relearn.ing/journal/entry-028/
 ---
 
 In late 2025, the AI engineering community faced a humiliating realization. We had spent billions trying to build "Agentic AI" that could reason like a senior engineer—planning architectures, maintaining complex state, and "thinking" before acting.
