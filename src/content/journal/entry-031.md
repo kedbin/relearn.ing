@@ -9,7 +9,7 @@ highlights:
   - "The Zeigarnik Effect acts as a memory leak, where incomplete tasks consume cognitive resources indefinitely [3]."
   - "Protocol: Implement a strict 'Actionability Predicate' to filter inputs before they enter the system."
 audioUrl: "https://audio.relearn.ing/entry-031.mp3"
-linkedin_image_urn: "urn:li:image:D4E10AQF8KfEThWYMvQ"
+linkedin_image_urn: "urn:li:image:D4E10AQEyWQ4Zv6qLrA"
 publish_social: true
 linkedin: |
   Studying for Google's DevOps Engineer cert and kept seeing this principle: reduce burnout by removing unactionable items.
