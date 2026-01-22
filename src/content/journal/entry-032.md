@@ -9,7 +9,7 @@ highlights:
   - "Declarative vs Imperative: Describing 'what you want' instead of 'how to make it' reduces iteration time by an order of magnitude."
   - "Skill Accumulation: Each prompt refinement becomes reusable knowledge that compounds across future projects."
 audioUrl: "https://audio.relearn.ing/entry-032.mp3"
-publish_social: true
+publish_social: false
 linkedin: |
   I saw a LinkedIn post claiming Claude Code + Remotion was the "ChatGPT moment for video creation."
   
