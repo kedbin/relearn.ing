@@ -59,18 +59,22 @@ def publish_linkedin(request):
     Expected JSON body:
     {
         "content": "The post content...",
-        "audio_url": "https://relearn.ing/audio/..."  (optional)
+        "audio_url": "https://relearn.ing/audio/..."  (optional),
+        "image_urn": "urn:li:image:..."  (optional - pre-uploaded image URN)
     }
     """
     try:
         data = request.get_json(silent=True) or {}
         content = data.get("content", "")
         audio_url = data.get("audio_url", "")
+        image_urn = data.get("image_urn", "")
 
         if not content:
             return json.dumps({"success": False, "error": "No content provided"}), 400
 
-        logger.info(f"Publishing to LinkedIn: {len(content)} chars")
+        logger.info(
+            f"Publishing to LinkedIn: {len(content)} chars, image: {bool(image_urn)}"
+        )
 
         # Get credentials from Secret Manager
         access_token = get_secret("linkedin-access-token")
@@ -85,6 +89,29 @@ def publish_linkedin(request):
         if audio_url:
             escaped = f"{escaped}\n\n🎧 Listen: {audio_url}"
 
+        # Build the post payload
+        post_payload = {
+            "author": person_urn,  # Use the full URN directly
+            "commentary": escaped,
+            "visibility": "PUBLIC",
+            "distribution": {
+                "feedDistribution": "MAIN_FEED",
+                "targetEntities": [],
+                "thirdPartyDistributionChannels": [],
+            },
+            "lifecycleState": "PUBLISHED",
+            "isReshareDisabledByAuthor": False,
+        }
+
+        # If image URN provided, add it to the post
+        if image_urn:
+            post_payload["content"] = {
+                "media": {
+                    "id": image_urn,
+                }
+            }
+            logger.info(f"Including image: {image_urn}")
+
         response = requests.post(
             "https://api.linkedin.com/rest/posts",
             headers={
@@ -93,18 +120,7 @@ def publish_linkedin(request):
                 "LinkedIn-Version": "202601",
                 "Content-Type": "application/json",
             },
-            json={
-                "author": person_urn,  # Use the full URN directly
-                "commentary": escaped,
-                "visibility": "PUBLIC",
-                "distribution": {
-                    "feedDistribution": "MAIN_FEED",
-                    "targetEntities": [],
-                    "thirdPartyDistributionChannels": [],
-                },
-                "lifecycleState": "PUBLISHED",
-                "isReshareDisabledByAuthor": False,
-            },
+            json=post_payload,
             timeout=30,
         )
 

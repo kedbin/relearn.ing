@@ -1,0 +1,80 @@
+main:
+  params: [event]
+  steps:
+    - init:
+        assign:
+          - encoded_data: ${event.data.message.data}
+          - decoded_string: ${text.decode(base64.decode(encoded_data))}
+          - message_data: ${json.decode(decoded_string)}
+          - linkedin_content: ${default(map.get(message_data, "linkedin_content"), "")}
+          - threads_content: ${default(map.get(message_data, "threads_content"), "")}
+          - audio_url: ${default(map.get(message_data, "audio_url"), "")}
+          - image_urn: ${default(map.get(message_data, "image_urn"), "")}
+          - project_id: "371885027672"
+          - region: "us-central1"
+          - results:
+              linkedin: null
+              threads: null
+    - log_start:
+        call: sys.log
+        args:
+          text: ${"Starting social publish - LinkedIn:" + linkedin_content + ", image_urn:" + image_urn}
+          severity: INFO
+    - parallel_publish:
+        parallel:
+          shared: [results]
+          branches:
+            - linkedin_branch:
+                steps:
+                  - call_linkedin:
+                      try:
+                        call: http.post
+                        args:
+                          url: ${"https://publish-linkedin-" + project_id + "." + region + ".run.app"}
+                          auth:
+                            type: OIDC
+                          body:
+                            content: ${linkedin_content}
+                            audio_url: ${audio_url}
+                            image_urn: ${image_urn}
+                        result: li_response
+                      retry:
+                        predicate: ${http.default_retry_predicate}
+                        max_retries: 3
+                        backoff:
+                          initial_delay: 2
+                          max_delay: 8
+                          multiplier: 2
+                  - save_linkedin:
+                      assign:
+                        - results.linkedin: ${li_response}
+            - threads_branch:
+                steps:
+                  - call_threads:
+                      try:
+                        call: http.post
+                        args:
+                          url: ${"https://publish-threads-" + project_id + "." + region + ".run.app"}
+                          auth:
+                            type: OIDC
+                          body:
+                            content: ${threads_content}
+                            audio_url: ${audio_url}
+                        result: th_response
+                      retry:
+                        predicate: ${http.default_retry_predicate}
+                        max_retries: 5
+                        backoff:
+                          initial_delay: 3
+                          max_delay: 48
+                          multiplier: 2
+                  - save_threads:
+                      assign:
+                        - results.threads: ${th_response}
+    - log_complete:
+        call: sys.log
+        args:
+          text: ${"Workflow complete - Results:" + json.encode_to_string(results)}
+          severity: INFO
+    - return_results:
+        return: ${results}

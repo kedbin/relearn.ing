@@ -122,10 +122,14 @@ jobs:
             # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
             AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')
             
+            # Extract LinkedIn image URN (pre-uploaded via local script)
+            IMAGE_URN=$(echo "$FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
+            
             # Debug output
             echo "LinkedIn content length: ${#LINKEDIN}"
             echo "Threads content length: ${#THREADS}"
             echo "Audio URL: $AUDIO_URL"
+            echo "Image URN: $IMAGE_URN"
             
             # Save to files for proper multiline handling
             echo "$LINKEDIN" > /tmp/linkedin.txt
@@ -145,6 +149,7 @@ jobs:
             } >> $GITHUB_OUTPUT
             
             echo "audio_url=$AUDIO_URL" >> $GITHUB_OUTPUT
+            echo "image_urn=$IMAGE_URN" >> $GITHUB_OUTPUT
             
           else
             echo "publish_social flag is not true, skipping social media publish"
@@ -168,6 +173,7 @@ jobs:
           LINKEDIN_CONTENT: ${{ steps.check.outputs.linkedin }}
           THREADS_CONTENT: ${{ steps.check.outputs.threads }}
           AUDIO_URL: ${{ steps.check.outputs.audio_url }}
+          IMAGE_URN: ${{ steps.check.outputs.image_urn }}
         run: |
           echo "Publishing to social media via Pub/Sub..."
           
@@ -176,11 +182,13 @@ jobs:
             --arg linkedin "$LINKEDIN_CONTENT" \
             --arg threads "$THREADS_CONTENT" \
             --arg audio_url "$AUDIO_URL" \
+            --arg image_urn "$IMAGE_URN" \
             '{
               content: "New journal entry published",
               linkedin_content: $linkedin,
               threads_content: $threads,
-              audio_url: $audio_url
+              audio_url: $audio_url,
+              image_urn: $image_urn
             }')
           
           echo "Payload:"
