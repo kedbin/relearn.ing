@@ -3,15 +3,6 @@ name: CI & Deploy
 on:
   push:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'astro.config.mjs'
-      - 'tsconfig.json'
-      - 'tailwind.config.mjs'
-      - '.github/workflows/ci.yml'
   pull_request:
     branches: [main]
   workflow_dispatch:
