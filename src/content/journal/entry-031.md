@@ -10,7 +10,7 @@ highlights:
   - "Protocol: Implement a strict 'Actionability Predicate' to filter inputs before they enter the system."
 audioUrl: "https://audio.relearn.ing/entry-031.mp3"
 linkedin_image_urn: "urn:li:image:D4E10AQEyWQ4Zv6qLrA"
-publish_social: true
+publish_social: false
 linkedin: |
   Studying for Google's DevOps Engineer cert and kept seeing this principle: reduce burnout by removing unactionable items.
 

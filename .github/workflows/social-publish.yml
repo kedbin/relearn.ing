@@ -103,9 +103,13 @@ jobs:
               flag { gsub(/^  /, ""); print }
             ')
             
-            # Compare content hashes
-            CURR_HASH=$(echo "$LINKEDIN$THREADS" | md5sum | cut -d' ' -f1)
-            PREV_HASH=$(echo "$PREV_LINKEDIN$PREV_THREADS" | md5sum | cut -d' ' -f1)
+            # Extract LinkedIn image URN for hash comparison
+            CURR_IMAGE_URN=$(echo "$FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
+            PREV_IMAGE_URN=$(echo "$PREV_FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
+            
+            # Compare content hashes (include image URN so image changes trigger republish)
+            CURR_HASH=$(echo "$LINKEDIN$THREADS$CURR_IMAGE_URN" | md5sum | cut -d' ' -f1)
+            PREV_HASH=$(echo "$PREV_LINKEDIN$PREV_THREADS$PREV_IMAGE_URN" | md5sum | cut -d' ' -f1)
             
             echo "Current hash: $CURR_HASH"
             echo "Previous hash: $PREV_HASH"
@@ -122,8 +126,8 @@ jobs:
             # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
             AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')
             
-            # Extract LinkedIn image URN (pre-uploaded via local script)
-            IMAGE_URN=$(echo "$FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
+            # Use the image URN we already extracted for hash comparison
+            IMAGE_URN="$CURR_IMAGE_URN"
             
             # Debug output
             echo "LinkedIn content length: ${#LINKEDIN}"
