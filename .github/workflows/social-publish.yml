@@ -107,9 +107,13 @@ jobs:
             CURR_IMAGE_URN=$(echo "$FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
             PREV_IMAGE_URN=$(echo "$PREV_FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
             
-            # Compare content hashes (include image URN so image changes trigger republish)
-            CURR_HASH=$(echo "$LINKEDIN$THREADS$CURR_IMAGE_URN" | md5sum | cut -d' ' -f1)
-            PREV_HASH=$(echo "$PREV_LINKEDIN$PREV_THREADS$PREV_IMAGE_URN" | md5sum | cut -d' ' -f1)
+            # Extract LinkedIn video URN
+            CURR_VIDEO_URN=$(echo "$FRONTMATTER" | grep "^linkedin_video_urn:" | sed 's/linkedin_video_urn: *"//' | sed 's/"$//' | tr -d '"')
+            PREV_VIDEO_URN=$(echo "$PREV_FRONTMATTER" | grep "^linkedin_video_urn:" | sed 's/linkedin_video_urn: *"//' | sed 's/"$//' | tr -d '"')
+            
+            # Compare content hashes (include image/video URN so media changes trigger republish)
+            CURR_HASH=$(echo "$LINKEDIN$THREADS$CURR_IMAGE_URN$CURR_VIDEO_URN" | md5sum | cut -d' ' -f1)
+            PREV_HASH=$(echo "$PREV_LINKEDIN$PREV_THREADS$PREV_IMAGE_URN$PREV_VIDEO_URN" | md5sum | cut -d' ' -f1)
             
             echo "Current hash: $CURR_HASH"
             echo "Previous hash: $PREV_HASH"
@@ -126,14 +130,16 @@ jobs:
             # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
             AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')
             
-            # Use the image URN we already extracted for hash comparison
+            # Use the image/video URN we already extracted for hash comparison
             IMAGE_URN="$CURR_IMAGE_URN"
+            VIDEO_URN="$CURR_VIDEO_URN"
             
             # Debug output
             echo "LinkedIn content length: ${#LINKEDIN}"
             echo "Threads content length: ${#THREADS}"
             echo "Audio URL: $AUDIO_URL"
             echo "Image URN: $IMAGE_URN"
+            echo "Video URN: $VIDEO_URN"
             
             # Save to files for proper multiline handling
             echo "$LINKEDIN" > /tmp/linkedin.txt
@@ -154,6 +160,7 @@ jobs:
             
             echo "audio_url=$AUDIO_URL" >> $GITHUB_OUTPUT
             echo "image_urn=$IMAGE_URN" >> $GITHUB_OUTPUT
+            echo "video_urn=$VIDEO_URN" >> $GITHUB_OUTPUT
             
           else
             echo "publish_social flag is not true, skipping social media publish"
@@ -178,6 +185,7 @@ jobs:
           THREADS_CONTENT: ${{ steps.check.outputs.threads }}
           AUDIO_URL: ${{ steps.check.outputs.audio_url }}
           IMAGE_URN: ${{ steps.check.outputs.image_urn }}
+          VIDEO_URN: ${{ steps.check.outputs.video_urn }}
         run: |
           echo "Publishing to social media via Pub/Sub..."
           
@@ -187,12 +195,14 @@ jobs:
             --arg threads "$THREADS_CONTENT" \
             --arg audio_url "$AUDIO_URL" \
             --arg image_urn "$IMAGE_URN" \
+            --arg video_urn "$VIDEO_URN" \
             '{
               content: "New journal entry published",
               linkedin_content: $linkedin,
               threads_content: $threads,
               audio_url: $audio_url,
-              image_urn: $image_urn
+              image_urn: $image_urn,
+              video_urn: $video_urn
             }')
           
           echo "Payload:"

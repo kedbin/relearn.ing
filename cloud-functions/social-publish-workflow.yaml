@@ -10,6 +10,7 @@ main:
           - threads_content: ${default(map.get(message_data, "threads_content"), "")}
           - audio_url: ${default(map.get(message_data, "audio_url"), "")}
           - image_urn: ${default(map.get(message_data, "image_urn"), "")}
+          - video_urn: ${default(map.get(message_data, "video_urn"), "")}
           - project_id: "371885027672"
           - region: "us-central1"
           - results:
@@ -18,7 +19,7 @@ main:
     - log_start:
         call: sys.log
         args:
-          text: ${"Starting social publish - LinkedIn:" + linkedin_content + ", image_urn:" + image_urn}
+          text: ${"Starting social publish - LinkedIn:" + linkedin_content + ", image_urn:" + image_urn + ", video_urn:" + video_urn}
           severity: INFO
     - parallel_publish:
         parallel:
@@ -37,6 +38,7 @@ main:
                             content: ${linkedin_content}
                             audio_url: ${audio_url}
                             image_urn: ${image_urn}
+                            video_urn: ${video_urn}
                         result: li_response
                       retry:
                         predicate: ${http.default_retry_predicate}

@@ -60,20 +60,24 @@ def publish_linkedin(request):
     {
         "content": "The post content...",
         "audio_url": "https://relearn.ing/audio/..."  (optional),
-        "image_urn": "urn:li:image:..."  (optional - pre-uploaded image URN)
+        "image_urn": "urn:li:image:..."  (optional - pre-uploaded image URN),
+        "video_urn": "urn:li:digitalmediaAsset:..."  (optional - pre-uploaded video URN)
     }
+
+    Note: image_urn and video_urn are mutually exclusive. If both provided, video takes priority.
     """
     try:
         data = request.get_json(silent=True) or {}
         content = data.get("content", "")
         audio_url = data.get("audio_url", "")
         image_urn = data.get("image_urn", "")
+        video_urn = data.get("video_urn", "")
 
         if not content:
             return json.dumps({"success": False, "error": "No content provided"}), 400
 
         logger.info(
-            f"Publishing to LinkedIn: {len(content)} chars, image: {bool(image_urn)}"
+            f"Publishing to LinkedIn: {len(content)} chars, image: {bool(image_urn)}, video: {bool(video_urn)}"
         )
 
         # Get credentials from Secret Manager
@@ -103,26 +107,60 @@ def publish_linkedin(request):
             "isReshareDisabledByAuthor": False,
         }
 
-        # If image URN provided, add it to the post
-        if image_urn:
-            post_payload["content"] = {
-                "media": {
-                    "id": image_urn,
-                }
-            }
-            logger.info(f"Including image: {image_urn}")
+        # If video URN provided, use the ugcPosts API (different format for video)
+        if video_urn:
+            logger.info(f"Including video: {video_urn}")
 
-        response = requests.post(
-            "https://api.linkedin.com/rest/posts",
-            headers={
-                "Authorization": f"Bearer {access_token}",
-                "X-Restli-Protocol-Version": "2.0.0",
-                "LinkedIn-Version": "202601",
-                "Content-Type": "application/json",
-            },
-            json=post_payload,
-            timeout=30,
-        )
+            # Video posts use the older ugcPosts API
+            post_payload = {
+                "author": person_urn,
+                "lifecycleState": "PUBLISHED",
+                "specificContent": {
+                    "com.linkedin.ugc.ShareContent": {
+                        "shareCommentary": {"text": escaped},
+                        "shareMediaCategory": "VIDEO",
+                        "media": [
+                            {
+                                "status": "READY",
+                                "media": video_urn,
+                            }
+                        ],
+                    }
+                },
+                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
+            }
+
+            response = requests.post(
+                "https://api.linkedin.com/v2/ugcPosts",
+                headers={
+                    "Authorization": f"Bearer {access_token}",
+                    "X-Restli-Protocol-Version": "2.0.0",
+                    "Content-Type": "application/json",
+                },
+                json=post_payload,
+                timeout=30,
+            )
+        else:
+            # If image URN provided, add it to the post
+            if image_urn:
+                post_payload["content"] = {
+                    "media": {
+                        "id": image_urn,
+                    }
+                }
+                logger.info(f"Including image: {image_urn}")
+
+            response = requests.post(
+                "https://api.linkedin.com/rest/posts",
+                headers={
+                    "Authorization": f"Bearer {access_token}",
+                    "X-Restli-Protocol-Version": "2.0.0",
+                    "LinkedIn-Version": "202601",
+                    "Content-Type": "application/json",
+                },
+                json=post_payload,
+                timeout=30,
+            )
 
         if response.status_code == 201:
             post_id = response.headers.get("x-restli-id", "unknown")
