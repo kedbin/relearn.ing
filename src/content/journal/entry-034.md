@@ -223,6 +223,89 @@ If I am right, I will be one of the few early-mid level engineers who made the b
 
 This is not a plan. This is a bet. And I am all in.
 
+## Appendix: The Beginner Track
+
+This section is for those starting from zero systems programming experience—coming from Python, JavaScript, or other high-level languages. This is not a disadvantage. Research shows that senior engineers sometimes struggle more with Rust than juniors because they keep trying to write C++ patterns that the borrow checker rejects [6]. A blank slate is a feature, not a bug.
+
+### What Will Feel Familiar
+
+If you know Python or JavaScript, several Rust concepts will map naturally:
+
+- Rust's syntax borrows from many languages (pattern matching, iterators, closures)
+- Cargo (Rust's package manager) works like npm but with better dependency resolution
+- Error handling with `Result<T, E>` is similar to try/catch but forces explicit handling
+- Strong typing will feel stricter but not entirely foreign
+
+### What Will Be New (and Painful)
+
+The following table maps Python/JS mental models to Rust reality:
+
+- **Ownership:** In Python, everything is a reference you pass around freely. In Rust, every value has exactly one owner. When ownership moves, the original variable becomes invalid.
+- **Borrowing:** In JavaScript, you just pass objects. In Rust, you must explicitly borrow with `&` for read access or `&mut` for write access.
+- **Lifetimes:** Python's garbage collector handles memory automatically. In Rust, you prove to the compiler how long references remain valid.
+- **No null:** Python has `None`, JavaScript has `null` and `undefined`. Rust has `Option<T>`, and you must handle the empty case explicitly.
+- **No exceptions:** Python uses try/except, JavaScript uses try/catch. Rust uses `Result<T, E>`, and you must handle errors explicitly.
+
+### The Emotional Arc
+
+Expect this progression:
+
+- **Week 1-2:** "This is cool, Cargo is nice, the syntax is readable."
+- **Week 3-4:** "Why will this not compile? The borrow checker hates me." (The Wall)
+- **Week 5-6:** "Oh... I think I understand ownership now."
+- **Week 7-8:** "Wait, the compiler is actually protecting me from real bugs."
+- **Month 3+:** "I cannot believe I used to write code without these guarantees."
+
+The "Week 3-4 Wall" is where most beginners quit. That wall is the signal. Pushing through it is what separates you from the AI-generated code crowd. The struggle is the proof of work.
+
+### Revised Phase 1: True Beginner Track
+
+**Sprint 1 (Weeks 1-2): Rust Fundamentals Part A**
+
+Week 1 focuses on basics:
+
+- Install Rust via rustup
+- Read Chapters 1-6 of The Rust Book (the official, free resource)
+- Complete the first 30 Rustlings exercises
+- Deliverable: Screenshot of 30 completed exercises pushed to a learning repository
+
+Week 2 tackles ownership (the hard part):
+
+- Read Chapters 7-10 of The Rust Book (ownership, borrowing, lifetimes)
+- Complete Rustlings exercises on ownership and borrowing
+- Deliverable: Write a blog post or README explaining ownership in your own words
+
+**Sprint 2 (Weeks 3-4): Rust Fundamentals Part B**
+
+Week 3 finishes the exercises:
+
+- Complete remaining Rustlings exercises (approximately 70 more)
+- Start reading Rust by Example for practical patterns
+- Deliverable: 100 percent Rustlings completion
+
+Week 4 builds the first real project:
+
+- Build a small CLI tool (file renamer, markdown converter, or anything useful to you)
+- Use the clap crate for argument parsing
+- Deliverable: Working CLI on GitHub with a README
+
+### When to Add C++
+
+The original plan introduces C++ in Phase 2 (Months 3-4). For beginners, I am adjusting the timeline:
+
+- **Months 1-4:** Rust only. Get comfortable with ownership, borrowing, and the Rust ecosystem.
+- **Months 5-6:** Start C++ basics when you encounter CUDA. The NVIDIA ecosystem requires C/C++.
+- **Month 7+:** Rust/C++ interop as needed for specific projects.
+
+By Month 5, your Rust mental model will make C++ easier to understand. You will see why certain C++ patterns are dangerous because Rust already taught you what memory safety means.
+
+### Resources
+
+- The Rust Book: https://doc.rust-lang.org/book/
+- Rustlings: https://github.com/rust-lang/rustlings
+- Rust by Example: https://doc.rust-lang.org/rust-by-example/
+- Exercism Rust Track: https://exercism.org/tracks/rust
+
 ## References
 
 [1] JetBrains. (2025). "Rust VS C++ Comparison for 2026." *The RustRover Blog*.
@@ -234,3 +317,5 @@ This is not a plan. This is a bet. And I am all in.
 [4] Sadhwani, V. (2025). "AI Infra Engineer Learning Roadmap." *tech5ense*.
 
 [5] Ng, A. (2025). "Your Side Project Won't Save You Anymore." *Medium*.
+
+[6] corrode Rust Consulting. (2025). "Flattening Rust's Learning Curve."
