@@ -84,19 +84,19 @@ def publish_linkedin(request):
         access_token = get_secret("linkedin-access-token")
         person_urn = get_secret("linkedin-urn")  # Full URN like urn:li:person:xxx
 
-        # Escape reserved characters for LinkedIn
-        import re
-
-        escaped = re.sub(r"([|{}@\[\]()<>#\*_~\\])", r"\\\1", content)
+        # Note: LinkedIn's REST API (/rest/posts) does NOT require escaping most characters.
+        # The older UGC API required escaping, but we only use that for video posts.
+        # For video posts (ugcPosts API), we escape only the truly reserved characters.
 
         # If audio URL provided, append it
+        final_content = content
         if audio_url:
-            escaped = f"{escaped}\n\n🎧 Listen: {audio_url}"
+            final_content = f"{content}\n\n🎧 Listen: {audio_url}"
 
         # Build the post payload
         post_payload = {
             "author": person_urn,  # Use the full URN directly
-            "commentary": escaped,
+            "commentary": final_content,
             "visibility": "PUBLIC",
             "distribution": {
                 "feedDistribution": "MAIN_FEED",
@@ -111,13 +111,18 @@ def publish_linkedin(request):
         if video_urn:
             logger.info(f"Including video: {video_urn}")
 
-            # Video posts use the older ugcPosts API
+            # Video posts use the older ugcPosts API which may need minimal escaping
+            # Only escape pipe and curly braces which are truly reserved
+            import re
+
+            video_content = re.sub(r"([|{}])", r"\\\1", final_content)
+
             post_payload = {
                 "author": person_urn,
                 "lifecycleState": "PUBLISHED",
                 "specificContent": {
                     "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {"text": escaped},
+                        "shareCommentary": {"text": video_content},
                         "shareMediaCategory": "VIDEO",
                         "media": [
                             {
