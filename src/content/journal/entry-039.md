@@ -1,7 +1,7 @@
 ---
 title: "The Observability Doctrine: Why Hard Work Deprecates Silently"
 date: "2026-02-02"
-summary: "A Principal Engineer's retrospective on the 5 unlearnings required to break career stagnation, framed through the lens of system observability and signal detection theory."
+summary: "A Principal Engineer's retrospective on the five unlearnings required to break career stagnation, framed through the lens of system observability and signal detection theory."
 status: "Published"
 category: "Relearn Work / Career Engineering"
 highlights:
