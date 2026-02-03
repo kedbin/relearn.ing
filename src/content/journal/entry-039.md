@@ -9,7 +9,7 @@ highlights:
   - "Multiplier Effect: At senior levels, network throughput beats individual throughput--Multipliers extract 2x capability from teams (Wiseman, 2010)."
   - "High Agency: Internal locus of control predicts breaking stagnation; prototype over permission, shadow to own (Judge & Bono, 2001)."
 audioUrl: "https://audio.relearn.ing/entry-039.mp3"
-publish_social: true
+publish_social: false
 linkedin_video_urn: "urn:li:digitalmediaAsset:D4D05AQFWuY264NncPA"
 linkedin: |
   I spent years believing hard work would speak for itself.
