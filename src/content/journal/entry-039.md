@@ -30,7 +30,7 @@ linkedin: |
   
   Full write-up (with audio) on relearn.ing:
   
-  https://relearn.ing/journal/entry-039/
+  https://relearn.ing/journal/entry-039
 threads: |
   spent years thinking hard work speaks for itself
   
