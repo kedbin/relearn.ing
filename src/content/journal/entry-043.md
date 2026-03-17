@@ -5,9 +5,9 @@ summary: "Hierarchical time synchronization introduces jitter and single points 
 status: "Published"
 category: "Relearn Engineering / Distributed Systems"
 highlights:
-  - "Clock Drift": "Crystal oscillator imperfections make centralized synchronization brittle at scale (Dalal & Li, 2026)."
-  - "Layered Consensus": "Decoupling internal state from external timing prevents cascading failures (Li et al., 2026)."
-  - "Random Graphs": "Using d-regular random graphs for peer selection averages out path asymmetries."
+  - "Clock Drift: Crystal oscillator imperfections make centralized synchronization brittle at scale (Dalal & Li, 2026)."
+  - "Layered Consensus: Decoupling internal state from external timing prevents cascading failures (Li et al., 2026)."
+  - "Random Graphs: Using d-regular random graphs for peer selection averages out path asymmetries."
 audioUrl: "https://audio.relearn.ing/entry-043.mp3"
 publish_social: true
 linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQGZJT2B7XMkng"
