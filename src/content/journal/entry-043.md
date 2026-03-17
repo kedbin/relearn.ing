@@ -10,7 +10,7 @@ highlights:
   - "Random Graphs": "Using d-regular random graphs for peer selection averages out path asymmetries."
 audioUrl: "https://audio.relearn.ing/entry-043.mp3"
 publish_social: true
-linkedin_video_urn: ""
+linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQGZJT2B7XMkng"
 linkedin: |
   We've been building distributed systems with a fatal flaw: relying on a master clock.
   
