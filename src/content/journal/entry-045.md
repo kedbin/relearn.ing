@@ -1,98 +1,116 @@
 ---
-title: "The Throughput Trap: Migrating to Qwen3-TTS on RDNA 4"
+title: "The Voice Clone Migration: From Chatterbox to Qwen3-TTS"
 date: "2026-03-20"
-summary: "Debugging the heterogeneous compute stack for real-time audio generation on bleeding-edge AMD hardware."
+summary: "Migrating voice cloning from Chatterbox Turbo to Qwen3-TTS for better fidelity, and the optimization journey to match the original speed."
 status: "Published"
 category: "Relearn Engineering / Systems"
 highlights:
-  - "Heterogeneous Bottlenecks: A faster GPU cannot overcome a CPU that is bogged down by thread contention and kernel compilation (Garofalo et al., 2023)."
-  - "Heuristic Overhead: Disabling exhaustive convolution searches in MIOpen reclaims CPU cycles and prevents GPU starvation (AMD ROCm, 2024)."
-  - "Signal Integrity: Naive tensor concatenation causes phase mismatch; proper crossfading and LUFS normalization are required to prevent audio artifacts (Smith, 2010)."
+  - "Voice Fidelity: Qwen3-TTS captures paralinguistic nuance better than Chatterbox Turbo, but requires audio-plus-transcript reference (Qwen Team, 2026)."
+  - "AMD ROCm Friction: Bleeding-edge GPUs like the RX 9070 XT lack kernel support, requiring Triton backend and architecture-specific compilation (AMD ROCm, 2024)."
+  - "CPU Orchestration: 3.4x speedup achieved by fixing MIOpen auto-tuning and OpenMP thread contention, not by upgrading hardware (Garofalo et al., 2023)."
 audioUrl: "https://audio.relearn.ing/entry-045.mp3"
-videoUrl: "urn:li:digitalmediaAsset:D4E05AQE1TB2ILGGG9Q"
-linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQE1TB2ILGGG9Q"
+videoUrl: "https://relearn.ing/videos/entry-045.mp4"
+linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQHlL3DkUvN5pg"
 publish_social: true
 linkedin: |
-  I dropped AMD's bleeding-edge Radeon RX 9070 XT into my rig, expecting to crush voice cloning workloads.
+  I migrated my voice cloning pipeline from Chatterbox Turbo to Qwen3-TTS.
   
-  Instead, my first attempt resulted in a hard GPU hang. When I finally got it running, generating 10 seconds of audio took 2 minutes and 15 seconds.
+  Why? Qwen captures my voice and tone better. More recent model, better zero-shot cloning.
   
-  The GPU was practically asleep. The CPU was pinned at 100%.
+  But there was a catch: on my AMD RX 9070 XT, Qwen took 2 minutes 15 seconds for 10 seconds of audio. Chatterbox Turbo? About 30 seconds.
   
-  I had fallen into the classic hardware trap: assuming a faster accelerator automatically yields faster throughput.
+  The problem wasn't the GPU. It was the CPU.
   
-  → The GPU is the worker. The CPU is the manager.
-  → If the manager spends all its time compiling kernels, the worker sits idle.
-  → Fix: MIOpen fast mode, thread constraints, proper audio crossfading.
+  → MIOpen was auto-tuning kernels on every inference pass
+  → OpenMP was spawning threads across all 16 cores, causing contention
+  → Flash Attention needed Triton backend, not the unsupported CK backend
   
-  Result: 3.4x speedup. 40 seconds instead of 2:15.
+  After optimization: 40 seconds. Still slower than Chatterbox, but acceptable for the quality gain.
   
-  A bleeding-edge accelerator is just an expensive heater until the CPU learns how to feed it.
+  Tradeoffs:
+  ✅ Better voice fidelity
+  ✅ Natural language emotion control
+  ❌ Requires transcript with reference audio
+  ❌ More complex setup on AMD
+  
+  The GPU is the worker. The CPU is the manager. Don't starve the worker.
   
   Full write-up (with audio) on relearn.ing:
   
   https://relearn.ing/journal/entry-045/
 threads: |
-  Bought a bleeding-edge GPU. Got 2:15 for 10 seconds of audio.
+  Migrated from Chatterbox to Qwen3-TTS for voice cloning.
   
-  Turns out the CPU was the bottleneck all along.
+  Better voice fidelity. But 2:15 for 10s audio vs 30s on Chatterbox.
   
-  Fixed: kernel compilation, thread contention, audio pipeline.
+  Fixed: MIOpen tuning, thread contention, Triton backend.
   
-  Result: 40 seconds. 3.4x faster.
+  Now: 40 seconds. Acceptable tradeoff for the quality.
   
-  The GPU is the worker. The CPU is the manager. Don't starve the worker.
+  The GPU is the worker. The CPU is the manager.
   
   relearn.ing/journal/entry-045/
 ---
 
-I recently dropped AMD's bleeding-edge Radeon RX 9070 XT (RDNA 4) into my rig, expecting to instantly crush voice cloning workloads. Instead, my first attempt to run Qwen3-TTS resulted in a hard GPU hang. When I finally got it running, generating 10 seconds of audio took 2 minutes and 15 seconds. The GPU was practically asleep, while the CPU was pinned at 100%. I had fallen into the classic hardware trap: assuming a faster accelerator automatically yields faster throughput, ignoring the orchestration layer that feeds it.
+I've been using Chatterbox Turbo for voice cloning on relearn.ing. It's fast, reliable, and integrates cleanly with my pipeline. But when Qwen3-TTS dropped with its 1.7B Base model for zero-shot voice cloning, I wanted to test if the quality improvement was worth the migration.
+
+Spoiler: it was. But getting there required a 3.4x optimization journey.
+
+### The Decision Matrix
+
+- **Chatterbox Turbo**: Audio-only reference, paralinguistic tags like chuckle and sigh, stable AMD support, about 30 seconds for 10 seconds of audio
+- **Qwen3-TTS 1.7B Base**: Requires audio plus transcript, natural language emotion control, bleeding-edge AMD support, initially 2 minutes 15 seconds for 10 seconds of audio
+
+The voice quality difference is subtle but noticeable. Qwen3-TTS captures prosody and emotional undertones that Chatterbox sometimes flattens. The tradeoff: you must provide a transcript of your reference audio, and setup on AMD hardware is non-trivial.
 
 ### The Fallacy
 
-The cultural script in machine learning is that inference speed is entirely a function of GPU compute (TFLOPS) and memory bandwidth. This leads to the "GPU-centric fallacy"—the belief that if a model is slow, you just need a bigger, newer GPU. We treat the CPU as a passive bystander and audio post-processing as an afterthought, ignoring the reality that a system is only as fast as its most constrained bottleneck.
+The cultural script in ML inference is that speed is purely a function of GPU compute. If a model is slow, get a faster GPU. This ignores the orchestration layer—the CPU that schedules kernels, manages memory transfers, and handles pre/post-processing.
 
 ### The Model
 
-In systems engineering, this is a manifestation of **Amdahl's Law in Heterogeneous Computing** [1]. The GPU is an incredibly fast worker, but the CPU is the manager. If the manager spends all its time compiling kernels, searching for optimal convolution algorithms, or spawning too many threads, the worker sits idle.
+On my AMD Radeon RX 9070 XT (gfx1201 architecture), Qwen3-TTS initially took 2 minutes 15 seconds to generate 10 seconds of audio. The GPU was underutilized. The CPU was pinned at 100%.
 
-This dynamic is especially pronounced when migrating between TTS architectures. Legacy systems like Chatterbox rely on older, stable architectures that are easier to deploy but lack zero-shot capabilities. In contrast, the Qwen3-TTS Base model—specifically when utilizing `create_voice_clone_prompt()` for voice cloning—offers superior fidelity but demands a significantly more complex orchestration layer.
-
-Furthermore, in audio generation, raw tensor output is not the final product. Neural TTS models output raw waveforms in chunks. If these chunks are naively concatenated without DSP (Digital Signal Processing) fundamentals—like zero-crossing alignment or crossfading—you introduce high-frequency artifacts (pops, clicks, and "radio noise"). The model isn't broken; the assembly line is.
-
-### The Data
-
-- **Hardware**: AMD Radeon RX 9070 XT (`gfx1201`).
-- **Initial State**: 2 minutes 15 seconds to generate 10s of audio. GPU hangs due to unsupported Composable Kernel (CK) backend.
-- **Optimized State**: 40 seconds for 10s of audio (a 3.4x speedup).
-- **Root Causes**: MIOpen auto-tuning overhead, OpenMP thread contention, and missing Triton backend compilation for `gfx1201`.
+This is Amdahl's Law in heterogeneous computing [1]. The GPU is the worker. The CPU is the manager. If the manager spends all its time compiling kernels and spawning threads, the worker starves.
 
 ### The Protocol
 
-#### Phase 1: Kernel and Architecture Alignment
+**Phase 1: Architecture Alignment**
 
-You cannot run bleeding-edge hardware on legacy assumptions. The RX 9070 XT uses the `gfx1201` architecture.
+The RX 9070 XT is very new. The Composable Kernel (CK) backend doesn't support gfx1201 yet.
 
-1. **Bypass unsupported backends**: The Composable Kernel (CK) backend doesn't yet support `gfx1201`. Force the Triton backend with `FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE`.
-2. **Recompile dependencies**: Rebuild Flash Attention explicitly for the new architecture using `PYTORCH_ROCM_ARCH=gfx1201`.
-3. **Fix the override**: Remove incorrect `HSA_OVERRIDE_GFX_VERSION` flags that cause silent kernel failures or hard hangs.
+1. Force Triton backend with `FLASH_ATTENTION_TRITON_AMD_ENABLE=TRUE`
+2. Rebuild Flash Attention with `PYTORCH_ROCM_ARCH=gfx1201`
+3. Remove incorrect `HSA_OVERRIDE_GFX_VERSION` flags
 
-#### Phase 2: CPU Orchestration (The Manager)
+**Phase 2: CPU Orchestration**
 
-Stop the CPU from doing unnecessary work during inference.
+The real bottleneck wasn't the GPU—it was the CPU doing unnecessary work.
 
-1. **Disable exhaustive kernel searches**: Set `MIOPEN_FIND_MODE=2` (Fast mode) and `MIOPEN_FIND_ENFORCE=1` to prevent the CPU from benchmarking convolution algorithms on every forward pass [2].
-2. **Constrain thread spawning**: Set `OMP_NUM_THREADS=4`. Deep learning frameworks often default to using all available CPU cores, causing massive context-switching overhead that starves the GPU.
+1. Disable MIOpen auto-tuning with `MIOPEN_FIND_MODE=2` and `MIOPEN_FIND_ENFORCE=1`
+2. Constrain OpenMP to 4 threads with `OMP_NUM_THREADS=4`
 
-#### Phase 3: Audio Pipeline Stabilization
+**Phase 3: Audio Pipeline**
 
-Raw tensor-to-audio conversion requires strict DSP boundaries to prevent clipping and artifacts [3].
+Neural TTS outputs waveforms in chunks. Naive concatenation introduces artifacts.
 
-1. **Implement Crossfading**: Never concatenate raw audio chunks abruptly. Apply a 10-20ms fade-in/fade-out at chunk boundaries to prevent phase mismatch clicks.
-2. **Prevent Clipping**: Neural models occasionally output values outside the [-1.0, 1.0] range. Apply hard limiting or dynamic range compression before saving the WAV file.
-3. **LUFS Normalization**: Normalize the final output to a standard loudness (e.g., -23 LUFS) to eliminate the "radio noise" floor caused by low-amplitude quantization errors.
+1. Crossfade chunks with 10ms fade-in/fade-out
+2. Peak limiting after LUFS normalization
+3. Single normalization pass at the end
 
-A bleeding-edge accelerator is just an expensive heater until the CPU learns how to feed it.
+### The Results
+
+- Generation time: 2:15 → 40s (3.4x faster)
+- CPU utilization: 100% → ~30%
+- Audio quality: pops/clicks → clean
+
+### The Verdict
+
+I migrated to Qwen3-TTS because voice fidelity matters for content creation. The optimization work was a one-time cost. Now I get better voice cloning at acceptable speed.
+
+If you're on NVIDIA hardware, the setup is probably trivial. On AMD ROCm with bleeding-edge GPUs, expect to debug the stack.
+
+The GPU is the worker. The CPU is the manager. Don't starve the worker.
 
 ### References
 
@@ -100,4 +118,4 @@ A bleeding-edge accelerator is just an expensive heater until the CPU learns how
 
 [2] AMD ROCm Documentation. (2024). "Using the find APIs and immediate mode in MIOpen." Advanced Micro Devices, Inc.
 
-[3] Smith, J. O. (2010). "Physical Audio Signal Processing." W3K Publishing.
+[3] Qwen Team. (2026). "Qwen3-TTS Technical Report." arXiv:2601.15621.
