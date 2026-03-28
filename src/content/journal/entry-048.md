@@ -25,7 +25,7 @@ linkedin: |
   -> enforce quality gates
   -> verify outputs before integration
   
-  The bottleneck is no longer generation. It is coordination, verification, and judgment.
+  Code generation keeps getting cheaper. The bottleneck is coordination, verification, and judgment.
   
   The engineer who wins won't be the fastest typist or even the cleverest prompter. It will be the one who can write a precise spec, route tasks through an agent system, and still know what not to ship.
   
@@ -35,7 +35,7 @@ linkedin: |
 threads: |
   AI coding is moving from "one smart assistant" to agent orchestration.
   
-  That changes the bottleneck.
+  That changes the bottleneck completely.
   
   Not generation.
   Verification.
