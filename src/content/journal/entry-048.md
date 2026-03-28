@@ -11,7 +11,7 @@ highlights:
   - "Human-Curated Contracts: Minimal repo guidance and explicit specs outperform redundant auto-generated instructions for coding agents (Gloaguen et al., 2026)."
 audioUrl: "https://audio.relearn.ing/entry-048.mp3"
 linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQHQdbUWUAH-Ow"
-publish_social: false
+publish_social: true
 linkedin: |
   AI engineering is quietly changing job descriptions.
   
