@@ -1,14 +1,37 @@
 # Relearning-Content Skill Architecture
 
-> **Version:** 3.0 (Two-Step Audio Pipeline)  
-> **Last Updated:** Restored `create-script` for LLM-powered condensation + paralinguistic tags
+> **Version:** 4.0 (Qwen3-TTS + Master-to-LinkedIn Video Pipeline)  
+> **Last Updated:** Standardized Qwen3-TTS scene audio, master render delivery, and flicker-safe Remotion guidance
+
+## 2026-03 Standard
+
+Treat this section as the current source of truth for relearn.ing journal production.
+
+1. Draft the journal entry in `relearn.ing`
+2. Create the condensed narration script with `create-script`
+3. Define video scenes directly in `/home/kedbin/Downloads/Organized/Projects/qwen3-tts/generate_manifest_qwen.py`
+4. Generate per-scene video audio with Qwen3-TTS into `~/projects/relearn-videos/public/voiceover/`
+5. Render a high-quality Remotion master from `~/projects/relearn-videos`
+6. Transcode a LinkedIn delivery MP4 from the master with `ffmpeg`
+7. Upload only the LinkedIn delivery MP4 and write the returned URN into frontmatter
+8. Generate separate journal audio with `voiceover_v2.py`, upload to R2, and set `audioUrl`
+
+### Operational Learnings
+
+- **Do not use Chatterbox for video scene audio.** Video scene audio is Qwen3-TTS only.
+- **Do not upload the master render to LinkedIn.** Always render `master -> linkedin.mp4 -> upload`.
+- **Redirect long-running renders to log files** instead of streaming progress into chat.
+- **Avoid animating SVG `<g>` wrappers around `foreignObject` cards** in Remotion. Fade HTML wrappers or cards directly to reduce blinking/flicker.
+- **Keep video audio and journal audio separate.** Video uses per-scene WAV generation; journal uses a full-script MP3.
 
 ## Overview
 
-The `relearning-content` skill creates journal entries and project pages for the relearn.ing platform. It uses a **two-step audio pipeline** for high-quality voiceovers:
+The `relearning-content` skill creates journal entries and project pages for the relearn.ing platform. It now uses a **split journal/video pipeline**:
 
-1. **`create-script` skill** — LLM-powered condensation + paralinguistic tags
-2. **`voiceover` skill** — TTS generation + deployment
+1. **`create-script` skill** — LLM-powered condensation for narration
+2. **Qwen3-TTS video scene generation** — per-scene WAV files + `manifest.json`
+3. **Remotion render + LinkedIn transcode** — master first, delivery second
+4. **`voiceover` skill** — full journal MP3 generation + deployment
 
 ### Why Two Steps?
 
@@ -178,30 +201,47 @@ The `create-script` skill adds these supported Chatterbox TTS tags:
 
 ## CLI Command Reference
 
+### Current Video Pipeline
+
+```bash
+cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts
+source ~/miniconda3/etc/profile.d/conda.sh && conda activate qwen3-tts
+mkdir -p logs
+python generate_manifest_qwen.py > logs/entry-XXX-video-audio.log 2>&1
+
+cd ~/projects/relearn-videos
+mkdir -p logs
+npx remotion render src/index.ts entry-XXX out/entry-XXX-master.mov --codec=prores --concurrency=1 > logs/entry-XXX-render.log 2>&1
+ffmpeg -y -i out/entry-XXX-master.mov -c:v libx264 -profile:v high -level 4.2 -pix_fmt yuv420p -r 30 -g 60 -keyint_min 60 -sc_threshold 0 -b:v 10M -maxrate 14M -bufsize 20M -movflags +faststart -c:a aac -b:a 192k -ar 48000 out/entry-XXX-linkedin.mp4 > logs/entry-XXX-ffmpeg.log 2>&1
+
+cd ~/threads && source .venv/bin/activate
+python linkedin_video_upload.py --upload-only ~/projects/relearn-videos/out/entry-XXX-linkedin.mp4
+```
+
+### Current Journal Audio Pipeline
+
+```bash
+cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts
+source ~/miniconda3/etc/profile.d/conda.sh && conda activate qwen3-tts
+python voiceover_v2.py -i archive/entry-XXX.txt -o archive/entry-XXX.mp3
+
+rclone copyto archive/entry-XXX.mp3 r2:relearn-audio/entry-XXX.mp3
+```
+
 ### Step 7a: create-script Skill
 
 This is executed via the skill system, not a bash command. The LLM:
 1. Reads the journal entry
 2. Condenses ~50%
-3. Adds paralinguistic tags
-4. Saves to `/home/kedbin/Downloads/Organized/Projects/chatterbox/archive/entry-XXX.txt`
+3. Rewrites for natural Qwen3-TTS speech
+4. Saves to `/home/kedbin/Downloads/Organized/Projects/qwen3-tts/archive/entry-XXX.txt`
 
 ### Step 7b: Voiceover Generation
 
 ```bash
-cd /home/kedbin/Downloads/Organized/Projects/chatterbox && \
-nohup uv run python archive/voiceover_script.py \
-  -i archive/entry-XXX.txt \
-  -o archive/entry-XXX.mp3 \
-  --entry entry-XXX \
-  --push > voiceover.log 2>&1 &
-```
-
-### Pre-flight Check (Optional)
-
-```bash
-cd /home/kedbin/Downloads/Organized/Projects/chatterbox && \
-uv run python archive/voiceover_script.py --preflight
+cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts && \
+source ~/miniconda3/etc/profile.d/conda.sh && conda activate qwen3-tts && \
+python voiceover_v2.py -i archive/entry-XXX.txt -o archive/entry-XXX.mp3
 ```
 
 ### Flag Reference
@@ -210,18 +250,17 @@ uv run python archive/voiceover_script.py --preflight
 |------|---------|
 | `-i, --input` | Input `.txt` file (from create-script) |
 | `-o, --output` | Output MP3 file (auto-generated if omitted) |
-| `-e, --entry` | Journal entry name for frontmatter update |
-| `--preflight` | Run checks only (git, ffmpeg, CUDA, disk, network) |
-| `--deploy` | Copy MP3 to relearn.ing (implied by --push) |
-| `--push` | Full git workflow: pull → add → commit → push |
-| `-m, --message` | Custom commit message |
+| `-p, --profile` | Voice profile (`edrian` default) |
+| `-l, --language` | Language (`Auto` default) |
+| `--pause-sentence` | Pause after sentences |
+| `--pause-comma` | Pause after commas |
 
 ### Environment Variables
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `RELEARNING_PROJECT_DIR` | `/home/kedbin/Downloads/Organized/Projects/relearn.ing` | Override relearn.ing path |
-| `CHATTERBOX_DIR` | `/home/kedbin/Downloads/Organized/Projects/chatterbox` | Override chatterbox path |
+| `QWEN3_TTS_DIR` | `/home/kedbin/Downloads/Organized/Projects/qwen3-tts` | Override Qwen3-TTS path |
 
 ---
 
@@ -231,7 +270,7 @@ uv run python archive/voiceover_script.py --preflight
 ~/.opencode/skill/
 ├── relearning-content/SKILL.md    # Main skill (v2.0)
 ├── create-script/SKILL.md         # LLM condensation + tags (v5.0)
-└── voiceover/SKILL.md             # TTS generation (v7.0)
+└── voiceover/SKILL.md             # Journal TTS generation (Qwen3-TTS)
 
 ~/Projects/relearn.ing/
 ├── src/content/
@@ -241,13 +280,19 @@ uv run python archive/voiceover_script.py --preflight
 ├── public/audio/*.mp3             # Deployed audio files
 └── docs/RELEARNING-CONTENT-ARCHITECTURE.md  # This file
 
-~/Projects/chatterbox/
+~/Projects/qwen3-tts/
+├── generate_manifest_qwen.py      # Video scene audio + manifest source of truth
+├── voiceover_v2.py                # Journal narration generator
 ├── archive/
-│   ├── voiceover_script.py        # TTS script
 │   ├── entry-XXX.txt              # Condensed scripts (from create-script)
-│   └── entry-XXX.mp3              # Generated audio
-├── clone.wav                      # Voice reference
-└── voiceover.log                  # Runtime log
+│   └── entry-XXX.mp3              # Generated journal audio
+└── voice_profiles/*.vp            # Voice profiles
+
+~/projects/relearn-videos/
+├── src/compositions/*.tsx         # Remotion compositions
+├── src/data/manifest.json         # Scene durations + captions
+├── public/voiceover/*.wav         # Video scene audio
+└── out/entry-XXX-linkedin.mp4     # Delivery file for LinkedIn upload
 ```
 
 ---
