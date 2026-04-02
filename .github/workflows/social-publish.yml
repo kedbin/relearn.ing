@@ -5,6 +5,17 @@ on:
     branches: [main]
     paths:
       - 'src/content/journal/**'
+  workflow_dispatch:
+    inputs:
+      file:
+        description: 'Journal entry path to publish'
+        required: true
+        type: string
+      force_publish:
+        description: 'Bypass unchanged-content idempotency check'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -22,11 +33,19 @@ jobs:
       - name: Get changed journal entries
         id: changed
         run: |
-          # Get list of changed journal entries
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'src/content/journal/*.md' 2>/dev/null | head -1)
-          
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            CHANGED="${{ github.event.inputs.file }}"
+            echo "Manual dispatch for file: $CHANGED"
+          else
+            # Get list of changed journal entries
+            CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'src/content/journal/*.md' 2>/dev/null | head -1)
+          fi
+           
           if [ -z "$CHANGED" ]; then
             echo "No journal entries changed"
+            echo "skip=true" >> $GITHUB_OUTPUT
+          elif [ ! -f "$CHANGED" ]; then
+            echo "Requested file does not exist: $CHANGED"
             echo "skip=true" >> $GITHUB_OUTPUT
           else
             echo "Changed file: $CHANGED"
@@ -39,6 +58,7 @@ jobs:
         id: check
         run: |
           FILE="${{ steps.changed.outputs.file }}"
+          FORCE_PUBLISH="${{ github.event.inputs.force_publish }}"
           
           echo "Checking file: $FILE"
           
@@ -88,6 +108,10 @@ jobs:
             git show HEAD~1:"$FILE" > /tmp/prev_file.md 2>/dev/null || echo "" > /tmp/prev_file.md
             
             PREV_FRONTMATTER=$(cat /tmp/prev_file.md | sed -n '/^---$/,/^---$/p' | sed '1d;$d')
+            PREV_PUBLISH_SOCIAL=false
+            if echo "$PREV_FRONTMATTER" | grep -q "^publish_social: true"; then
+              PREV_PUBLISH_SOCIAL=true
+            fi
             
             PREV_LINKEDIN=$(echo "$PREV_FRONTMATTER" | awk '
               /^linkedin:/ { flag=1; if ($0 ~ /\|/) { next }; gsub(/^linkedin: */, ""); if (length > 0) print; next }
@@ -117,14 +141,19 @@ jobs:
             
             echo "Current hash: $CURR_HASH"
             echo "Previous hash: $PREV_HASH"
+            echo "Previous publish_social: $PREV_PUBLISH_SOCIAL"
+            echo "Force publish: ${FORCE_PUBLISH:-false}"
             
-            if [ "$CURR_HASH" = "$PREV_HASH" ] && [ -n "$PREV_HASH" ]; then
+            if [ "$FORCE_PUBLISH" = "true" ]; then
+              echo "Force publish requested - bypassing idempotency check"
+            elif [ "$CURR_HASH" = "$PREV_HASH" ] && [ -n "$PREV_HASH" ] && [ "$PREV_PUBLISH_SOCIAL" = "true" ]; then
               echo "Social content unchanged - skipping to prevent duplicate posts"
               echo "should_publish=false" >> $GITHUB_OUTPUT
+              echo "skip_reason=unchanged" >> $GITHUB_OUTPUT
               exit 0
             fi
             
-            echo "Social content changed or new - will publish to social media"
+            echo "Social content changed, force publish requested, or publish_social just transitioned to true - will publish to social media"
             echo "should_publish=true" >> $GITHUB_OUTPUT
             
             # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
@@ -165,6 +194,7 @@ jobs:
           else
             echo "publish_social flag is not true, skipping social media publish"
             echo "should_publish=false" >> $GITHUB_OUTPUT
+            echo "skip_reason=publish_flag_false" >> $GITHUB_OUTPUT
           fi
 
       - name: Authenticate to Google Cloud
@@ -226,7 +256,11 @@ jobs:
           if [ "${{ steps.changed.outputs.skip }}" == "true" ]; then
             echo "⏭️ **Skipped**: No journal entries were changed" >> $GITHUB_STEP_SUMMARY
           elif [ "${{ steps.check.outputs.should_publish }}" != "true" ]; then
-            echo "⏭️ **Skipped**: \`publish_social\` flag is not set to \`true\`" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ steps.check.outputs.skip_reason }}" = "unchanged" ]; then
+              echo "⏭️ **Skipped**: Social content hash was unchanged from the last already-publishable version" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⏭️ **Skipped**: \`publish_social\` flag is not set to \`true\`" >> $GITHUB_STEP_SUMMARY
+            fi
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "To enable social publishing, add this to your entry's frontmatter:" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`yaml" >> $GITHUB_STEP_SUMMARY

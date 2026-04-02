@@ -26,6 +26,8 @@ linkedin: |
   -> `capture-pane` is used for logs, not as the primary source of truth for TUI tools
   -> reviewer lanes and quality gates stop speed from becoming noise
 
+  The practical version is simple: one main lane, one writer lane, one review lane.
+
   This matters because tools like OpenCode and Gemini CLI are useful inside a bounded session, but they do not give you dependable nested subagents as a local control-plane primitive.
 
   So engineers push orchestration one layer lower.
@@ -53,6 +55,7 @@ threads: |
   one main lane
   one writer lane
   one review lane
+  start with three lanes, not thirty
   worker callbacks back to main
   pane capture only for logs
 
