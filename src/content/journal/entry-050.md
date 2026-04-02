@@ -11,7 +11,7 @@ highlights:
   - "Throughput Still Needs Judgment: More lanes increase speed, but the real leverage still comes from routing, review, and killing bad paths early rather than trusting raw generation alone (Osmani, 2026; Anthropic, 2025)."
 audioUrl: "https://audio.relearn.ing/entry-050.mp3"
 linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQFHbLu59G3H2g"
-publish_social: false
+publish_social: true
 linkedin: |
   Most people stop at worktrees.
 
