@@ -9,7 +9,7 @@ highlights:
   - "Orchestration Became Infrastructure: Multi-agent coordination is no longer just a research pattern; enterprise platforms now treat it as a production abstraction layer with governance, A2A handoffs, and connected agent systems (Anthropic, 2025; Microsoft, 2026)."
   - "Memory Is a Trust Boundary: Persistent memory increases recall, but 2026 security research shows the same always-on background loops can silently pollute memory and steer future behavior (Zhang et al., 2026)."
   - "Start Simple, Stay Inspectable: Local memory planes built on SQLite, structured files, and targeted retrieval are often more useful than opaque memory lakes because they preserve provenance, filtering, and low-latency recall in one place (Garcia, 2024; Gupta, 2026)."
-publish_social: true
+publish_social: false
 linkedin: |
   2026 narrowed the engineering claim around self-improving agents.
 
