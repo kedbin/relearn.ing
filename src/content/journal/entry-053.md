@@ -11,7 +11,7 @@ highlights:
   - "Search Is Only the Baseline: Hybrid retrieval is useful, but the real 2026 direction is toward explicit world models, programmable retrieval control, and interoperable memory surfaces with tight security boundaries (Source brief, 2026; Model Context Protocol, 2026)."
 publish_social: true
 audioUrl: "https://audio.relearn.ing/entry-053.mp3"
-linkedin_video_urn: "urn:li:video:7093415541084202752"
+linkedin_video_urn: "urn:li:video:D4E10AQHnEnvBn8cIhQ"
 linkedin: |
   The biggest 2026 correction in agent design is that bigger context windows were never the real memory solution.
 
