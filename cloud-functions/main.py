@@ -61,10 +61,12 @@ def publish_linkedin(request):
         "content": "The post content...",
         "audio_url": "https://relearn.ing/audio/..."  (optional),
         "image_urn": "urn:li:image:..."  (optional - pre-uploaded image URN),
-        "video_urn": "urn:li:digitalmediaAsset:..."  (optional - pre-uploaded video URN)
+        "video_urn": "urn:li:video:..."  (optional - pre-uploaded video URN, preferred)
     }
 
     Note: image_urn and video_urn are mutually exclusive. If both provided, video takes priority.
+    Preferred video path uses LinkedIn Videos API upload URNs (`urn:li:video:...`) with the Posts API.
+    Legacy `urn:li:digitalmediaAsset:...` is still supported as a fallback via the older UGC path.
     """
     try:
         data = request.get_json(silent=True) or {}
@@ -85,8 +87,8 @@ def publish_linkedin(request):
         person_urn = get_secret("linkedin-urn")  # Full URN like urn:li:person:xxx
 
         # Note: LinkedIn's REST API (/rest/posts) does NOT require escaping most characters.
-        # The older UGC API required escaping, but we only use that for video posts.
-        # For video posts (ugcPosts API), we escape only the truly reserved characters.
+        # Legacy ugcPosts behavior is retained only as a compatibility fallback for
+        # older digitalmediaAsset video URNs.
 
         # If audio URL provided, append it
         final_content = content
@@ -107,44 +109,67 @@ def publish_linkedin(request):
             "isReshareDisabledByAuthor": False,
         }
 
-        # If video URN provided, use the ugcPosts API (different format for video)
+        rest_headers = {
+            "Authorization": f"Bearer {access_token}",
+            "X-Restli-Protocol-Version": "2.0.0",
+            "LinkedIn-Version": "202601",
+            "Content-Type": "application/json",
+        }
+
+        # Preferred video path: current Posts API with `urn:li:video:...`
         if video_urn:
             logger.info(f"Including video: {video_urn}")
 
-            # Video posts use the older ugcPosts API which may need minimal escaping
-            # Only escape pipe and curly braces which are truly reserved
-            import re
-
-            video_content = re.sub(r"([|{}])", r"\\\1", final_content)
-
-            post_payload = {
-                "author": person_urn,
-                "lifecycleState": "PUBLISHED",
-                "specificContent": {
-                    "com.linkedin.ugc.ShareContent": {
-                        "shareCommentary": {"text": video_content},
-                        "shareMediaCategory": "VIDEO",
-                        "media": [
-                            {
-                                "status": "READY",
-                                "media": video_urn,
-                            }
-                        ],
+            if video_urn.startswith("urn:li:video:"):
+                post_payload["content"] = {
+                    "media": {
+                        "id": video_urn,
                     }
-                },
-                "visibility": {"com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"},
-            }
+                }
 
-            response = requests.post(
-                "https://api.linkedin.com/v2/ugcPosts",
-                headers={
-                    "Authorization": f"Bearer {access_token}",
-                    "X-Restli-Protocol-Version": "2.0.0",
-                    "Content-Type": "application/json",
-                },
-                json=post_payload,
-                timeout=30,
-            )
+                response = requests.post(
+                    "https://api.linkedin.com/rest/posts",
+                    headers=rest_headers,
+                    json=post_payload,
+                    timeout=30,
+                )
+            else:
+                # Legacy fallback for older uploads that still return
+                # `urn:li:digitalmediaAsset:...` and rely on ugcPosts.
+                import re
+
+                video_content = re.sub(r"([|{}])", r"\\\1", final_content)
+
+                legacy_payload = {
+                    "author": person_urn,
+                    "lifecycleState": "PUBLISHED",
+                    "specificContent": {
+                        "com.linkedin.ugc.ShareContent": {
+                            "shareCommentary": {"text": video_content},
+                            "shareMediaCategory": "VIDEO",
+                            "media": [
+                                {
+                                    "status": "READY",
+                                    "media": video_urn,
+                                }
+                            ],
+                        }
+                    },
+                    "visibility": {
+                        "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+                    },
+                }
+
+                response = requests.post(
+                    "https://api.linkedin.com/v2/ugcPosts",
+                    headers={
+                        "Authorization": f"Bearer {access_token}",
+                        "X-Restli-Protocol-Version": "2.0.0",
+                        "Content-Type": "application/json",
+                    },
+                    json=legacy_payload,
+                    timeout=30,
+                )
         else:
             # If image URN provided, add it to the post
             if image_urn:
@@ -157,12 +182,7 @@ def publish_linkedin(request):
 
             response = requests.post(
                 "https://api.linkedin.com/rest/posts",
-                headers={
-                    "Authorization": f"Bearer {access_token}",
-                    "X-Restli-Protocol-Version": "2.0.0",
-                    "LinkedIn-Version": "202601",
-                    "Content-Type": "application/json",
-                },
+                headers=rest_headers,
                 json=post_payload,
                 timeout=30,
             )
