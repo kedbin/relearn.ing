@@ -9,7 +9,7 @@ highlights:
   - "File-First Memory Beats Opaque Memory Lakes: OpenClaw's strongest idea is making Markdown the source of truth and treating SQLite indexes as accelerators, which keeps memory inspectable, versionable, and local-first (Source brief, 2026; SQLite, 2026; sqlite-vec, 2026)."
   - "Flush Before You Summarize: The pre-compaction memory flush is the critical operational move because it forces durable facts onto disk before lossy context compression destroys them (Source brief, 2026)."
   - "Search Is Only the Baseline: Hybrid retrieval is useful, but the real 2026 direction is toward explicit world models, programmable retrieval control, and interoperable memory surfaces with tight security boundaries (Source brief, 2026; Model Context Protocol, 2026)."
-publish_social: true
+publish_social: false
 audioUrl: "https://audio.relearn.ing/entry-053.mp3"
 linkedin_video_urn: "urn:li:video:7093415541084202752"
 linkedin: |
