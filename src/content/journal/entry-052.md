@@ -11,7 +11,7 @@ highlights:
   - "Security Still Splits the Market: Bun optimizes for velocity, but Deno's sandboxing model is a better fit when enterprises need to execute untrusted LLM-written code under strict egress and secret controls (Dahl, 2026)."
 audioUrl: "https://audio.relearn.ing/entry-052.mp3"
 linkedin_video_urn: "urn:li:digitalmediaAsset:D4E05AQEtstvza6btgA"
-publish_social: true
+publish_social: false
 linkedin: |
   The 2026 runtime shift in AI tooling is real, and the reason is operational.
 
