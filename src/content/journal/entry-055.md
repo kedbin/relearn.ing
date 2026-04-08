@@ -10,7 +10,7 @@ highlights:
   - "Ash Maurya's customer-discovery advice still maps cleanly to AI engineering: measure what people actually did and where the pain actually lived before building the solution you want to build (Maurya, 2024a; Maurya, 2024b)."
   - "Anthropic and OpenAI both converge on the same 2026 design rule: start with the simplest workable system, use workflows for predictable tasks, and reserve agents for ambiguous, open-ended work (Anthropic, 2024; OpenAI, 2025)."
   - "Thoughtworks' agentwashing critique is useful inside engineering teams too: probabilistic systems can entrench bad processes, add cognitive load, and automate the wrong thing faster when discovery is weak (Thoughtworks, 2025)."
-publish_social: true
+publish_social: false
 linkedin: |
   I once spent days designing an automation for a task that only took 2 minutes.
   
