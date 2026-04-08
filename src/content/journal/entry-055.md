@@ -3,14 +3,15 @@ title: "The Excel Script That Beat My Agent Architecture"
 date: "2026-04-07"
 summary: "I spent days designing a Power Apps and Teams workflow for HR before learning their real weekly pain was thirty minutes of spreadsheet formatting, not the two-minute announcement. In 2026 AI engineering, that mistake scales into agentic over-design unless we validate the bottleneck before we architect the solution."
 status: "Published"
-linkedin_video_urn: "urn:li:video:D4E10AQErFPDs-OVRLQ"
 category: "Relearn Engineering / AI Engineering"
 highlights:
   - "The visible workflow is not always the expensive workflow: in this case the real bottleneck was thirty minutes of Excel formatting, so the right fix was a deterministic script rather than broader announcement automation (personal experience, 2026)."
   - "Ash Maurya's customer-discovery advice still maps cleanly to AI engineering: measure what people actually did and where the pain actually lived before building the solution you want to build (Maurya, 2024a; Maurya, 2024b)."
   - "Anthropic and OpenAI both converge on the same 2026 design rule: start with the simplest workable system, use workflows for predictable tasks, and reserve agents for ambiguous, open-ended work (Anthropic, 2024; OpenAI, 2025)."
   - "Thoughtworks' agentwashing critique is useful inside engineering teams too: probabilistic systems can entrench bad processes, add cognitive load, and automate the wrong thing faster when discovery is weak (Thoughtworks, 2025)."
-publish_social: false
+audioUrl: "https://audio.relearn.ing/entry-055.mp3"
+linkedin_video_urn: "urn:li:video:D4E10AQErFPDs-OVRLQ"
+publish_social: true
 linkedin: |
   I once spent days designing an automation for a task that only took 2 minutes.
   
@@ -51,7 +52,7 @@ linkedin: |
   
   That one HR conversation saved me from repeating the same mistake in AI with more expensive tools.
   
-  Full draft:
+  Full writeup:
   
   https://relearn.ing/journal/entry-055/
 threads: |
@@ -71,7 +72,6 @@ threads: |
   not the architecture.
   
   relearn.ing/journal/entry-055/
-audioUrl: "https://audio.relearn.ing/entry-055.mp3"
 ---
 
 I volunteered to help HR with a weekly recurring workflow: upload the open roles, then announce them to the company.
