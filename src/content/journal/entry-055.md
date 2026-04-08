@@ -3,7 +3,7 @@ title: "The Excel Script That Beat My Agent Architecture"
 date: "2026-04-07"
 summary: "I spent days designing a Power Apps and Teams workflow for HR before learning their real weekly pain was thirty minutes of spreadsheet formatting, not the two-minute announcement. In 2026 AI engineering, that mistake scales into agentic over-design unless we validate the bottleneck before we architect the solution."
 status: "Published"
-linkedin_video_urn: "urn:li:video:D4E10AQHm9M6lyGkWLQ"
+linkedin_video_urn: "urn:li:video:D4E10AQErFPDs-OVRLQ"
 category: "Relearn Engineering / AI Engineering"
 highlights:
   - "The visible workflow is not always the expensive workflow: in this case the real bottleneck was thirty minutes of Excel formatting, so the right fix was a deterministic script rather than broader announcement automation (personal experience, 2026)."
