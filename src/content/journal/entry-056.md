@@ -9,7 +9,7 @@ highlights:
   - "Free time is not empty time: it is where resilience, relationships, health, and long-term career optionality get rebuilt."
   - "Boreout and burnout are opposite career traps, and the real goal is a middle zone with enough stretch to grow and enough autonomy to recover."
   - "In the agentic AI era, protected autonomy plus self-directed AI fluency can compound better than a more prestigious path that depends on chronic overtime."
-publish_social: true
+publish_social: false
 linkedin: |
   I started wondering what my own time was actually worth after enough weekends disappeared into work that was supposed to come back later as time in lieu.
   
