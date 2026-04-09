@@ -8,7 +8,11 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "npm run build && gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist",
+    "journal:next": "node scripts/next-journal-entry.mjs",
+    "journal:draft": "node scripts/create-journal-draft.mjs",
+    "journal:update": "node scripts/update-journal-frontmatter.mjs",
+    "journal:check": "node scripts/check-journal-entry.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",

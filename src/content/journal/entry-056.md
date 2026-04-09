@@ -2,13 +2,15 @@
 title: "What My Time Was Actually Worth"
 date: "2026-04-08"
 summary: "Enough weekends disappeared into work that was supposed to come back later as time in lieu that I had to ask a harder question: what does a job actually do to the long-term value of my time? In the agentic AI era, that answer increasingly points away from chronic unpaid overtime and toward protected autonomy plus deliberate AI upskilling."
-status: "Draft"
+status: "Published"
 category: "Relearn Engineering / AI Engineering"
 highlights:
   - "Salary is an incomplete metric because the true cost of work includes unpaid overtime, recovery time, and the learning bandwidth a job quietly consumes."
   - "Free time is not empty time: it is where resilience, relationships, health, and long-term career optionality get rebuilt."
   - "Boreout and burnout are opposite career traps, and the real goal is a middle zone with enough stretch to grow and enough autonomy to recover."
   - "In the agentic AI era, protected autonomy plus self-directed AI fluency can compound better than a more prestigious path that depends on chronic overtime."
+audioUrl: "https://audio.relearn.ing/entry-056.mp3"
+linkedin_video_urn: "urn:li:video:D4E10AQH9qVVY-Og42g"
 publish_social: false
 linkedin: |
   I started wondering what my own time was actually worth after enough weekends disappeared into work that was supposed to come back later as time in lieu.
@@ -74,9 +76,6 @@ threads: |
   and use it to deliberately build AI fluency.
   
   relearn.ing/journal/entry-056/
-audioUrl: "https://audio.relearn.ing/entry-056.mp3"
-linkedin_video_urn: "urn:li:video:D4E10AQH9qVVY-Og42g"
-status: "Published"
 ---
 
 I started wondering what my own time was actually worth after enough weekends disappeared into work that was supposed to come back to me later as time in lieu.

@@ -1,7 +1,7 @@
 # Relearning-Content Skill Architecture
 
-> **Version:** 4.0 (Qwen3-TTS + Master-to-LinkedIn Video Pipeline)  
-> **Last Updated:** Standardized Qwen3-TTS scene audio, master render delivery, and flicker-safe Remotion guidance
+> **Version:** 4.1 (Qwen3-TTS + Quality-Gated LinkedIn Delivery)  
+> **Last Updated:** Added helper-driven orchestration, W3 quality gates, and narrated-video shell defaults
 
 ## 2026-03 Standard
 
@@ -9,12 +9,12 @@ Treat this section as the current source of truth for relearn.ing journal produc
 
 1. Draft the journal entry in `relearn.ing`
 2. Create the condensed narration script with `create-script`
-3. Define video scenes directly in `/home/kedbin/Downloads/Organized/Projects/qwen3-tts/generate_manifest_qwen.py`
-4. Generate per-scene video audio with Qwen3-TTS into `~/projects/relearn-videos/public/voiceover/`
+3. Write `/tmp/relearn-ENTRYXXX-scenarios.json` and validate it before W2 runs
+4. Generate per-scene video audio with `qwen-video-manifest.sh` into `~/projects/relearn-videos/public/voiceover/`
 5. Render a high-quality Remotion master from `~/projects/relearn-videos`
 6. Transcode a LinkedIn delivery MP4 from the master with `ffmpeg`
 7. Upload only the LinkedIn delivery MP4 and write the returned URN into frontmatter
-8. Generate separate journal audio with `voiceover_v2.py`, upload to R2, and set `audioUrl`
+8. Generate separate journal audio with `qwen-journal-voiceover.sh start/status`, upload to R2, and set `audioUrl`
 
 ### Operational Learnings
 
@@ -23,6 +23,108 @@ Treat this section as the current source of truth for relearn.ing journal produc
 - **Redirect long-running renders to log files** instead of streaming progress into chat.
 - **Avoid animating SVG `<g>` wrappers around `foreignObject` cards** in Remotion. Fade HTML wrappers or cards directly to reduce blinking/flicker.
 - **Keep video audio and journal audio separate.** Video uses per-scene WAV generation; journal uses a full-script MP3.
+- **Narrated journal videos should include a subtle background music bed by default** unless the user explicitly requests dry voiceover-only output.
+- **Scene quality is not just variety.** The scene order must preserve the article's story arc and feel like one coherent video.
+- **Stills alone are not enough.** W3 should review representative stills plus at least one short preview clip before upload.
+- **Prefer shared helpers over ad hoc composition shells.** For narrated journal entries, use `src/lib/JournalVideoShell.tsx` before reimplementing scene sequencing + background bed wiring.
+
+## Current Quality Gates
+
+Apply these before final upload:
+
+1. Background bed is present and subordinate to voice clarity.
+2. Scene order mirrors the approved article's logic/story arc.
+3. Representative stills from early/middle/late scenes were inspected.
+4. At least one short preview clip was checked for pacing/cohesion.
+5. No edge clipping, dead air, or "random demo reel" feeling remains.
+
+## Current Helper Inventory
+
+- `relearn.ing/scripts/create-journal-draft.mjs` — canonical journal draft creation
+- `relearn.ing/scripts/update-journal-frontmatter.mjs` — canonical frontmatter updates
+- `relearn.ing/scripts/check-journal-entry.mjs` — canonical journal-entry checks
+- `relearning-content/scripts/write-run-checklists.py` — render the shared + role worker checklist bundle for the current entry/run
+- `relearning-content/scripts/write-w1-prompt.py` — standard W1 handoff prompt
+- `relearning-content/scripts/write-w2-prompt.py` — standard W2 audio/manifest handoff prompt
+- `relearning-content/scripts/write-w3-prompt.py` — standard W3 quality-aware prompt
+- `kitty-opencode-agents/scripts/kitty-launch-opencode.sh` — fire-and-idle worker spawn
+- `kitty-opencode-agents/scripts/kitty-send.sh` — atomic send-text + Enter helper
+- `kitty-opencode-agents/scripts/kitty-self-info.sh` — current-lane socket/window/title lookup
+
+## Journal Authoring Helpers
+
+To reduce formatting drift and make social defaults explicit, use the helper scripts in `relearn.ing/scripts/`.
+
+### Defaults
+
+- `publish_social` defaults to `true` in the draft helper.
+- Body markdown can be passed directly, piped over stdin, or copied from an existing draft file while stripping old frontmatter.
+- Frontmatter is rewritten in a canonical order so journal entries stay uniform across manual edits and pipeline updates.
+
+### Commands
+
+```bash
+# Print the next numbered entry id
+npm run journal:next
+
+# Create a new draft with a body copied from an existing markdown file
+npm run journal:draft -- \
+  --title "The Dream Cycle" \
+  --summary "Why Dreaming changes agent memory design." \
+  --highlight "Dreaming turns memory into admission control." \
+  --body-file /tmp/draft-body.md \
+  --linkedin-headline "OpenClaw's Dreaming feature matters for one reason" \
+  --threads-headline "AI memory is finally learning what to forget"
+
+# Canonically update frontmatter fields later in the pipeline
+npm run journal:update -- \
+  --entry entry-054 \
+  --audio-url https://audio.relearn.ing/entry-054.mp3 \
+  --linkedin-video-urn urn:li:video:123 \
+  --publish-social
+
+# Check a journal entry for missing fields / non-canonical formatting
+npm run journal:check -- --entry entry-054
+```
+
+## Strategy C Addendum (3 Windows)
+
+For single-entry runs, use the kitty-based 3-window layout:
+
+- **W1 Orchestrator**: research, draft, create script, own `SCENES`, final publish
+- **W2 GPU Worker**: video TTS, then journal TTS, then R2/audio-url handoff
+- **W3 Remotion Worker**: build composition as soon as `SCENES` exist, then wait for GPU-free before render
+
+Orchestration rule:
+
+- W1 must explicitly spawn W2 and W3 and collect their callbacks.
+- W1 is the orchestrator lane, not the default executor for W2/W3-owned work.
+- If W1 takes those tasks itself without a worker `BLOCKED` callback, the pipeline is wasting time instead of parallelizing.
+- W1 should generate or refresh the run checklist bundle and hand the shared + role checklist files to W2/W3 through the prompt helpers, not ad hoc chat instructions.
+- Before W1 references any file in a worker prompt, it should verify the file exists and pass the absolute path instead of assuming the worker can find it.
+- W1 should validate scenarios JSON before handing it to W2; required scene keys are `id`, `visualScene`, `text`, and `captions`.
+- W1 owns the journal git publish sequence for the run; the main lane should not take commit/push duties back after handoff unless W1 is blocked and the fallback is logged.
+- When launching kitty OpenCode workers, prefer the default model unless the user explicitly asked for a model override.
+- W2 owns manifest audio + journal audio. W3 owns composition/render/upload.
+- W3 can continue composition work while waiting on W2 audio artifacts.
+- CPU-only rendering is an acceptable fallback when no suitable render GPU is available.
+
+Signal files:
+
+- `/tmp/relearn-ENTRY-scenarios.json`
+- `/tmp/relearn-ENTRY-video-tts.status`
+- `/tmp/relearn-ENTRY-gpu-free.status`
+- `/tmp/relearn-ENTRY-audio-url.txt`
+- `/tmp/relearn-ENTRY-video-urn.txt`
+
+Kitty IPC should use the helper scripts above rather than ad hoc command snippets.
+
+## Historical Reference (Read With Caution)
+
+The sections below explain older workflow context and implementation history.
+
+If any lower section conflicts with the current standard above or with the live skill at
+`/home/kedbin/.opencode/skill/relearning-content/SKILL.md`, follow the current standard and skill docs.
 
 ## Overview
 
@@ -205,28 +307,32 @@ The `create-script` skill adds these supported Chatterbox TTS tags:
 
 ```bash
 cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts
-source ~/miniconda3/etc/profile.d/conda.sh && conda activate qwen3-tts
-mkdir -p logs
-python generate_manifest_qwen.py > logs/entry-XXX-video-audio.log 2>&1
+python3 /home/kedbin/.opencode/skill/relearning-content/scripts/validate-scenarios-json.py --input /tmp/relearn-ENTRYXXX-scenarios.json --entry-id entry-XXX
+scripts/qwen-video-manifest.sh start --entry entry-XXX
+scripts/qwen-video-manifest.sh status --entry entry-XXX
 
 cd ~/projects/relearn-videos
 mkdir -p logs
-npx remotion render src/index.ts entry-XXX out/entry-XXX-master.mov --codec=prores --concurrency=1 > logs/entry-XXX-render.log 2>&1
-ffmpeg -y -i out/entry-XXX-master.mov -c:v libx264 -profile:v high -level 4.2 -pix_fmt yuv420p -r 30 -g 60 -keyint_min 60 -sc_threshold 0 -b:v 10M -maxrate 14M -bufsize 20M -movflags +faststart -c:a aac -b:a 192k -ar 48000 out/entry-XXX-linkedin.mp4 > logs/entry-XXX-ffmpeg.log 2>&1
+npx remotion render src/index.ts entry-XXX out/entry-XXX-master.mp4 --codec=h264 --crf=12 > logs/entry-XXX-render.log 2>&1
+ffmpeg -y -i out/entry-XXX-master.mp4 -c:v libx264 -profile:v high -level 4.2 -pix_fmt yuv420p -r 30 -g 60 -keyint_min 60 -sc_threshold 0 -b:v 10M -maxrate 14M -bufsize 20M -movflags +faststart -c:a aac -b:a 192k -ar 48000 out/entry-XXX-linkedin.mp4 > logs/entry-XXX-ffmpeg.log 2>&1
 
-cd ~/threads && source .venv/bin/activate
-python linkedin_video_upload.py --upload-only ~/projects/relearn-videos/out/entry-XXX-linkedin.mp4
+/home/kedbin/.opencode/skill/remotion/scripts/linkedin-video-upload.sh \
+  ~/projects/relearn-videos/out/entry-XXX-linkedin.mp4
 ```
+
+The helper uses the current LinkedIn Videos API flow by default and returns `urn:li:video:...` only after multipart finalize + availability polling succeed.
+
+Use the manifest helper for agent runs so the scenario-path contract, output paths, default `edrian` profile, no-captions default, ROCm/MIOpen optimization env vars, timeout handling, and log/status files are already packaged.
 
 ### Current Journal Audio Pipeline
 
 ```bash
 cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts
-source ~/miniconda3/etc/profile.d/conda.sh && conda activate qwen3-tts
-python voiceover_v2.py -i archive/entry-XXX.txt -o archive/entry-XXX.mp3
-
-rclone copyto archive/entry-XXX.mp3 r2:relearn-audio/entry-XXX.mp3
+scripts/qwen-journal-voiceover.sh start --entry entry-XXX
+scripts/qwen-journal-voiceover.sh status --entry entry-XXX
 ```
+
+Use the helper for agent runs so the correct repo paths, default `edrian` profile, ROCm/MIOpen optimization env vars, conda env, timeout handling, and log/status files are already packaged.
 
 ### Step 7a: create-script Skill
 
@@ -239,9 +345,9 @@ This is executed via the skill system, not a bash command. The LLM:
 ### Step 7b: Voiceover Generation
 
 ```bash
-cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts && \
-source ~/miniconda3/etc/profile.d/conda.sh && conda activate qwen3-tts && \
-python voiceover_v2.py -i archive/entry-XXX.txt -o archive/entry-XXX.mp3
+cd /home/kedbin/Downloads/Organized/Projects/qwen3-tts
+scripts/qwen-journal-voiceover.sh start --entry entry-XXX --deploy
+scripts/qwen-journal-voiceover.sh status --entry entry-XXX
 ```
 
 ### Flag Reference
