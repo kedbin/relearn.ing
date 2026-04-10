@@ -11,7 +11,7 @@ highlights:
   - "Kaizen (改善) and Omotenashi (おもてなし) translate into agentic ambition at its best: continuous improvement plus anticipatory service that removes friction for humans without removing human judgment."
 audioUrl: "https://audio.relearn.ing/entry-057.mp3"
 linkedin_video_urn: "urn:li:video:D4E10AQHf9FXBukZUdw"
-publish_social: true
+publish_social: false
 linkedin: |
   The more I work with agentic AI systems, the less their failure modes look purely technical.
   They look organizational.
