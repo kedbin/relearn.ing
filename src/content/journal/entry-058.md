@@ -13,7 +13,7 @@ audioUrl: "https://audio.relearn.ing/entry-058.mp3"
 linkedin_video_urn: "urn:li:video:D4E10AQH_jJRWvcDlXw"
 youtube_url: "https://www.youtube.com/watch?v=gAeRd9FzFy8"
 youtube_video_id: "gAeRd9FzFy8"
-publish_social: true
+publish_social: false
 linkedin: |
   I have gradually updated my relearning pipeline from a skill chain with occasional subagents into something much closer to a swarm AI architecture.
   
