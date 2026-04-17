@@ -11,7 +11,7 @@ highlights:
   - "The most practical first fix is usually not more tooling but less latency: one approver plus required CI on sprint integration branches, stricter governance reserved for `main`, and a repository structure that reduces overlap."
 audioUrl: "https://audio.relearn.ing/entry-059.mp3"
 linkedin_video_urn: "urn:li:video:D4E10AQF36NbALztwzg"
-publish_social: true
+publish_social: false
 linkedin: |
   I found myself managing far too many merge conflicts simply because our Playwright pull requests were staying open for 3 to 4 days.
   
