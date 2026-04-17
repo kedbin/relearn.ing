@@ -11,6 +11,8 @@ highlights:
   - "The most practical first fix is usually not more tooling but less latency: one approver plus required CI on sprint integration branches, stricter governance reserved for `main`, and a repository structure that reduces overlap."
 audioUrl: "https://audio.relearn.ing/entry-059.mp3"
 linkedin_video_urn: "urn:li:video:D4E10AQF36NbALztwzg"
+youtube_url: "https://www.youtube.com/watch?v=gXx7zkFprV8"
+youtube_video_id: "gXx7zkFprV8"
 publish_social: false
 linkedin: |
   I found myself managing far too many merge conflicts simply because our Playwright pull requests were staying open for 3 to 4 days.
@@ -70,6 +72,14 @@ threads: |
   
   Full draft:
   https://relearn.ing/journal/entry-059/
+youtube_title: "The Merge Conflict Tax: What 4-Day Playwright Reviews Taught Me About CI/CD"
+youtube_description: |
+  I found myself spending more time resolving merge conflicts than writing Playwright tests. The deeper problem was not the framework, but a CI/CD flow where pull requests sat for days, shared page.ts files became contention points, and Azure DevOps policies amplified source drift instead of containing it.
+  
+  Full draft:
+  
+  https://relearn.ing/journal/entry-059/
+youtube_privacy_status: "public"
 ---
 
 I found myself managing far too many merge conflicts simply because our Playwright pull requests were staying open for three to four days.
