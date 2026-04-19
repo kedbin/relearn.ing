@@ -14,7 +14,7 @@ linkedin_document_urn: "urn:li:document:D4E10AQHzAFVcDQemuA"
 linkedin_document_title: "The LinkedIn Slides Pivot: Why Relearning Flow Split Reading From Watching"
 youtube_url: "https://www.youtube.com/watch?v=09MUcUwVp70"
 youtube_video_id: "09MUcUwVp70"
-publish_social: false
+publish_social: true
 linkedin: |
   I had already solved what I thought was the hard part in the relearn.ing pipeline:
   draft → audio → video → publication.
