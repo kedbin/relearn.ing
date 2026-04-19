@@ -10,11 +10,11 @@ highlights:
   - "GPT-5.4 remained the reasoning-heavy agent for workflow design and system changes, while Qwen 3.6 Plus was delegated the multimodal job of inspecting slide artifacts visually."
   - "The visual review step is now iterative and belongs inside W3: generate slides, review them, fix clipping or safe-area defects, and only then upload to LinkedIn."
 audioUrl: "https://audio.relearn.ing/entry-060.mp3"
-linkedin_document_urn: "urn:li:document:D4E10AQF9sUwTZqIujQ"
+linkedin_document_urn: "urn:li:document:D4E10AQEAyKKJI1MXnA"
 linkedin_document_title: "The LinkedIn Slides Pivot: Why Relearning Flow Split Reading From Watching"
 youtube_url: "https://www.youtube.com/watch?v=09MUcUwVp70"
 youtube_video_id: "09MUcUwVp70"
-publish_social: false
+publish_social: true
 linkedin: |
   I had already solved what I thought was the hard part in the relearn.ing pipeline:
   draft → audio → video → publication.
