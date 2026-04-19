@@ -59,85 +59,41 @@ jobs:
         run: |
           FILE="${{ steps.changed.outputs.file }}"
           FORCE_PUBLISH="${{ github.event.inputs.force_publish }}"
+          SOCIAL_EXTRACTOR="scripts/extract-social-metadata.mjs"
           
           echo "Checking file: $FILE"
-          
-          # Read the file content
-          CONTENT=$(cat "$FILE")
-          
-          # Extract frontmatter (between first two ---)
-          FRONTMATTER=$(echo "$CONTENT" | sed -n '/^---$/,/^---$/p' | sed '1d;$d')
-          
-          echo "Frontmatter extracted, checking for publish_social flag..."
+          node "$SOCIAL_EXTRACTOR" --file "$FILE" > /tmp/current-social.json
+          echo "Social metadata extracted with UTF-8-safe parser"
           
           # Check for publish_social: true
-          if echo "$FRONTMATTER" | grep -q "^publish_social: true"; then
+          if [ "$(jq -r '.publish_social' /tmp/current-social.json)" = "true" ]; then
             echo "publish_social flag is TRUE"
-            
-            # Extract linkedin content (multiline YAML block)
-            # This handles the | syntax for multiline strings
-            LINKEDIN=$(echo "$FRONTMATTER" | awk '
-              /^linkedin:/ { 
-                flag=1
-                if ($0 ~ /\|/) { next }  # Skip the "linkedin: |" line
-                gsub(/^linkedin: */, "")  # Or get inline value
-                if (length > 0) print
-                next
-              }
-              /^[a-zA-Z_]+:/ && flag { flag=0 }
-              /^---$/ && flag { flag=0 }
-              flag { gsub(/^  /, ""); print }
-            ')
-            
-            # Extract threads content
-            THREADS=$(echo "$FRONTMATTER" | awk '
-              /^threads:/ { 
-                flag=1
-                if ($0 ~ /\|/) { next }
-                gsub(/^threads: */, "")
-                if (length > 0) print
-                next
-              }
-              /^[a-zA-Z_]+:/ && flag { flag=0 }
-              /^---$/ && flag { flag=0 }
-              flag { gsub(/^  /, ""); print }
-            ')
             
             # Check if linkedin/threads content actually changed (idempotency check)
             # Get previous version of the file
             git show HEAD~1:"$FILE" > /tmp/prev_file.md 2>/dev/null || echo "" > /tmp/prev_file.md
-            
-            PREV_FRONTMATTER=$(cat /tmp/prev_file.md | sed -n '/^---$/,/^---$/p' | sed '1d;$d')
-            PREV_PUBLISH_SOCIAL=false
-            if echo "$PREV_FRONTMATTER" | grep -q "^publish_social: true"; then
-              PREV_PUBLISH_SOCIAL=true
-            fi
-            
-            PREV_LINKEDIN=$(echo "$PREV_FRONTMATTER" | awk '
-              /^linkedin:/ { flag=1; if ($0 ~ /\|/) { next }; gsub(/^linkedin: */, ""); if (length > 0) print; next }
-              /^[a-zA-Z_]+:/ && flag { flag=0 }
-              /^---$/ && flag { flag=0 }
-              flag { gsub(/^  /, ""); print }
-            ')
-            
-            PREV_THREADS=$(echo "$PREV_FRONTMATTER" | awk '
-              /^threads:/ { flag=1; if ($0 ~ /\|/) { next }; gsub(/^threads: */, ""); if (length > 0) print; next }
-              /^[a-zA-Z_]+:/ && flag { flag=0 }
-              /^---$/ && flag { flag=0 }
-              flag { gsub(/^  /, ""); print }
-            ')
-            
-            # Extract LinkedIn image URN for hash comparison
-            CURR_IMAGE_URN=$(echo "$FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
-            PREV_IMAGE_URN=$(echo "$PREV_FRONTMATTER" | grep "^linkedin_image_urn:" | sed 's/linkedin_image_urn: *"//' | sed 's/"$//' | tr -d '"')
-            
-            # Extract LinkedIn video URN
-            CURR_VIDEO_URN=$(echo "$FRONTMATTER" | grep "^linkedin_video_urn:" | sed 's/linkedin_video_urn: *"//' | sed 's/"$//' | tr -d '"')
-            PREV_VIDEO_URN=$(echo "$PREV_FRONTMATTER" | grep "^linkedin_video_urn:" | sed 's/linkedin_video_urn: *"//' | sed 's/"$//' | tr -d '"')
+            node "$SOCIAL_EXTRACTOR" --file /tmp/prev_file.md > /tmp/prev-social.json
             
             # Compare content hashes (include image/video URN so media changes trigger republish)
-            CURR_HASH=$(echo "$LINKEDIN$THREADS$CURR_IMAGE_URN$CURR_VIDEO_URN" | md5sum | cut -d' ' -f1)
-            PREV_HASH=$(echo "$PREV_LINKEDIN$PREV_THREADS$PREV_IMAGE_URN$PREV_VIDEO_URN" | md5sum | cut -d' ' -f1)
+            CURR_HASH=$(jq -r '.content_hash' /tmp/current-social.json)
+            PREV_HASH=$(jq -r '.content_hash' /tmp/prev-social.json)
+            PREV_PUBLISH_SOCIAL=$(jq -r '.publish_social' /tmp/prev-social.json)
+            AUDIO_URL=$(jq -r '.audio_url' /tmp/current-social.json)
+            IMAGE_URN=$(jq -r '.image_urn' /tmp/current-social.json)
+            DOCUMENT_URN=$(jq -r '.document_urn' /tmp/current-social.json)
+            DOCUMENT_TITLE=$(jq -r '.document_title' /tmp/current-social.json)
+            VIDEO_URN=$(jq -r '.video_urn' /tmp/current-social.json)
+
+            python3 - <<'PY'
+            import json
+            from pathlib import Path
+
+            with open('/tmp/current-social.json', 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            Path('/tmp/linkedin.txt').write_text(data.get('linkedin', ''), encoding='utf-8')
+            Path('/tmp/threads.txt').write_text(data.get('threads', ''), encoding='utf-8')
+            PY
             
             echo "Current hash: $CURR_HASH"
             echo "Previous hash: $PREV_HASH"
@@ -156,39 +112,19 @@ jobs:
             echo "Social content changed, force publish requested, or publish_social just transitioned to true - will publish to social media"
             echo "should_publish=true" >> $GITHUB_OUTPUT
             
-            # Extract audio URL (already full URL like https://audio.relearn.ing/entry-XXX.mp3)
-            AUDIO_URL=$(echo "$FRONTMATTER" | grep "^audioUrl:" | sed 's/audioUrl: *"//' | sed 's/"$//')
-            
-            # Use the image/video URN we already extracted for hash comparison
-            IMAGE_URN="$CURR_IMAGE_URN"
-            VIDEO_URN="$CURR_VIDEO_URN"
-            
             # Debug output
-            echo "LinkedIn content length: ${#LINKEDIN}"
-            echo "Threads content length: ${#THREADS}"
+            echo "LinkedIn content chars: $(wc -m < /tmp/linkedin.txt)"
+            echo "Threads content chars: $(wc -m < /tmp/threads.txt)"
             echo "Audio URL: $AUDIO_URL"
             echo "Image URN: $IMAGE_URN"
+            echo "Document URN: $DOCUMENT_URN"
+            echo "Document title: $DOCUMENT_TITLE"
             echo "Video URN: $VIDEO_URN"
-            
-            # Save to files for proper multiline handling
-            echo "$LINKEDIN" > /tmp/linkedin.txt
-            echo "$THREADS" > /tmp/threads.txt
-            
-            # For GitHub outputs, we need to handle multiline differently
-            {
-              echo 'linkedin<<EOF'
-              cat /tmp/linkedin.txt
-              echo 'EOF'
-            } >> $GITHUB_OUTPUT
-            
-            {
-              echo 'threads<<EOF'
-              cat /tmp/threads.txt
-              echo 'EOF'
-            } >> $GITHUB_OUTPUT
             
             echo "audio_url=$AUDIO_URL" >> $GITHUB_OUTPUT
             echo "image_urn=$IMAGE_URN" >> $GITHUB_OUTPUT
+            echo "document_urn=$DOCUMENT_URN" >> $GITHUB_OUTPUT
+            echo "document_title=$DOCUMENT_TITLE" >> $GITHUB_OUTPUT
             echo "video_urn=$VIDEO_URN" >> $GITHUB_OUTPUT
             
           else
@@ -211,20 +147,22 @@ jobs:
       - name: Publish to Pub/Sub
         if: steps.check.outputs.should_publish == 'true'
         env:
-          LINKEDIN_CONTENT: ${{ steps.check.outputs.linkedin }}
-          THREADS_CONTENT: ${{ steps.check.outputs.threads }}
           AUDIO_URL: ${{ steps.check.outputs.audio_url }}
           IMAGE_URN: ${{ steps.check.outputs.image_urn }}
+          DOCUMENT_URN: ${{ steps.check.outputs.document_urn }}
+          DOCUMENT_TITLE: ${{ steps.check.outputs.document_title }}
           VIDEO_URN: ${{ steps.check.outputs.video_urn }}
         run: |
           echo "Publishing to social media via Pub/Sub..."
           
-          # Build the JSON payload using jq for proper escaping
+          # Build the JSON payload using UTF-8-safe raw files for multiline social copy
           PAYLOAD=$(jq -n \
-            --arg linkedin "$LINKEDIN_CONTENT" \
-            --arg threads "$THREADS_CONTENT" \
+            --rawfile linkedin /tmp/linkedin.txt \
+            --rawfile threads /tmp/threads.txt \
             --arg audio_url "$AUDIO_URL" \
             --arg image_urn "$IMAGE_URN" \
+            --arg document_urn "$DOCUMENT_URN" \
+            --arg document_title "$DOCUMENT_TITLE" \
             --arg video_urn "$VIDEO_URN" \
             '{
               content: "New journal entry published",
@@ -232,6 +170,8 @@ jobs:
               threads_content: $threads,
               audio_url: $audio_url,
               image_urn: $image_urn,
+              document_urn: $document_urn,
+              document_title: $document_title,
               video_urn: $video_urn
             }')
           
