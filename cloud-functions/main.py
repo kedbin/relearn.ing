@@ -51,6 +51,51 @@ def get_secret(name: str) -> str:
 # =============================================================================
 
 
+def wait_for_document_available(document_urn: str, access_token: str, max_attempts: int = 12) -> bool:
+    """Poll LinkedIn Documents API until document is AVAILABLE.
+
+    Prevents the post from being created with an invalid or unprocessed document URN.
+    Returns True if AVAILABLE, False otherwise.
+    """
+    import time as _time
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "LinkedIn-Version": "202601",
+        "X-Restli-Protocol-Version": "2.0.0",
+    }
+
+    for attempt in range(max_attempts):
+        try:
+            response = requests.get(
+                f"https://api.linkedin.com/rest/documents/{document_urn}",
+                headers=headers,
+                timeout=30,
+            )
+            if response.status_code == 200:
+                data = response.json()
+                status = data.get("status", "UNKNOWN")
+                if status == "AVAILABLE":
+                    logger.info(f"Document {document_urn} is AVAILABLE (attempt {attempt + 1})")
+                    return True
+                elif status in ("PROCESSING", "WAITING_UPLOAD"):
+                    logger.info(f"Document {document_urn} status: {status}, waiting... (attempt {attempt + 1}/{max_attempts})")
+                    _time.sleep(5)
+                    continue
+                else:
+                    logger.error(f"Document {document_urn} unexpected status: {status}")
+                    return False
+            else:
+                logger.warning(f"Document status check returned {response.status_code}, retrying... (attempt {attempt + 1}/{max_attempts})")
+                _time.sleep(5)
+        except Exception as e:
+            logger.warning(f"Document status check failed: {e}, retrying... (attempt {attempt + 1}/{max_attempts})")
+            _time.sleep(5)
+
+    logger.error(f"Timeout waiting for document {document_urn} after {max_attempts} attempts")
+    return False
+
+
 @functions_framework.http
 def publish_linkedin(request):
     """
@@ -128,19 +173,29 @@ def publish_linkedin(request):
         # Preferred current path: document posts for LinkedIn slides.
         if document_urn:
             logger.info(f"Including document: {document_urn}")
-            post_payload["content"] = {
-                "media": {
-                    "id": document_urn,
-                    "title": document_title or "relearn.ing LinkedIn Slides",
-                }
-            }
 
-            response = requests.post(
-                "https://api.linkedin.com/rest/posts",
-                headers=rest_headers,
-                json=post_payload,
-                timeout=30,
-            )
+            # Validate document is AVAILABLE before posting to prevent missing slides
+            doc_available = wait_for_document_available(document_urn, access_token)
+            if not doc_available:
+                logger.warning(f"Document {document_urn} not available, falling back to text-only post")
+                document_urn = ""
+            else:
+                post_payload["content"] = {
+                    "media": {
+                        "id": document_urn,
+                        "title": document_title or "relearn.ing LinkedIn Slides",
+                    }
+                }
+
+                logger.info(f"Creating document post with payload: {json.dumps(post_payload, indent=2)[:500]}")
+
+                response = requests.post(
+                    "https://api.linkedin.com/rest/posts",
+                    headers=rest_headers,
+                    json=post_payload,
+                    timeout=30,
+                )
+                logger.info(f"LinkedIn API response: {response.status_code} - {response.text[:500]}")
         # Compatibility path: current Posts API with `urn:li:video:...`
         elif video_urn:
             logger.info(f"Including video: {video_urn}")
