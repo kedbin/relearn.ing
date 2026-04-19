@@ -53,6 +53,10 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Install dependencies
+        if: steps.changed.outputs.skip != 'true'
+        run: npm ci --ignore-scripts
+
       - name: Check publish_social flag and extract content
         if: steps.changed.outputs.skip != 'true'
         id: check
