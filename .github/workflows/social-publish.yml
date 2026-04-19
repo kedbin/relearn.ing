@@ -69,16 +69,24 @@ jobs:
           node "$SOCIAL_EXTRACTOR" --file "$FILE" > /tmp/current-social.json
           echo "Social metadata extracted with UTF-8-safe parser"
           
+          # Extract linkedin and threads content to separate files
+          python3 -c "
+          import json
+          from pathlib import Path
+          with open('/tmp/current-social.json', 'r', encoding='utf-8') as f:
+              data = json.load(f)
+          Path('/tmp/linkedin.txt').write_text(data.get('linkedin', ''), encoding='utf-8')
+          Path('/tmp/threads.txt').write_text(data.get('threads', ''), encoding='utf-8')
+          "
+          
           # Check for publish_social: true
           if [ "$(jq -r '.publish_social' /tmp/current-social.json)" = "true" ]; then
             echo "publish_social flag is TRUE"
             
             # Check if linkedin/threads content actually changed (idempotency check)
-            # Get previous version of the file
             git show HEAD~1:"$FILE" > /tmp/prev_file.md 2>/dev/null || echo "" > /tmp/prev_file.md
             node "$SOCIAL_EXTRACTOR" --file /tmp/prev_file.md > /tmp/prev-social.json
             
-            # Compare content hashes (include image/video URN so media changes trigger republish)
             CURR_HASH=$(jq -r '.content_hash' /tmp/current-social.json)
             PREV_HASH=$(jq -r '.content_hash' /tmp/prev-social.json)
             PREV_PUBLISH_SOCIAL=$(jq -r '.publish_social' /tmp/prev-social.json)
@@ -87,17 +95,6 @@ jobs:
             DOCUMENT_URN=$(jq -r '.document_urn' /tmp/current-social.json)
             DOCUMENT_TITLE=$(jq -r '.document_title' /tmp/current-social.json)
             VIDEO_URN=$(jq -r '.video_urn' /tmp/current-social.json)
-
-            python3 - <<'PY'
-            import json
-            from pathlib import Path
-
-            with open('/tmp/current-social.json', 'r', encoding='utf-8') as f:
-                data = json.load(f)
-
-            Path('/tmp/linkedin.txt').write_text(data.get('linkedin', ''), encoding='utf-8')
-            Path('/tmp/threads.txt').write_text(data.get('threads', ''), encoding='utf-8')
-            PY
             
             echo "Current hash: $CURR_HASH"
             echo "Previous hash: $PREV_HASH"
@@ -116,7 +113,6 @@ jobs:
             echo "Social content changed, force publish requested, or publish_social just transitioned to true - will publish to social media"
             echo "should_publish=true" >> $GITHUB_OUTPUT
             
-            # Debug output
             echo "LinkedIn content chars: $(wc -m < /tmp/linkedin.txt)"
             echo "Threads content chars: $(wc -m < /tmp/threads.txt)"
             echo "Audio URL: $AUDIO_URL"
