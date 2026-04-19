@@ -61,39 +61,48 @@ def publish_linkedin(request):
         "content": "The post content...",
         "audio_url": "https://relearn.ing/audio/..."  (optional),
         "image_urn": "urn:li:image:..."  (optional - pre-uploaded image URN),
+        "document_urn": "urn:li:document:..."  (optional - pre-uploaded slides/doc URN, preferred),
+        "document_title": "entry-059 · LinkedIn Slides" (optional),
         "video_urn": "urn:li:video:..."  (optional - pre-uploaded video URN, preferred)
     }
 
-    Note: image_urn and video_urn are mutually exclusive. If both provided, video takes priority.
-    Preferred video path uses LinkedIn Videos API upload URNs (`urn:li:video:...`) with the Posts API.
-    Legacy `urn:li:digitalmediaAsset:...` is still supported as a fallback via the older UGC path.
+    Note: media priority is document -> video -> image.
+    Preferred current path for relearn.ing is LinkedIn document posts (`urn:li:document:...`) with the Posts API.
+    Video URNs remain supported for older entries, and legacy `urn:li:digitalmediaAsset:...` is still supported as a fallback via the older UGC path.
     """
     try:
         data = request.get_json(silent=True) or {}
         content = data.get("content", "")
         audio_url = data.get("audio_url", "")
         image_urn = data.get("image_urn", "")
+        document_urn = data.get("document_urn", "")
+        document_title = data.get("document_title", "")
         video_urn = data.get("video_urn", "")
 
         if not content:
             return json.dumps({"success": False, "error": "No content provided"}), 400
 
         logger.info(
-            f"Publishing to LinkedIn: {len(content)} chars, image: {bool(image_urn)}, video: {bool(video_urn)}"
+            f"Publishing to LinkedIn: {len(content)} chars, image: {bool(image_urn)}, document: {bool(document_urn)}, video: {bool(video_urn)}"
         )
 
         # Get credentials from Secret Manager
         access_token = get_secret("linkedin-access-token")
         person_urn = get_secret("linkedin-urn")  # Full URN like urn:li:person:xxx
 
-        # Note: LinkedIn's REST API (/rest/posts) does NOT require escaping most characters.
-        # Legacy ugcPosts behavior is retained only as a compatibility fallback for
-        # older digitalmediaAsset video URNs.
+        # Note: LinkedIn's REST API (/rest/posts) uses "Little Text" format which
+        # reserves certain characters. Unescaped reserved chars can cause the post
+        # to render incorrectly or truncate. Escape them before sending.
+        # Reserved: | { } @ [ ] ( ) < > # \ * _ ~ `
+        def escape_linkedin_text(text):
+            import re
+            reserved = r"([|{}@\[\]()<>#\\*_~`])"
+            return re.sub(reserved, r"\\\1", text)
 
         # If audio URL provided, append it
-        final_content = content
+        final_content = escape_linkedin_text(content)
         if audio_url:
-            final_content = f"{content}\n\n🎧 Listen: {audio_url}"
+            final_content = f"{final_content}\n\n🎧 Listen: {audio_url}"
 
         # Build the post payload
         post_payload = {
@@ -116,8 +125,24 @@ def publish_linkedin(request):
             "Content-Type": "application/json",
         }
 
-        # Preferred video path: current Posts API with `urn:li:video:...`
-        if video_urn:
+        # Preferred current path: document posts for LinkedIn slides.
+        if document_urn:
+            logger.info(f"Including document: {document_urn}")
+            post_payload["content"] = {
+                "media": {
+                    "id": document_urn,
+                    "title": document_title or "relearn.ing LinkedIn Slides",
+                }
+            }
+
+            response = requests.post(
+                "https://api.linkedin.com/rest/posts",
+                headers=rest_headers,
+                json=post_payload,
+                timeout=30,
+            )
+        # Compatibility path: current Posts API with `urn:li:video:...`
+        elif video_urn:
             logger.info(f"Including video: {video_urn}")
 
             if video_urn.startswith("urn:li:video:"):
