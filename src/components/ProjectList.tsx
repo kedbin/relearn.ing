@@ -4,7 +4,7 @@ import Fuse from 'fuse.js';
 import { ProjectCard } from './ProjectCard';
 
 interface Project {
-  slug: string;
+  id: string;
   data: {
     title: string;
     description: string;
@@ -68,8 +68,8 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProjects.map((project) => (
             <ProjectCard
-              key={project.slug}
-              slug={project.slug}
+              key={project.id}
+              id={project.id}
               {...project.data}
             />
           ))}

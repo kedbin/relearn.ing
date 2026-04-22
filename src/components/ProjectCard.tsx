@@ -10,10 +10,10 @@ interface ProjectCardProps {
   techStack: string[];
   demoUrl?: string;
   repoUrl?: string;
-  slug: string;
+  id: string;
 }
 
-export const ProjectCard = ({ title, description, date, techStack, demoUrl, repoUrl, slug }: ProjectCardProps) => {
+export const ProjectCard = ({ title, description, date, techStack, demoUrl, repoUrl, id }: ProjectCardProps) => {
   return (
     <div className="group h-full">
       <NotebookCard className="h-full flex flex-col transition-all duration-300 group-hover:border-text/20">
@@ -35,7 +35,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
         </div>
 
         {/* Title & Description */}
-        <a href={`/projects/${slug}`} className="block group-hover:no-underline mb-auto">
+        <a href={`/projects/${id}`} className="block group-hover:no-underline mb-auto">
           <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">
             {title}
           </h3>

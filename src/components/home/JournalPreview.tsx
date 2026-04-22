@@ -6,7 +6,6 @@ import { Tag } from '../ui/Tag';
 
 interface JournalEntry {
   id: string;
-  slug: string;
   data: {
     title: string;
     date: string;
@@ -47,7 +46,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
                 {featured.data.summary}
               </p>
               <a
-                href={`/journal/${featured.slug}`}
+                href={`/journal/${featured.id}`}
                 className="text-sm text-note flex items-center gap-2 hover:text-text transition-colors"
               >
                 Read more →

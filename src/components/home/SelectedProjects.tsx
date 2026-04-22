@@ -5,7 +5,7 @@ import { SectionHeader } from '../ui/SectionHeader';
 import { Tag } from '../ui/Tag';
 
 interface Project {
-  slug: string;
+  id: string;
   data: {
     title: string;
     description: string;
@@ -29,7 +29,7 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
 
         <div className="grid md:grid-cols-2 gap-4">
           {featured.map((project) => (
-            <a key={project.slug} href={`/projects/${project.slug}`} className="group block">
+            <a key={project.id} href={`/projects/${project.id}`} className="group block">
               <NotebookCard className="h-full flex flex-col">
                 <span className="label-mono block mb-3">{project.data.date}</span>
                 <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">

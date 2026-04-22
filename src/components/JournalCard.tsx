@@ -6,7 +6,6 @@ import { cn } from '../lib/utils';
 
 interface JournalEntry {
   id: string;
-  slug: string;
   data: {
     title: string;
     date: string;
@@ -25,7 +24,7 @@ export const JournalCard = ({ entry }: JournalCardProps) => {
 
   return (
     <a
-      href={`/journal/${entry.slug}`}
+      href={`/journal/${entry.id}`}
       className="block group h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl"
     >
       <NotebookCard className="h-full flex flex-col transition-all duration-300 group-hover:border-text/20">
