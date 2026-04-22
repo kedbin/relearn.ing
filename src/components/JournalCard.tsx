@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { Tag } from './ui/Tag';
+import { GenerativeThumbnail } from './GenerativeThumbnail';
 
 function estimateReadingTime(text: string): number {
   const words = text.trim().split(/\s+/).length;
@@ -23,24 +24,6 @@ interface JournalCardProps {
   entry: JournalEntry;
   featured?: boolean;
 }
-
-// Abstract thumbnail placeholder with gradient orbs
-const ThumbnailPlaceholder = ({ seed }: { seed: number }) => {
-  const hues = [
-    'from-green/20 via-transparent to-transparent',
-    'from-note/15 via-transparent to-transparent',
-    'from-amber/15 via-transparent to-transparent',
-    'from-redsoft/15 via-transparent to-transparent',
-  ];
-  const hue = hues[seed % hues.length];
-  return (
-    <div className="relative w-full h-full overflow-hidden rounded-xl bg-surface2">
-      <div className={`absolute inset-0 bg-radial-gradient ${hue}`} />
-      <div className="absolute top-1/4 left-1/4 w-1/2 h-1/2 rounded-full bg-text/[0.03] blur-xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 rounded-full bg-text/[0.02] blur-lg" />
-    </div>
-  );
-};
 
 export const JournalCard = ({ entry, featured = false }: JournalCardProps) => {
   const subCategory = entry.data.category.split('/').pop()?.trim() || entry.data.category;
@@ -79,8 +62,8 @@ export const JournalCard = ({ entry, featured = false }: JournalCardProps) => {
               </span>
             </div>
           </div>
-          <div className="order-1 lg:order-2 h-48 md:h-64">
-            <ThumbnailPlaceholder seed={entry.id.charCodeAt(0)} />
+          <div className="order-1 lg:order-2">
+            <GenerativeThumbnail seed={entry.id} className="h-48 md:h-64 w-full" />
           </div>
         </div>
       </a>
@@ -94,7 +77,7 @@ export const JournalCard = ({ entry, featured = false }: JournalCardProps) => {
     >
       <div className="grid md:grid-cols-[200px_1fr] gap-5 rounded-2xl border border-border/60 bg-surface/40 p-4 transition-all duration-300 group-hover:border-text/20">
         <div className="h-40 md:h-full min-h-[120px]">
-          <ThumbnailPlaceholder seed={entry.id.charCodeAt(0)} />
+          <GenerativeThumbnail seed={entry.id} className="h-full w-full" />
         </div>
         <div className="flex flex-col justify-center py-2">
           <div className="flex items-center gap-3 mb-2">

@@ -2,29 +2,7 @@ import React from 'react';
 import { ArrowUpRight, Github, ArrowRight } from 'lucide-react';
 import { NotebookCard } from './ui/NotebookCard';
 import { Tag } from './ui/Tag';
-
-// Abstract icon placeholder using CSS shapes
-const ProjectIcon = ({ seed }: { seed: number }) => {
-  const shapes = [
-    // Circle with ring
-    <div key="1" className="w-10 h-10 rounded-full border-2 border-amber/40 flex items-center justify-center">
-      <div className="w-4 h-4 rounded-full bg-amber/20" />
-    </div>,
-    // Square with dot
-    <div key="2" className="w-10 h-10 rounded-lg border-2 border-note/40 flex items-center justify-center">
-      <div className="w-3 h-3 rounded-sm bg-note/20" />
-    </div>,
-    // Diamond
-    <div key="3" className="w-8 h-8 rotate-45 border-2 border-green/40 flex items-center justify-center">
-      <div className="w-3 h-3 bg-green/20 -rotate-45" />
-    </div>,
-    // Hexagon-ish
-    <div key="4" className="w-10 h-10 rounded-full border-2 border-redsoft/40 flex items-center justify-center">
-      <div className="w-2 h-6 bg-redsoft/20 rounded-full" />
-    </div>,
-  ];
-  return shapes[seed % shapes.length];
-};
+import { GenerativeThumbnail } from './GenerativeThumbnail';
 
 interface ProjectCardProps {
   title: string;
@@ -70,10 +48,8 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
               </span>
             </div>
           </div>
-          <div className="relative h-48 md:h-64 rounded-xl border border-border/40 bg-surface2 overflow-hidden flex items-center justify-center">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgb(var(--green)/0.1),transparent_50%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgb(var(--blue-note)/0.08),transparent_50%)]" />
-            <ProjectIcon seed={id.charCodeAt(0)} />
+          <div className="h-48 md:h-64">
+            <GenerativeThumbnail seed={id} className="h-full w-full" />
           </div>
         </div>
       </a>
@@ -83,11 +59,13 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
   return (
     <div className="group h-full">
       <NotebookCard className="h-full flex flex-col transition-all duration-300 group-hover:border-text/20">
-        {/* Icon + Category */}
-        <div className="flex items-center gap-3 mb-4">
-          <ProjectIcon seed={id.charCodeAt(0)} />
-          <span className="label-mono">{date}</span>
+        {/* Thumbnail */}
+        <div className="mb-4 h-40">
+          <GenerativeThumbnail seed={id} className="h-full w-full" />
         </div>
+
+        {/* Date */}
+        <span className="label-mono block mb-3">{date}</span>
 
         {/* Title & Description */}
         <a href={`/projects/${id}`} className="block group-hover:no-underline mb-auto">
