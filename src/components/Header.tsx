@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Github, Linkedin } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { Logo } from './Logo';
+import { ThemeToggle } from './ThemeToggle';
 
-// Custom Threads icon (Meta's official path)
+// Custom Threads icon
 const ThreadsIcon = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -23,15 +23,19 @@ const socialLinks = [
   { name: 'Threads', href: 'https://www.threads.com/@relearn.ing', icon: ThreadsIcon }
 ];
 
-const NavLink = ({ children, href, active }: { children: React.ReactNode; href: string; active?: boolean }) => (
+const NavLink = ({ children, href, active, onClick }: { children: React.ReactNode; href: string; active?: boolean; onClick?: () => void }) => (
   <a
     href={href}
+    onClick={onClick}
     className={cn(
-      "text-sm font-medium transition-colors duration-200 hover:text-brand-300 relative px-3 py-2 rounded-md",
-      active ? "text-brand-400 bg-brand-500/10" : "text-slate-400"
+      "text-sm font-medium transition-colors duration-200 hover:text-text relative px-3 py-2 rounded-md",
+      active ? "text-text" : "text-muted"
     )}
   >
     {children}
+    {active && (
+      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green" />
+    )}
   </a>
 );
 
@@ -39,7 +43,6 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Normalize path to handle trailing slashes
   const isActive = (path: string) => {
     if (path === '/' && (currentPath === '/')) return true;
     return currentPath.startsWith(path) && path !== '/';
@@ -51,38 +54,32 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSubscribeClick = () => {
-    setMobileMenuOpen(false);
-    // If on home, scroll. If not, nav to home #newsletter
-    if (currentPath === '/') {
-      document.getElementById('newsletter')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.location.href = "/#newsletter";
-    }
-  };
-
   return (
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-        scrolled ? "bg-slate-950/80 border-slate-800/50 py-3" : "bg-transparent border-transparent py-5"
+        scrolled ? "bg-bg/80 border-border/50 backdrop-blur-md py-3" : "bg-transparent border-transparent py-5"
       )}
     >
       <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <div className="cursor-pointer">
-          <Logo />
-        </div>
+        <a href="/" className="flex items-center gap-2 group">
+          <span className="text-xl font-bold tracking-tight text-text">
+            R/
+          </span>
+          <span className="text-sm text-muted group-hover:text-text transition-colors">
+            relearn.ing
+          </span>
+        </a>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
-          <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
           <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
           <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
           <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
-          <div className="flex items-center gap-3 text-slate-400">
+          <div className="flex items-center gap-3 text-muted">
             {socialLinks.map((link) => (
               <a
                 key={link.name}
@@ -90,23 +87,19 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={link.name}
-                className="hover:text-white transition-colors"
+                className="hover:text-text transition-colors"
               >
-                <link.icon className="h-5 w-5" />
+                <link.icon className="h-4 w-4" />
               </a>
             ))}
           </div>
-          <button
-            onClick={handleSubscribeClick}
-            className="px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold rounded-full transition-all shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40"
-          >
-            Newsletter
-          </button>
+          <div className="w-px h-4 bg-border/40" />
+          <ThemeToggle />
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-slate-400"
+          className="md:hidden p-2 text-muted"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X /> : <Menu />}
@@ -120,20 +113,30 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-slate-900/95 border-b border-slate-800 overflow-hidden"
+            className="md:hidden bg-surface border-b border-border/50 overflow-hidden"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
-              <NavLink href="/" active={currentPath === '/'}>Home</NavLink>
-              <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
-              <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
-              <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
-              <hr className="border-slate-800" />
-              <button
-                onClick={handleSubscribeClick}
-                className="w-full py-3 bg-brand-600 text-white rounded-lg font-semibold"
-              >
-                Newsletter
-              </button>
+              <NavLink href="/journal" active={currentPath.includes('/journal')} onClick={() => setMobileMenuOpen(false)}>Journal</NavLink>
+              <NavLink href="/projects" active={currentPath.includes('/projects')} onClick={() => setMobileMenuOpen(false)}>Projects</NavLink>
+              <NavLink href="/about" active={currentPath.includes('/about')} onClick={() => setMobileMenuOpen(false)}>About</NavLink>
+              <hr className="border-border/50" />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-muted">
+                  {socialLinks.map((link) => (
+                    <a
+                      key={link.name}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={link.name}
+                      className="hover:text-text transition-colors"
+                    >
+                      <link.icon className="h-5 w-5" />
+                    </a>
+                  ))}
+                </div>
+                <ThemeToggle />
+              </div>
             </div>
           </motion.div>
         )}

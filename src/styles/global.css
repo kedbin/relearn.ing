@@ -4,29 +4,106 @@
 
 @layer base {
   :root {
+    /* Light mode: warm paper aesthetic */
+    --bg: 245 243 240;
+    --surface: 240 238 234;
+    --surface-2: 232 230 226;
+    --border: 200 196 190;
+    --text: 30 28 24;
+    --muted: 110 108 104;
+    --green: 80 140 80;
+    --blue-note: 70 110 160;
+    --red-soft: 180 80 80;
+    --amber: 180 140 60;
+
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --background: 40 20% 96%;
+    --foreground: 30 10% 10%;
+  }
+
+  .dark {
+    /* Dark mode: warm near-black aesthetic */
+    --bg: 10 12 16;
+    --surface: 16 18 24;
+    --surface-2: 22 24 31;
+    --border: 64 70 82;
+    --text: 232 228 220;
+    --muted: 154 154 160;
+    --green: 126 168 120;
+    --blue-note: 124 153 196;
+    --red-soft: 181 96 96;
+    --amber: 180 152 91;
+
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
   }
 
   body {
-    @apply bg-slate-950 text-slate-200 antialiased;
+    background: rgb(var(--bg));
+    color: rgb(var(--text));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection {
+    background: rgb(var(--green) / 0.25);
+    color: rgb(var(--text));
   }
 }
 
-.font-display {
-  font-family: 'Inter', sans-serif; /* Fallback/Custom */
+@layer components {
+  .display-serif {
+    font-family: var(--font-serif);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .meta-mono {
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgb(var(--muted));
+  }
+
+  .notebook-card {
+    border-radius: 1rem;
+    border: 1px solid rgb(var(--border) / 0.6);
+    background: rgb(var(--surface) / 0.6);
+    padding: 1.5rem;
+    box-shadow: 0 0 0 1px rgb(var(--border) / 0.15);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .artifact-card {
+    border-radius: 1rem;
+    border: 1px solid rgb(var(--border) / 0.6);
+    background: rgb(var(--surface) / 0.5);
+    padding: 0.75rem;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .handwritten {
+    font-family: 'Caveat', cursive;
+    color: rgb(var(--blue-note));
+    font-weight: 500;
+    font-style: italic;
+  }
 }
 
 /* Hero animations */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }

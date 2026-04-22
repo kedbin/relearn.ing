@@ -16,7 +16,6 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
   const [error, setError] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Lazy initialization - only create audio element on first user interaction
   const initializeAudio = useCallback(() => {
     if (audioRef.current || isInitialized) return audioRef.current;
     
@@ -65,7 +64,6 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
     return audio;
   }, [src, isInitialized]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -90,7 +88,6 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
       try {
         await audio.play();
       } catch (err) {
-        // Silently handle - user may have paused quickly or audio not ready
         setIsPlaying(false);
         setIsLoading(false);
       }
@@ -125,19 +122,19 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
 
   if (error) {
     return (
-      <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
-        <div className="flex items-center gap-2 text-slate-500 font-bold mb-2 font-display">
+      <div className="bg-surface/40 border border-border/60 rounded-2xl p-6 backdrop-blur-sm">
+        <div className="flex items-center gap-2 text-muted font-bold mb-2 font-mono text-sm">
           <Headphones className="w-4 h-4" />
           <h3>{title}</h3>
         </div>
-        <p className="text-xs text-slate-600">Audio unavailable</p>
+        <p className="text-xs text-muted/60">Audio unavailable</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 backdrop-blur-sm">
-      <div className="flex items-center gap-2 text-brand-300 font-bold mb-4 font-display">
+    <div className="bg-surface/40 border border-border/60 rounded-2xl p-6 backdrop-blur-sm">
+      <div className="flex items-center gap-2 text-note font-bold mb-4 font-mono text-sm">
         <Headphones className="w-4 h-4" />
         <h3>{title}</h3>
       </div>
@@ -148,7 +145,7 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
           <button
             onClick={togglePlay}
             disabled={isLoading}
-            className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-brand-600 hover:bg-brand-500 disabled:bg-brand-700 disabled:cursor-wait text-white rounded-full transition-colors shadow-lg shadow-brand-900/30"
+            className="flex-shrink-0 w-10 h-10 flex items-center justify-center bg-text hover:bg-muted disabled:bg-muted/50 disabled:cursor-wait text-bg rounded-full transition-colors"
             aria-label={isLoading ? 'Loading' : isPlaying ? 'Pause' : 'Play'}
           >
             {isLoading ? (
@@ -162,9 +159,9 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
 
           <div className="flex-1 space-y-1">
             {/* Progress Bar */}
-            <div className="relative h-2 bg-slate-700/50 rounded-full overflow-hidden">
+            <div className="relative h-2 bg-border/50 rounded-full overflow-hidden">
               <div
-                className="absolute h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-150"
+                className="absolute h-full bg-green rounded-full transition-all duration-150"
                 style={{ width: `${progressPercent}%` }}
               />
               <input
@@ -179,7 +176,7 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
             </div>
 
             {/* Time Display */}
-            <div className="flex justify-between text-xs text-slate-500">
+            <div className="flex justify-between text-xs text-muted">
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
@@ -189,7 +186,7 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
           <button
             onClick={toggleMute}
             disabled={!isInitialized}
-            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white disabled:text-slate-600 transition-colors rounded-lg hover:bg-slate-800/50"
+            className="flex-shrink-0 w-8 h-8 flex items-center justify-center text-muted hover:text-text disabled:text-muted/40 transition-colors rounded-lg hover:bg-surface2/50"
             aria-label={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? (
@@ -201,7 +198,7 @@ export default function AudioPlayer({ src, title = "Audio Overview" }: AudioPlay
         </div>
 
         {/* Listen prompt */}
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted">
           Listen to a quick audio overview of this entry
         </p>
       </div>

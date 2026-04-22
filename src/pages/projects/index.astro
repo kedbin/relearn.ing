@@ -2,35 +2,32 @@
 import Layout from '../../layouts/Layout.astro';
 import { ProjectList } from '../../components/ProjectList';
 import { getCollection } from 'astro:content';
-import { Cpu } from 'lucide-react';
 
 const projects = await getCollection('projects');
 const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
-// Extract body content for full-text search (build-time only)
 const projectsWithContent = sortedProjects.map(project => ({
   slug: project.slug,
   data: project.data,
-  body: project.body, // Raw markdown body for searching
+  body: project.body,
 }));
 ---
 
-<Layout title="Projects | relearn.ing">
+<Layout title="Projects">
   <section class="pt-28 pb-24 px-6">
-    <div class="max-w-3xl mx-auto text-center mb-16">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-xs uppercase tracking-wide text-brand-200 mb-4">
-        <Cpu className="w-3 h-3" />
-        Portfolio
+    <div class="max-w-7xl mx-auto">
+      <div class="mb-16">
+        <div class="flex items-start gap-4 mb-4">
+          <div>
+            <span class="label-mono block mb-2">Portfolio</span>
+            <h1 class="display-serif text-4xl md:text-5xl text-text">Engineering Artifacts</h1>
+          </div>
+        </div>
+        <p class="text-muted max-w-xl">
+          Tangible proof of concept. These are not just codebases; they are attempts to instantiate specific cognitive models into software.
+        </p>
       </div>
-      <h1 class="text-4xl md:text-5xl font-display font-bold text-white mb-4">
-        Engineering Artifacts
-      </h1>
-      <p class="text-slate-300">
-        Tangible proof of concept. These are not just codebases; they are attempts to instantiate specific cognitive models into software.
-      </p>
-    </div>
 
-    <div class="max-w-6xl mx-auto">
       <ProjectList client:load projects={projectsWithContent} />
     </div>
   </section>

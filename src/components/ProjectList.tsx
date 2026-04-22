@@ -13,10 +13,9 @@ interface Project {
     demoUrl?: string;
     repoUrl?: string;
   };
-  body: string; // Raw markdown content for searching
+  body: string;
 }
 
-// Fuse.js configuration
 const FUSE_OPTIONS = {
   keys: [
     { name: 'data.title', weight: 2 },
@@ -33,14 +32,10 @@ const FUSE_OPTIONS = {
 export const ProjectList = ({ projects }: { projects: Project[] }) => {
   const [search, setSearch] = useState('');
 
-  // Memoized Fuse instance - only recreated when projects change
   const fuse = useMemo(() => new Fuse(projects, FUSE_OPTIONS), [projects]);
 
   const filteredProjects = useMemo(() => {
-    if (!search.trim()) {
-      return projects;
-    }
-
+    if (!search.trim()) return projects;
     const results = fuse.search(search);
     return results.map(result => result.item);
   }, [projects, search, fuse]);
@@ -48,29 +43,29 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
   return (
     <div className="w-full">
       {/* Search */}
-      <div className="mb-12 bg-slate-900/40 p-6 rounded-2xl border border-slate-800/50">
+      <div className="mb-12">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-          <input 
-            type="text" 
-            placeholder="Search projects, tech stack, content..." 
-            className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-brand-500/50 transition-colors placeholder:text-slate-600"
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+          <input
+            type="text"
+            placeholder="Search projects, tech stack, content..."
+            className="w-full bg-surface border border-border/60 rounded-xl pl-10 pr-4 py-2.5 text-sm text-text focus:outline-none focus:border-text/30 transition-colors placeholder:text-muted/50"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Results count when searching */}
+      {/* Results count */}
       {search.trim() && (
-        <p className="text-sm text-slate-500 mb-6">
+        <p className="text-sm text-muted mb-6">
           {filteredProjects.length} result{filteredProjects.length !== 1 ? 's' : ''} for "{search}"
         </p>
       )}
 
       {/* Grid */}
       {filteredProjects.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProjects.map((project) => (
             <ProjectCard
               key={project.slug}
@@ -80,11 +75,11 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-24 border border-dashed border-slate-800 rounded-2xl">
-          <p className="text-slate-500">No projects found matching your search.</p>
-          <button 
+        <div className="text-center py-24 border border-dashed border-border/40 rounded-2xl">
+          <p className="text-muted">No projects found matching your search.</p>
+          <button
             onClick={() => setSearch('')}
-            className="mt-4 text-brand-400 hover:text-brand-300 text-sm"
+            className="mt-4 text-note hover:text-text text-sm"
           >
             Clear search
           </button>
