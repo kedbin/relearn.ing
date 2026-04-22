@@ -8,7 +8,7 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
 
 const entriesWithContent = sortedEntries.map(entry => ({
   id: entry.id,
-  slug: entry.slug,
+  slug: entry.id,
   data: entry.data,
   body: entry.body,
 }));

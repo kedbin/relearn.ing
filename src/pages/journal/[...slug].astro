@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { ArrowLeft, Calendar, Tag, Sparkles, ArrowRight } from 'lucide-react';
 import AudioPlayer from '../../components/AudioPlayer';
 import { NotebookCard } from '../../components/ui/NotebookCard';
@@ -9,13 +9,13 @@ import { Tag as TagBadge } from '../../components/ui/Tag';
 export async function getStaticPaths() {
   const entries = await getCollection('journal');
   return entries.map(entry => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
 
 <Layout title={entry.data.title}>
