@@ -8,7 +8,6 @@ const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - n
 
 const entriesWithContent = sortedEntries.map(entry => ({
   id: entry.id,
-  slug: entry.id,
   data: entry.data,
   body: entry.body,
 }));
@@ -16,11 +15,11 @@ const entriesWithContent = sortedEntries.map(entry => ({
 
 <Layout title="Journal">
   <section class="pt-28 pb-24 px-6">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-5xl mx-auto">
       <div class="mb-16">
         <div class="flex items-start gap-4 mb-4">
           <div>
-            <span class="label-mono block mb-2">Build log</span>
+            <span class="label-mono block mb-3">Build log</span>
             <h1 class="display-serif text-4xl md:text-5xl text-text">Journal</h1>
           </div>
         </div>

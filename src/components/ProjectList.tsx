@@ -40,16 +40,20 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
     return results.map(result => result.item);
   }, [projects, search, fuse]);
 
+  const featured = filteredProjects[0];
+  const rest = filteredProjects.slice(1);
+
   return (
     <div className="w-full">
       {/* Search */}
-      <div className="mb-12">
-        <div className="relative w-full md:w-96">
+      <div className="flex flex-col md:flex-row gap-4 mb-10 items-start md:items-center justify-between">
+        <div className="relative w-full md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
           <input
             type="text"
-            placeholder="Search projects, tech stack, content..."
-            className="w-full bg-surface border border-border/60 rounded-xl pl-10 pr-4 py-2.5 text-sm text-text focus:outline-none focus:border-text/30 transition-colors placeholder:text-muted/50"
+            placeholder="Search projects, tech stack..."
+            aria-label="Search projects"
+            className="w-full bg-surface border border-border/60 rounded-full pl-10 pr-4 py-2 text-sm text-text focus:outline-none focus:border-text/30 transition-colors placeholder:text-muted/50"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -63,21 +67,42 @@ export const ProjectList = ({ projects }: { projects: Project[] }) => {
         </p>
       )}
 
-      {/* Grid */}
       {filteredProjects.length > 0 ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProjects.map((project) => (
+        <div className="space-y-8">
+          {/* Featured Project */}
+          {featured && !search.trim() && (
             <ProjectCard
-              key={project.id}
-              id={project.id}
-              {...project.data}
+              key={featured.id}
+              id={featured.id}
+              featured
+              {...featured.data}
             />
-          ))}
+          )}
+
+          {/* Divider */}
+          {featured && !search.trim() && rest.length > 0 && (
+            <div className="flex items-center gap-4 pt-2">
+              <span className="label-mono">All projects</span>
+              <div className="flex-1 h-px bg-border/30" />
+            </div>
+          )}
+
+          {/* Project Grid */}
+          <div className="grid md:grid-cols-2 gap-4">
+            {(search.trim() ? filteredProjects : rest).map((project) => (
+              <ProjectCard
+                key={project.id}
+                id={project.id}
+                {...project.data}
+              />
+            ))}
+          </div>
         </div>
       ) : (
         <div className="text-center py-24 border border-dashed border-border/40 rounded-2xl">
           <p className="text-muted">No projects found matching your search.</p>
           <button
+            type="button"
             onClick={() => setSearch('')}
             className="mt-4 text-note hover:text-text text-sm"
           >
