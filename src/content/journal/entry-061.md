@@ -14,7 +14,7 @@ linkedin_document_urn: "urn:li:document:D4E10AQG0vlLYhWAreQ"
 linkedin_document_title: "The Orchestration Era: What April 2026 Changed About AI Systems · LinkedIn Slides"
 youtube_url: "https://www.youtube.com/watch?v=8LhAMPvuZ9g"
 youtube_video_id: "8LhAMPvuZ9g"
-publish_social: true
+publish_social: false
 linkedin: |
   The second half of April 2026 has been kind of crazy with all the AI drops and changes.
   
