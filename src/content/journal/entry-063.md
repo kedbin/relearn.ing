@@ -16,7 +16,7 @@ linkedin_document_urn: "urn:li:document:D4E10AQFjLwsXCUWwSA"
 linkedin_document_title: "My LinkedIn Slides Were Trash, So I Asked My AI to Self-Correct · LinkedIn Slides"
 youtube_url: "https://www.youtube.com/watch?v=OKgxpwoNaxQ"
 youtube_video_id: "OKgxpwoNaxQ"
-publish_social: true
+publish_social: false
 linkedin: |
   Three days back, I pivoted to LinkedIn carousel posts for my relearn.ing journal.
   
