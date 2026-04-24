@@ -13,7 +13,7 @@ linkedin_document_urn: "urn:li:document:D4E10AQG5LVXaeS38Zg"
 linkedin_document_title: "Software Fundamentals Are the AI Interface"
 youtube_url: "https://www.youtube.com/watch?v=sPp4Lcw4TmA"
 youtube_video_id: "sPp4Lcw4TmA"
-publish_social: true
+publish_social: false
 linkedin: |
   This was inspired by Matt Pocock's talk, "It Ain't Broke: Why Software Fundamentals Matter More Than Ever":
   https://www.youtube.com/watch?v=v4F1gFy-hqg
