@@ -97,3 +97,34 @@ Revamp the relearn.ing Astro site with a new design system based on a warm near-
 - Consider creating a `src/content/system/` collection to power the hero status cards dynamically.
 - Add subtle hover transitions and entrance animations (Framer Motion) to NotebookCards for extra polish.
 - Evaluate if a dedicated `/system` page is desired based on user feedback.
+
+---
+
+## Session Date
+2026-04-24
+
+## Objective
+Improve dark-mode markdown rendering so inline code like `/tmp` and table cells stay visible in generated site/pipeline screenshots.
+
+## Errors / Misses / Recovery Steps
+
+1. **Prose typography default contrast miss**
+   - The revamp set paragraph/list colors with Tailwind `prose-*` utilities, but did not explicitly override inline `code`, `td`, or `th` colors.
+   - In dark-mode renders, typography plugin defaults could make these elements look too dim against the near-black palette.
+   - Fix: Added global `.prose` overrides for inline code and table cells/headers, with stronger dark-mode foreground and border colors.
+
+2. **Scope correction**
+   - Rather than duplicate classes across journal and project detail pages, applied the fix in `src/styles/global.css` so all markdown-rendered prose inherits the contrast improvement.
+
+3. **Build warning observed**
+   - `npm run build` completed successfully, but Astro emitted a pre-existing-looking warning: duplicate id `entry-063` found in `src/content/journal/entry-063.md`; later items overwrite earlier ones.
+   - No recovery was needed for this CSS fix, but future content runs should inspect the journal collection/frontmatter if duplicate entry IDs cause routing or content selection confusion.
+
+## Files Modified / Created
+
+- `src/styles/global.css` — added inline code and markdown table contrast overrides for light/dark prose.
+- `RUN_LEARNINGS.md` — recorded this dark-mode rendering correction.
+
+## Verification
+
+- `npm run build` — passed; generated 73 pages with the duplicate `entry-063` warning noted above.

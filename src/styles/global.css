@@ -101,6 +101,47 @@
     font-weight: 500;
     font-style: italic;
   }
+
+  .prose :where(code):not(:where(pre code)) {
+    color: rgb(var(--text));
+    background: rgb(var(--surface-2) / 0.78);
+    border: 1px solid rgb(var(--border) / 0.55);
+    border-radius: 0.35rem;
+    padding: 0.12rem 0.35rem;
+    font-weight: 600;
+  }
+
+  .prose :where(code):not(:where(pre code))::before,
+  .prose :where(code):not(:where(pre code))::after {
+    color: inherit;
+  }
+
+  .prose :where(td),
+  .prose :where(th) {
+    border-color: rgb(var(--border) / 0.72);
+  }
+
+  .prose :where(td) {
+    color: rgb(var(--text) / 0.88);
+  }
+
+  .prose :where(th) {
+    color: rgb(var(--text));
+  }
+
+  .dark .prose :where(code):not(:where(pre code)) {
+    color: rgb(248 250 252);
+    background: rgb(var(--surface-2) / 0.95);
+    border-color: rgb(var(--border) / 0.85);
+  }
+
+  .dark .prose :where(td) {
+    color: rgb(226 232 240);
+  }
+
+  .dark .prose :where(th) {
+    color: rgb(248 250 252);
+  }
 }
 
 /* Hero animations */
