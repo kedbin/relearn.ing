@@ -16,7 +16,7 @@ linkedin_document_urn: "urn:li:document:D4E10AQHtbixijiJefQ"
 linkedin_document_title: "Accelerator, Last Order, and the Real Meaning of AI Offloading · LinkedIn Slides"
 youtube_url: "https://www.youtube.com/watch?v=_IYqPQyq8ew"
 youtube_video_id: "_IYqPQyq8ew"
-publish_social: true
+publish_social: false
 linkedin: |
   Quick anime detour, but I promise this maps back to work.
   
