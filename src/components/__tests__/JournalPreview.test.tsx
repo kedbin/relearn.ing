@@ -25,6 +25,30 @@ function makeEntry(id: string, title: string): JournalEntryFixture {
   };
 }
 
+describe('JournalPreview — engagement layout (thumbnails, read-time, CTA)', () => {
+  it('badges the featured card as the latest essay and shows a reading time', () => {
+    const entries = [makeEntry('e1', 'Featured'), makeEntry('e2', 'B'), makeEntry('e3', 'C')];
+    render(<JournalPreview entries={entries} />);
+    expect(screen.getByText(/latest essay/i)).toBeInTheDocument();
+    // readingTime fixture body is 5 words -> 1 min read
+    expect(screen.getByText(/1 min read/i)).toBeInTheDocument();
+  });
+
+  it('renders a full-card "View all entries" CTA to the journal index', () => {
+    render(<JournalPreview entries={[makeEntry('a', 'A'), makeEntry('b', 'B'), makeEntry('c', 'C')]} />);
+    expect(screen.getByRole('link', { name: /view all entries/i })).toHaveAttribute('href', '/journal');
+  });
+
+  it('renders a generative thumbnail inside the featured card', () => {
+    const { container } = render(
+      <JournalPreview entries={[makeEntry('e1', 'Featured'), makeEntry('e2', 'B'), makeEntry('e3', 'C')]} />,
+    );
+    // GenerativeThumbnail paints a radial-gradient background on a styled div.
+    const thumbs = container.querySelectorAll('[style*="radial-gradient"]');
+    expect(thumbs.length).toBeGreaterThan(0);
+  });
+});
+
 describe('JournalPreview — card clickability (homepage)', () => {
   it('renders the featured entry as a full-card link to its page', () => {
     const entries = [makeEntry('entry-featured', 'Featured Title'), makeEntry('a', 'A'), makeEntry('b', 'B')];

@@ -11,7 +11,7 @@ interface NotebookCardProps {
 export const NotebookCard = ({ title, label, children, className }: NotebookCardProps) => {
   return (
     <section className={cn(
-      "rounded-2xl border border-border/60 bg-surface/60 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]",
+      "notebook-card",
       className
     )}>
       {label && (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Github, Linkedin } from 'lucide-react';
+import { Menu, X, Github, Linkedin, BookOpen, FolderGit2, User } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -23,21 +23,34 @@ const socialLinks = [
   { name: 'Threads', href: 'https://www.threads.com/@relearn.ing', icon: ThreadsIcon }
 ];
 
-const NavLink = ({ children, href, active, onClick }: { children: React.ReactNode; href: string; active?: boolean; onClick?: () => void }) => (
+const navItems = [
+  { name: 'Journal', href: '/journal', icon: BookOpen, match: '/journal' },
+  { name: 'Projects', href: '/projects', icon: FolderGit2, match: '/projects' },
+  { name: 'About', href: '/about', icon: User, match: '/about' },
+];
+
+const NavLink = ({ children, href, active, icon: Icon, onClick }: { children: React.ReactNode; href: string; active?: boolean; icon?: React.ElementType; onClick?: () => void }) => (
   <a
     href={href}
     onClick={onClick}
     className={cn(
-      "text-sm font-medium transition-colors duration-200 hover:text-text relative px-3 py-2 rounded-md",
-      active ? "text-text" : "text-muted"
+      "group/nav relative flex items-center gap-2 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-200",
+      active ? "text-text bg-surface-2/60" : "text-muted hover:text-text hover:bg-surface-2/40"
     )}
   >
+    {Icon && (
+      <Icon className={cn(
+        "h-[15px] w-[15px] transition-colors",
+        active ? "text-green" : "text-muted group-hover/nav:text-text"
+      )} />
+    )}
     {children}
     {active && (
-      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-green" />
+      <span className="absolute -bottom-0.5 left-1/2 h-[2px] w-5 -translate-x-1/2 rounded-full bg-green" />
     )}
   </a>
 );
+
 
 export const Header = ({ currentPath }: { currentPath: string }) => {
   const [scrolled, setScrolled] = useState(false);
@@ -62,24 +75,26 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
       )}
     >
       <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <a href="/" className="flex items-center gap-2 group">
-          <span className="text-xl font-bold tracking-tight text-text">
+        <a href="/" className="flex items-center gap-2.5 group">
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-text text-bg font-bold text-sm transition-transform group-hover:scale-105">
             R/
           </span>
-          <span className="text-sm text-muted group-hover:text-text transition-colors">
+          <span className="text-sm font-medium text-muted group-hover:text-text transition-colors">
             relearn.ing
           </span>
         </a>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
-          <NavLink href="/journal" active={currentPath.includes('/journal')}>Journal</NavLink>
-          <NavLink href="/projects" active={currentPath.includes('/projects')}>Projects</NavLink>
-          <NavLink href="/about" active={currentPath.includes('/about')}>About</NavLink>
+          {navItems.map((item) => (
+            <NavLink key={item.href} href={item.href} icon={item.icon} active={currentPath.includes(item.match) && item.match !== '/'}>
+              {item.name}
+            </NavLink>
+          ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-4">
-          <div className="flex items-center gap-3 text-muted">
+        <div className="hidden md:flex items-center gap-3">
+          <div className="flex items-center gap-1 text-muted">
             {socialLinks.map((link) => (
               <a
                 key={link.name}
@@ -87,13 +102,14 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={link.name}
-                className="hover:text-text transition-colors"
+                title={link.name}
+                className="grid h-8 w-8 place-items-center rounded-full text-muted hover:text-text hover:bg-surface-2/60 transition-colors"
               >
-                <link.icon className="h-4 w-4" />
+                <link.icon className="h-[17px] w-[17px]" />
               </a>
             ))}
           </div>
-          <div className="w-px h-4 bg-border/40" />
+          <div className="w-px h-5 bg-border/40" />
           <ThemeToggle />
         </div>
 
@@ -115,11 +131,13 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-surface border-b border-border/50 overflow-hidden"
           >
-            <div className="px-6 py-4 flex flex-col gap-4">
-              <NavLink href="/journal" active={currentPath.includes('/journal')} onClick={() => setMobileMenuOpen(false)}>Journal</NavLink>
-              <NavLink href="/projects" active={currentPath.includes('/projects')} onClick={() => setMobileMenuOpen(false)}>Projects</NavLink>
-              <NavLink href="/about" active={currentPath.includes('/about')} onClick={() => setMobileMenuOpen(false)}>About</NavLink>
-              <hr className="border-border/50" />
+            <div className="px-6 py-4 flex flex-col gap-2">
+              {navItems.map((item) => (
+                <NavLink key={item.href} href={item.href} icon={item.icon} active={currentPath.includes(item.match) && item.match !== '/'} onClick={() => setMobileMenuOpen(false)}>
+                  {item.name}
+                </NavLink>
+              ))}
+              <hr className="border-border/50 my-2" />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 text-muted">
                   {socialLinks.map((link) => (

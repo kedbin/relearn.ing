@@ -22,7 +22,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
         href={`/projects/${id}`}
         className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl"
       >
-        <div className="grid lg:grid-cols-[1fr_1fr] gap-8 rounded-2xl border border-border/60 bg-surface/40 p-6 md:p-8 transition-all duration-300 group-hover:border-text/20">
+        <div className="grid lg:grid-cols-[1fr_1fr] gap-8 rounded-2xl border border-border/60 bg-surface/40 p-6 md:p-8 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-text/25 group-hover:shadow-[0_24px_50px_-24px_rgba(0,0,0,0.8)]">
           <div className="flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-4">
               <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-green">
@@ -41,15 +41,15 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
                 <Tag key={tech}>{tech}</Tag>
               ))}
             </div>
-            <div className="flex items-center gap-4 text-xs text-muted font-mono">
-              <span>{date}</span>
-              <span className="flex items-center gap-1 text-note group-hover:text-text transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted font-mono">{date}</span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-text text-bg px-4 py-1.5 text-xs font-semibold transition-all group-hover:gap-2.5">
                 Read case study <ArrowRight className="w-3 h-3" />
               </span>
             </div>
           </div>
-          <div className="h-48 md:h-64">
-            <GenerativeThumbnail seed={id} className="h-full w-full" />
+          <div className="h-48 md:h-64 overflow-hidden rounded-xl">
+            <GenerativeThumbnail seed={id} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
           </div>
         </div>
       </a>

@@ -33,7 +33,7 @@ import { Newsletter } from '../components/home/Newsletter';
                 <strong>Relearn.ing</strong> is where I document my experiments in cognitive engineering—applying systematic approaches to learning, productivity, and personal development. It's part lab notebook, part reference, and fully open source.
               </p>
               <p>
-                For my professional work and portfolio, visit <a href="https://binasoy.kim" target="_blank" rel="noopener noreferrer">binasoy.kim</a>.
+                For my professional work and portfolio, visit <a href="https://binasoy.kim" target="_blank" rel="noopener noreferrer" class="link-accent">binasoy.kim</a>.
               </p>
             </div>
           </div>
@@ -43,14 +43,16 @@ import { Newsletter } from '../components/home/Newsletter';
             <h2 class="display-serif text-2xl text-text mb-6">Principles</h2>
             <div class="grid sm:grid-cols-2 gap-4">
               {[
-                'Based in Earth',
-                'Building in public',
-                'Shipping tiny things',
-                'Learning every day',
+                { t: 'Based in Earth', },
+                { t: 'Building in public', },
+                { t: 'Shipping tiny things', },
+                { t: 'Learning every day', },
               ].map((principle) => (
                 <div class="flex items-center gap-3 text-muted">
-                  <span class="w-1.5 h-1.5 rounded-full bg-green" />
-                  <span>{principle}</span>
+                  <span class="grid h-5 w-5 place-items-center rounded-full bg-green/10 ring-1 ring-green/20">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green" />
+                  </span>
+                  <span class="text-text/90">{principle.t}</span>
                 </div>
               ))}
             </div>
@@ -61,7 +63,7 @@ import { Newsletter } from '../components/home/Newsletter';
             <h2 class="display-serif text-2xl text-text mb-6">Technical Stack</h2>
             <div class="flex flex-wrap gap-2">
               {['Azure', 'AWS', 'Python', 'TypeScript', 'Power Platform', 'React', 'Docker', 'Terraform'].map((tech) => (
-                <span class="px-3 py-1 bg-surface border border-border/40 rounded-lg text-sm text-muted">
+                <span class="px-3 py-1.5 bg-surface border border-border/40 rounded-lg text-sm text-text/85 transition-colors hover:border-text/30 hover:text-text">
                   {tech}
                 </span>
               ))}
@@ -73,7 +75,7 @@ import { Newsletter } from '../components/home/Newsletter';
         </div>
 
         {/* Sidebar */}
-        <aside class="space-y-6">
+        <aside class="space-y-6 lg:sticky lg:top-24">
           {/* Profile Card */}
           <NotebookCard className="!p-4">
             <div class="relative mb-4">
@@ -100,7 +102,13 @@ import { Newsletter } from '../components/home/Newsletter';
 
           {/* System Status */}
           <NotebookCard>
-            <span class="label-mono block mb-4">System Status</span>
+            <span class="label-mono block mb-4 flex items-center gap-2">
+              <span class="relative flex h-1.5 w-1.5">
+                <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-60"></span>
+                <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-green"></span>
+              </span>
+              System Status
+            </span>
             <div class="space-y-1 divide-y divide-border/30">
               <MetricRow label="Sleep" value="7.1h avg" status="degraded" />
               <MetricRow label="Focus" value="12.4h deep work" status="healthy" />

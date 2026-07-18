@@ -1,8 +1,9 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { NotebookCard } from '../ui/NotebookCard';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Tag } from '../ui/Tag';
+import { GenerativeThumbnail } from '../GenerativeThumbnail';
 
 interface JournalEntry {
   id: string;
@@ -13,6 +14,13 @@ interface JournalEntry {
     summary: string;
     category: string;
   };
+  body?: string;
+}
+
+function readingTime(body?: string): number {
+  if (!body) return 0;
+  const words = body.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }
 
 export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
@@ -36,22 +44,36 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
               href={`/journal/${featured.id}`}
               className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl lg:row-span-2"
             >
-              <NotebookCard className="h-full flex flex-col">
-                <div className="flex items-center gap-3 mb-4">
-                  <Tag variant={featured.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
-                    {featured.data.category.split('/').pop()?.trim() || featured.data.category}
-                  </Tag>
-                  <span className="text-xs text-muted font-mono">{featured.data.date}</span>
+              <NotebookCard className="h-full flex flex-col overflow-hidden !p-0">
+                <div className="h-44 w-full overflow-hidden border-b border-border/40">
+                  <GenerativeThumbnail seed={featured.id} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
                 </div>
-                <h3 className="display-serif text-2xl md:text-3xl text-text mb-3 group-hover:text-note transition-colors">
-                  {featured.data.title}
-                </h3>
-                <p className="text-muted leading-relaxed mb-6 flex-grow">
-                  {featured.data.summary}
-                </p>
-                <span className="text-sm text-note flex items-center gap-2 group-hover:text-text transition-colors">
-                  Read more →
-                </span>
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-amber">
+                      <span className="w-1.5 h-1.5 rounded-full bg-amber" />
+                      Latest Essay
+                    </span>
+                    <Tag variant={featured.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
+                      {featured.data.category.split('/').pop()?.trim() || featured.data.category}
+                    </Tag>
+                  </div>
+                  <h3 className="display-serif text-2xl md:text-3xl text-text mb-3 group-hover:text-note transition-colors">
+                    {featured.data.title}
+                  </h3>
+                  <p className="text-muted leading-relaxed mb-5 flex-grow">
+                    {featured.data.summary}
+                  </p>
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/30">
+                    <span className="flex items-center gap-2 text-xs text-muted font-mono">
+                      <Clock className="w-3 h-3" />
+                      {readingTime(featured.body)} min read · {featured.data.date}
+                    </span>
+                    <span className="flex items-center gap-1 text-sm text-note font-medium transition-all group-hover:gap-2">
+                      Read <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </div>
               </NotebookCard>
             </a>
           )}
@@ -64,26 +86,34 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
                 href={`/journal/${entry.id}`}
                 className="group block flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl"
               >
-                <NotebookCard className="h-full">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
-                      {entry.data.category.split('/').pop()?.trim() || entry.data.category}
-                    </Tag>
-                    <span className="text-xs text-muted font-mono">{entry.data.date}</span>
+                <NotebookCard className="h-full !p-3">
+                  <div className="flex gap-4">
+                    <div className="hidden sm:block w-24 shrink-0 overflow-hidden rounded-lg border border-border/40">
+                      <GenerativeThumbnail seed={entry.id} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]" />
+                    </div>
+                    <div className="flex flex-col flex-grow min-w-0">
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
+                          {entry.data.category.split('/').pop()?.trim() || entry.data.category}
+                        </Tag>
+                        <span className="flex items-center gap-1 text-xs text-muted font-mono">
+                          <Clock className="w-3 h-3" />
+                          {readingTime(entry.body)}m
+                        </span>
+                      </div>
+                      <h3 className="text-lg font-semibold text-text mb-1 group-hover:text-note transition-colors leading-snug">{entry.data.title}</h3>
+                      <p className="text-sm text-muted line-clamp-2">{entry.data.summary}</p>
+                      <ArrowRight className="w-4 h-4 mt-2 text-muted group-hover:text-text transition-all group-hover:translate-x-1" />
+                    </div>
                   </div>
-                  <h3 className="text-lg font-semibold text-text mb-1 group-hover:text-note transition-colors">{entry.data.title}</h3>
-                  <p className="text-sm text-muted line-clamp-2">{entry.data.summary}</p>
                 </NotebookCard>
               </a>
             ))}
           </div>
         </div>
 
-        <div className="mt-8 text-center">
-          <a
-            href="/journal"
-            className="inline-flex items-center gap-2 text-sm text-muted hover:text-text transition-colors"
-          >
+        <div className="mt-10 flex justify-center">
+          <a href="/journal" className="btn-ghost">
             View all entries <ArrowRight className="w-4 h-4" />
           </a>
         </div>
