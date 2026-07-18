@@ -32,41 +32,49 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Featured Entry */}
           {featured && (
-            <NotebookCard className="lg:row-span-2 flex flex-col">
-              <div className="flex items-center gap-3 mb-4">
-                <Tag variant={featured.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
-                  {featured.data.category.split('/').pop()?.trim() || featured.data.category}
-                </Tag>
-                <span className="text-xs text-muted font-mono">{featured.data.date}</span>
-              </div>
-              <h3 className="display-serif text-2xl md:text-3xl text-text mb-3">
-                {featured.data.title}
-              </h3>
-              <p className="text-muted leading-relaxed mb-6 flex-grow">
-                {featured.data.summary}
-              </p>
-              <a
-                href={`/journal/${featured.id}`}
-                className="text-sm text-note flex items-center gap-2 hover:text-text transition-colors"
-              >
-                Read more →
-              </a>
-            </NotebookCard>
+            <a
+              href={`/journal/${featured.id}`}
+              className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl lg:row-span-2"
+            >
+              <NotebookCard className="h-full flex flex-col">
+                <div className="flex items-center gap-3 mb-4">
+                  <Tag variant={featured.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
+                    {featured.data.category.split('/').pop()?.trim() || featured.data.category}
+                  </Tag>
+                  <span className="text-xs text-muted font-mono">{featured.data.date}</span>
+                </div>
+                <h3 className="display-serif text-2xl md:text-3xl text-text mb-3 group-hover:text-note transition-colors">
+                  {featured.data.title}
+                </h3>
+                <p className="text-muted leading-relaxed mb-6 flex-grow">
+                  {featured.data.summary}
+                </p>
+                <span className="text-sm text-note flex items-center gap-2 group-hover:text-text transition-colors">
+                  Read more →
+                </span>
+              </NotebookCard>
+            </a>
           )}
 
           {/* Stacked Entries */}
           <div className="flex flex-col gap-4">
             {rest.map((entry) => (
-              <NotebookCard key={entry.id} className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
-                    {entry.data.category.split('/').pop()?.trim() || entry.data.category}
-                  </Tag>
-                  <span className="text-xs text-muted font-mono">{entry.data.date}</span>
-                </div>
-                <h3 className="text-lg font-semibold text-text mb-1">{entry.data.title}</h3>
-                <p className="text-sm text-muted line-clamp-2">{entry.data.summary}</p>
-              </NotebookCard>
+              <a
+                key={entry.id}
+                href={`/journal/${entry.id}`}
+                className="group block flex-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl"
+              >
+                <NotebookCard className="h-full">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
+                      {entry.data.category.split('/').pop()?.trim() || entry.data.category}
+                    </Tag>
+                    <span className="text-xs text-muted font-mono">{entry.data.date}</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-text mb-1 group-hover:text-note transition-colors">{entry.data.title}</h3>
+                  <p className="text-sm text-muted line-clamp-2">{entry.data.summary}</p>
+                </NotebookCard>
+              </a>
             ))}
           </div>
         </div>

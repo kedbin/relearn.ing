@@ -57,7 +57,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
   }
 
   return (
-    <div className="group h-full">
+    <div className="group relative h-full">
       <NotebookCard className="h-full flex flex-col transition-all duration-300 group-hover:border-text/20">
         {/* Thumbnail */}
         <div className="mb-4 h-40">
@@ -68,14 +68,12 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
         <span className="label-mono block mb-3">{date}</span>
 
         {/* Title & Description */}
-        <a href={`/projects/${id}`} className="block group-hover:no-underline mb-auto">
-          <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">
-            {title}
-          </h3>
-          <p className="text-muted text-sm leading-relaxed mb-4 line-clamp-3">
-            {description}
-          </p>
-        </a>
+        <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">
+          {title}
+        </h3>
+        <p className="text-muted text-sm leading-relaxed mb-4 line-clamp-3">
+          {description}
+        </p>
 
         {/* Tech Stack */}
         <div className="flex flex-wrap gap-2 mb-4">
@@ -84,14 +82,11 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
           ))}
         </div>
 
-        {/* Links */}
-        <div className="flex items-center gap-4 pt-4 border-t border-border/30 mt-auto">
-          <a
-            href={`/projects/${id}`}
-            className="text-xs text-note hover:text-text transition-colors flex items-center gap-1"
-          >
+        {/* Links — elevated above the full-card overlay so they stay clickable */}
+        <div className="relative z-10 flex items-center gap-4 pt-4 border-t border-border/30 mt-auto">
+          <span className="text-xs text-note flex items-center gap-1">
             Read case study <ArrowRight className="w-3 h-3" />
-          </a>
+          </span>
           {repoUrl && (
             <a href={repoUrl} target="_blank" rel="noreferrer" className="text-xs text-muted hover:text-text transition-colors flex items-center gap-1">
               <Github className="w-3 h-3" /> Source
@@ -104,6 +99,15 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
           )}
         </div>
       </NotebookCard>
+
+      {/* Full-card stretched link. Sits over the card so the whole surface is
+          clickable; the external links above stay reachable via z-10. Kept as
+          a sibling (not a wrapper) to avoid nesting <a> inside <a>. */}
+      <a
+        href={`/projects/${id}`}
+        className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        aria-label={`Read case study: ${title}`}
+      />
     </div>
   );
 };
