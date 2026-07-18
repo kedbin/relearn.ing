@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowUpRight, Github, ArrowRight } from 'lucide-react';
 import { NotebookCard } from './ui/NotebookCard';
 import { Tag } from './ui/Tag';
-import { GenerativeThumbnail } from './GenerativeThumbnail';
+import { Motif } from './ui/Motif';
 
 interface ProjectCardProps {
   title: string;
@@ -49,7 +49,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
             </div>
           </div>
           <div className="h-48 md:h-64 overflow-hidden rounded-xl">
-            <GenerativeThumbnail seed={id} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
+            <Motif seed={id} category="Relearn Engineering" className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
           </div>
         </div>
       </a>
@@ -61,7 +61,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
       <NotebookCard className="h-full flex flex-col transition-all duration-300 group-hover:border-text/20">
         {/* Thumbnail */}
         <div className="mb-4 h-40">
-          <GenerativeThumbnail seed={id} className="h-full w-full" />
+          <Motif seed={id} category="Relearn Engineering" className="h-full w-full" />
         </div>
 
         {/* Date */}

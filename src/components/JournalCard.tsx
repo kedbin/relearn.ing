@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { Tag } from './ui/Tag';
-import { GenerativeThumbnail } from './GenerativeThumbnail';
+import { Motif } from './ui/Motif';
 
 function estimateReadingTime(text: string): number {
   const words = text.trim().split(/\s+/).length;
@@ -63,7 +63,7 @@ export const JournalCard = ({ entry, featured = false }: JournalCardProps) => {
             </div>
           </div>
           <div className="order-1 lg:order-2">
-            <GenerativeThumbnail seed={entry.id} className="h-48 md:h-64 w-full" />
+            <Motif seed={entry.id} category={entry.data.category} className="h-48 md:h-64 w-full" />
           </div>
         </div>
       </a>
@@ -77,7 +77,7 @@ export const JournalCard = ({ entry, featured = false }: JournalCardProps) => {
     >
       <div className="grid md:grid-cols-[200px_1fr] gap-5 rounded-2xl border border-border/60 bg-surface/40 p-4 transition-all duration-300 group-hover:border-text/20">
         <div className="h-40 md:h-full min-h-[120px]">
-          <GenerativeThumbnail seed={entry.id} className="h-full w-full" />
+          <Motif seed={entry.id} category={entry.data.category} className="h-full w-full" />
         </div>
         <div className="flex flex-col justify-center py-2">
           <div className="flex items-center gap-3 mb-2">

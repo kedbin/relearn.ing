@@ -8,9 +8,9 @@ interface TagProps {
 }
 
 const variantStyles = {
-  default: 'bg-surface2/50 text-muted border-border/40',
-  life: 'bg-purple-500/5 text-purple-300 border-purple-500/15',
-  engineering: 'bg-cyan-500/5 text-cyan-300 border-cyan-500/15',
+  default: 'bg-surface2/60 text-muted border-border/40',
+  life: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/25 dark:border-purple-500/15',
+  engineering: 'bg-cyan-500/10 text-cyan-700 dark:text-cyan-300 border-cyan-500/25 dark:border-cyan-500/15',
   muted: 'bg-transparent text-muted border-border/30',
 };
 

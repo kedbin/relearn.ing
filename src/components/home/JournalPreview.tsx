@@ -3,7 +3,7 @@ import { ArrowRight, Clock } from 'lucide-react';
 import { NotebookCard } from '../ui/NotebookCard';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Tag } from '../ui/Tag';
-import { GenerativeThumbnail } from '../GenerativeThumbnail';
+import { Motif } from '../ui/Motif';
 
 interface JournalEntry {
   id: string;
@@ -46,7 +46,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
             >
               <NotebookCard className="h-full flex flex-col overflow-hidden !p-0">
                 <div className="h-44 w-full overflow-hidden border-b border-border/40">
-                  <GenerativeThumbnail seed={featured.id} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
+                  <Motif seed={featured.id} category={featured.data.category} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex items-center gap-3 mb-3">
@@ -89,7 +89,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
                 <NotebookCard className="h-full !p-3">
                   <div className="flex gap-4">
                     <div className="hidden sm:block w-24 shrink-0 overflow-hidden rounded-lg border border-border/40">
-                      <GenerativeThumbnail seed={entry.id} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]" />
+                      <Motif seed={entry.id} category={entry.data.category} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]" />
                     </div>
                     <div className="flex flex-col flex-grow min-w-0">
                       <div className="flex items-center gap-2 mb-1.5">

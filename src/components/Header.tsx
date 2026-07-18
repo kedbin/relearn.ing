@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Github, Linkedin, BookOpen, FolderGit2, User } from 'lucide-react';
+import { Menu, X, Github, Linkedin } from 'lucide-react';
+import { CodeGlyph } from './ui/CodeGlyph';
 import { cn } from '../lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -24,12 +25,12 @@ const socialLinks = [
 ];
 
 const navItems = [
-  { name: 'Journal', href: '/journal', icon: BookOpen, match: '/journal' },
-  { name: 'Projects', href: '/projects', icon: FolderGit2, match: '/projects' },
-  { name: 'About', href: '/about', icon: User, match: '/about' },
+  { name: 'Journal', href: '/journal', k: 'journal', match: '/journal' },
+  { name: 'Projects', href: '/projects', k: 'projects', match: '/projects' },
+  { name: 'About', href: '/about', k: 'about', match: '/about' },
 ];
 
-const NavLink = ({ children, href, active, icon: Icon, onClick }: { children: React.ReactNode; href: string; active?: boolean; icon?: React.ElementType; onClick?: () => void }) => (
+const NavLink = ({ children, href, active, glyph, onClick }: { children: React.ReactNode; href: string; active?: boolean; glyph?: string; onClick?: () => void }) => (
   <a
     href={href}
     onClick={onClick}
@@ -38,12 +39,7 @@ const NavLink = ({ children, href, active, icon: Icon, onClick }: { children: Re
       active ? "text-text bg-surface-2/60" : "text-muted hover:text-text hover:bg-surface-2/40"
     )}
   >
-    {Icon && (
-      <Icon className={cn(
-        "h-[15px] w-[15px] transition-colors",
-        active ? "text-green" : "text-muted group-hover/nav:text-text"
-      )} />
-    )}
+    {glyph && <CodeGlyph k={glyph} className="!text-[12px]" />}
     {children}
     {active && (
       <span className="absolute -bottom-0.5 left-1/2 h-[2px] w-5 -translate-x-1/2 rounded-full bg-green" />
@@ -87,7 +83,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => (
-            <NavLink key={item.href} href={item.href} icon={item.icon} active={currentPath.includes(item.match) && item.match !== '/'}>
+            <NavLink key={item.href} href={item.href} glyph={item.k} active={currentPath.includes(item.match) && item.match !== '/'}>
               {item.name}
             </NavLink>
           ))}
@@ -133,7 +129,7 @@ export const Header = ({ currentPath }: { currentPath: string }) => {
           >
             <div className="px-6 py-4 flex flex-col gap-2">
               {navItems.map((item) => (
-                <NavLink key={item.href} href={item.href} icon={item.icon} active={currentPath.includes(item.match) && item.match !== '/'} onClick={() => setMobileMenuOpen(false)}>
+                <NavLink key={item.href} href={item.href} glyph={item.k} active={currentPath.includes(item.match) && item.match !== '/'} onClick={() => setMobileMenuOpen(false)}>
                   {item.name}
                 </NavLink>
               ))}

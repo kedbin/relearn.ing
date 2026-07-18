@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { NotebookCard } from '../ui/NotebookCard';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Tag } from '../ui/Tag';
+import { Motif } from '../ui/Motif';
 
 interface Project {
   id: string;
@@ -30,7 +31,9 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
         <div className="grid md:grid-cols-2 gap-4">
           {featured.map((project) => (
             <a key={project.id} href={`/projects/${project.id}`} className="group block">
-              <NotebookCard className="h-full flex flex-col">
+              <NotebookCard className="h-full flex flex-col overflow-hidden !p-0">
+                <Motif seed={project.id} category="Relearn Engineering" className="h-28 w-full" />
+                <div className="p-5 flex flex-col flex-grow">
                 <span className="label-mono block mb-3">{project.data.date}</span>
                 <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">
                   {project.data.title}
@@ -43,16 +46,17 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
                     <Tag key={tech}>{tech}</Tag>
                   ))}
                 </div>
+                <div className="flex items-center gap-1.5 mt-5 text-sm text-note font-medium transition-all group-hover:gap-2.5">
+                  View project <ArrowRight className="w-4 h-4" />
+                </div>
+                </div>
               </NotebookCard>
             </a>
           ))}
         </div>
 
-        <div className="mt-8 text-center">
-          <a
-            href="/projects"
-            className="inline-flex items-center gap-2 text-sm text-muted hover:text-text transition-colors"
-          >
+        <div className="mt-10 flex justify-center">
+          <a href="/projects" className="btn-ghost">
             View all projects <ArrowRight className="w-4 h-4" />
           </a>
         </div>

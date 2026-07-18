@@ -10,11 +10,11 @@
     --surface-2: 230 226 220;
     --border: 205 200 192;
     --text: 26 24 21;
-    --muted: 122 117 109;
-    --green: 80 140 80;
-    --blue-note: 70 110 160;
-    --red-soft: 180 80 80;
-    --amber: 180 140 60;
+    --muted: 106 101 94;
+    --green: 60 120 70;
+    --blue-note: 55 92 140;
+    --red-soft: 165 70 70;
+    --amber: 165 125 50;
 
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', system-ui, sans-serif;
@@ -33,7 +33,7 @@
     --text: 236 232 224;
     --muted: 176 180 190;
     --green: 126 168 120;
-    --blue-note: 124 153 196;
+    --blue-note: 150 172 210;
     --red-soft: 181 96 96;
     --amber: 180 152 91;
 
@@ -113,7 +113,7 @@
   .handwritten {
     font-family: 'Caveat', cursive;
     color: rgb(var(--blue-note));
-    font-weight: 500;
+    font-weight: 600;
     font-style: italic;
   }
 
