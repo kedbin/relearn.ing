@@ -39,13 +39,15 @@ describe('JournalPreview — engagement layout (thumbnails, read-time, CTA)', ()
     expect(screen.getByRole('link', { name: /view all entries/i })).toHaveAttribute('href', '/journal');
   });
 
-  it('renders a generative thumbnail inside the featured card', () => {
+  it('featured card is text-led with NO preview picture (unprofessional art removed)', () => {
     const { container } = render(
       <JournalPreview entries={[makeEntry('e1', 'Featured'), makeEntry('e2', 'B'), makeEntry('e3', 'C')]} />,
     );
-    // GenerativeThumbnail paints a radial-gradient background on a styled div.
+    // Article card preview pictures were intentionally removed.
     const thumbs = container.querySelectorAll('[style*="radial-gradient"]');
-    expect(thumbs.length).toBeGreaterThan(0);
+    expect(thumbs.length).toBe(0);
+    // The title uses the unified card-title system.
+    expect(container.querySelector('.card-title')).not.toBeNull();
   });
 });
 

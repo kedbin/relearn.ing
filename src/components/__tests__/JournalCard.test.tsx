@@ -26,4 +26,11 @@ describe('JournalCard', () => {
     // Sub-category is the segment after the slash.
     expect(container.textContent).toContain('Mind');
   });
+
+  it('uses the unified card-title system and has no preview picture', () => {
+    const entry = makeJournalEntry('e1', { title: 'Unified Title' });
+    const { container } = render(<JournalCard entry={entry} />);
+    expect(container.querySelector('.card-title')).not.toBeNull();
+    expect(container.querySelectorAll('[style*="radial-gradient"]').length).toBe(0);
+  });
 });

@@ -63,6 +63,17 @@
     line-height: 1.05;
   }
 
+  /* Unified card-title system — one serif face across every card (journal
+     featured, journal list, projects). Hierarchy comes from SIZE/WEIGHT, never
+     from swapping to a sans face. text-wrap:balance kills orphan title lines. */
+  .card-title {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.18;
+    text-wrap: balance;
+  }
+
   .meta-mono {
     font-family: var(--font-mono);
     letter-spacing: 0.02em;
@@ -80,7 +91,7 @@
 
   .notebook-card {
     border-radius: 1rem;
-    border: 1px solid rgb(var(--border) / 0.55);
+    border: 1px solid rgb(var(--border) / 0.75);
     background:
       linear-gradient(180deg, rgb(var(--surface-2) / 0.35), rgb(var(--surface) / 0.65));
     padding: 1.5rem;

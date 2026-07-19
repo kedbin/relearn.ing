@@ -30,7 +30,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
                 Featured Project
               </span>
             </div>
-            <h3 className="display-serif text-2xl md:text-3xl text-text mb-3 group-hover:text-note transition-colors">
+            <h3 className="card-title text-2xl md:text-3xl text-text mb-3 group-hover:text-note transition-colors">
               {title}
             </h3>
             <p className="text-muted leading-relaxed mb-6">
@@ -68,7 +68,7 @@ export const ProjectCard = ({ title, description, date, techStack, demoUrl, repo
         <span className="label-mono block mb-3">{date}</span>
 
         {/* Title & Description */}
-        <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">
+        <h3 className="card-title text-xl text-text mb-2 group-hover:text-note transition-colors">
           {title}
         </h3>
         <p className="text-muted text-sm leading-relaxed mb-4 line-clamp-3">

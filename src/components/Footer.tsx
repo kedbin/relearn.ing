@@ -27,7 +27,7 @@ export const Footer = () => (
         <p className="text-muted text-sm">
           © {new Date().getFullYear()} relearn.ing
         </p>
-        <p className="text-muted/60 text-xs mt-1">
+        <p className="text-muted/80 text-xs mt-1">
           Built in public with honest metrics.
         </p>
       </div>
@@ -38,9 +38,11 @@ export const Footer = () => (
             href={link.href}
             target="_blank"
             rel="noreferrer"
+            aria-label={link.name}
+            title={link.name}
             className="hover:text-text transition-colors"
           >
-            <link.icon className="w-4 h-4" />
+            <link.icon className="w-[18px] h-[18px]" />
           </a>
         ))}
       </div>

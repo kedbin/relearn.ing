@@ -44,5 +44,10 @@ describe('ProjectCard', () => {
       render(<ProjectCard {...baseProps} demoUrl="https://example.com" />);
       expect(screen.getByRole('link', { name: /live/i })).toHaveAttribute('href', 'https://example.com');
     });
+
+    it('uses the unified card-title system', () => {
+      const { container } = render(<ProjectCard {...baseProps} />);
+      expect(container.querySelector('.card-title')).not.toBeNull();
+    });
   });
 });

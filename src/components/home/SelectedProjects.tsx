@@ -24,7 +24,6 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
         <SectionHeader
           label="Builds"
           title="Selected Projects"
-          annotation="Systems I build."
           description="Applied cognitive engineering. From theory to executable code."
         />
 
@@ -35,7 +34,7 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
                 <Motif seed={project.id} category="Relearn Engineering" className="h-28 w-full" />
                 <div className="p-5 flex flex-col flex-grow">
                 <span className="label-mono block mb-3">{project.data.date}</span>
-                <h3 className="text-xl font-semibold text-text mb-2 group-hover:text-note transition-colors">
+                <h3 className="card-title text-xl text-text mb-2 group-hover:text-note transition-colors">
                   {project.data.title}
                 </h3>
                 <p className="text-sm text-muted leading-relaxed mb-4 flex-grow">

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { Tag } from './ui/Tag';
-import { Motif } from './ui/Motif';
+import { NotebookCard } from './ui/NotebookCard';
 
 function estimateReadingTime(text: string): number {
   const words = text.trim().split(/\s+/).length;
@@ -35,72 +35,63 @@ export const JournalCard = ({ entry, featured = false }: JournalCardProps) => {
         href={`/journal/${entry.id}`}
         className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl"
       >
-        <div className="grid lg:grid-cols-[1.2fr_1fr] gap-8 items-center rounded-2xl border border-border/60 bg-surface/40 p-6 md:p-8 transition-all duration-300 group-hover:border-text/20">
-          <div className="order-2 lg:order-1">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-amber">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber" />
-                Latest Essay
-              </span>
-            </div>
-            <h3 className="display-serif text-3xl md:text-4xl text-text mb-4 group-hover:text-note transition-colors">
-              {entry.data.title}
-            </h3>
-            <p className="text-muted leading-relaxed mb-6 max-w-lg">
-              {entry.data.summary}
-            </p>
-            <div className="flex items-center gap-3 text-xs text-muted font-mono">
-              <span>{entry.data.date}</span>
-              <span className="w-px h-3 bg-border/40" />
-              <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
-                {subCategory}
-              </Tag>
-              <span className="w-px h-3 bg-border/40" />
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {readTime} min read
-              </span>
-            </div>
+        <NotebookCard className="h-full flex flex-col">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-amber">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber" />
+              Latest Essay
+            </span>
+            <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
+              {subCategory}
+            </Tag>
           </div>
-          <div className="order-1 lg:order-2">
-            <Motif seed={entry.id} category={entry.data.category} className="h-48 md:h-64 w-full" />
+          <h3 className="card-title text-2xl md:text-3xl text-text mb-3 group-hover:text-note transition-colors">
+            {entry.data.title}
+          </h3>
+          <p className="text-muted leading-relaxed mb-5">
+            {entry.data.summary}
+          </p>
+          <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/30">
+            <span className="flex items-center gap-2 text-xs text-muted font-mono">
+              <Clock className="w-3 h-3" />
+              {readTime} min read · {entry.data.date}
+            </span>
+            <span className="flex items-center gap-1 text-sm text-note font-medium transition-all group-hover:gap-2">
+              Read <ArrowRight className="w-4 h-4" />
+            </span>
           </div>
-        </div>
+        </NotebookCard>
       </a>
     );
   }
 
+  // List-row card — text-led, no preview picture.
   return (
     <a
       href={`/journal/${entry.id}`}
       className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-green/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded-2xl"
     >
-      <div className="grid md:grid-cols-[200px_1fr] gap-5 rounded-2xl border border-border/60 bg-surface/40 p-4 transition-all duration-300 group-hover:border-text/20">
-        <div className="h-40 md:h-full min-h-[120px]">
-          <Motif seed={entry.id} category={entry.data.category} className="h-full w-full" />
-        </div>
-        <div className="flex flex-col justify-center py-2">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-xs text-muted font-mono">{entry.data.date}</span>
-            <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
+      <NotebookCard className="h-full">
+        <div className="flex items-center gap-5">
+          <div className="hidden sm:block shrink-0 pr-4 border-r border-border/40 text-right">
+            <div className="font-mono text-xs text-muted">{entry.data.date}</div>
+            <div className="mt-1 flex items-center justify-end gap-1 text-[11px] text-muted font-mono">
+              <Clock className="w-3 h-3" />
+              {readTime}m
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <Tag variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'} className="mb-1.5">
               {subCategory}
             </Tag>
+            <h3 className="card-title text-lg text-text group-hover:text-note transition-colors">
+              {entry.data.title}
+            </h3>
+            <p className="text-sm text-muted line-clamp-1 mt-1">{entry.data.summary}</p>
           </div>
-          <h3 className="display-serif text-xl md:text-2xl text-text mb-2 group-hover:text-note transition-colors">
-            {entry.data.title}
-          </h3>
-          <p className="text-sm text-muted leading-relaxed mb-3 line-clamp-2">
-            {entry.data.summary}
-          </p>
-          <div className="flex items-center justify-between mt-auto">
-            <span className="flex items-center gap-1 text-xs text-muted font-mono">
-              <Clock className="w-3 h-3" />
-              {readTime} min read
-            </span>
-            <ArrowRight className="w-4 h-4 text-muted group-hover:text-text transition-all group-hover:translate-x-1" />
-          </div>
+          <ArrowRight className="shrink-0 w-4 h-4 text-muted group-hover:text-text group-hover:translate-x-1 transition-all" />
         </div>
-      </div>
+      </NotebookCard>
     </a>
   );
 };

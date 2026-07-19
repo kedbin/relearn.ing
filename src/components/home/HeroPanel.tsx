@@ -50,7 +50,7 @@ export const HeroPanel = () => {
               how to work<br />
               and live<span className="text-green">.</span>
             </h1>
-            <p className="text-xl md:text-2xl text-text/90 leading-snug max-w-lg mb-3 font-medium">
+            <p className="text-xl md:text-2xl text-text/80 leading-snug max-w-lg mb-3">
               Augmenting cognition, focus & decision-making.
             </p>
             <p className="text-base md:text-lg text-muted leading-relaxed max-w-lg mb-9">
