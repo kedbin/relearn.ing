@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { JournalCard } from './JournalCard';
 
@@ -15,9 +15,24 @@ interface JournalEntry {
   body: string;
 }
 
-const FILTERS = ['All', 'Life', 'Engineering', 'Systems', 'Productivity'] as const;
-
-type FilterValue = (typeof FILTERS)[number];
+/**
+ * Extract the top-level domain from a category string.
+ * Categories look like "Relearn Engineering / AI Engineering" or
+ * "Relearn Life / Behavioral Economics" -> the segment before the slash,
+ * with the "Relearn " prefix stripped. "AI Engineering" normalises to
+ * "Engineering" so the oddball entry groups correctly.
+ *
+ * Filters are DERIVED from these domains (see filters below), so a bucket
+ * with zero entries can never appear — no more dead "Productivity" pill —
+ * and "Systems" (always a sub-category) is folded into its parent domain
+ * instead of being its own redundant filter.
+ */
+export function topDomain(category: string): string {
+  let head = category.split('/')[0].trim();
+  head = head.replace(/^Relearn\s+/i, '');
+  if (/^AI\s+Engineering$/i.test(head)) head = 'Engineering';
+  return head || 'Engineering';
+}
 
 const FUSE_OPTIONS = {
   keys: [
@@ -34,19 +49,24 @@ const FUSE_OPTIONS = {
 
 export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<FilterValue>('All');
+  const [filter, setFilter] = useState<string>('All');
+
+  // Baseline filter taxonomy, derived from content: "All" + every top-level
+  // domain that actually has entries, sorted by count desc. Buckets with no
+  // entries are impossible here, so filters can never show an empty list.
+  const filters = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const entry of entries) {
+      const d = topDomain(entry.data.category);
+      counts.set(d, (counts.get(d) ?? 0) + 1);
+    }
+    const domains = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([d]) => d);
+    return ['All', ...domains];
+  }, [entries]);
 
   const filteredByCategory = useMemo(() => {
     if (filter === 'All') return entries;
-    return entries.filter((entry) => {
-      const { category } = entry.data;
-      const catLower = category.toLowerCase();
-      if (filter === 'Life') return catLower.includes('life');
-      if (filter === 'Engineering') return catLower.includes('engineering');
-      if (filter === 'Systems') return catLower.includes('systems');
-      if (filter === 'Productivity') return catLower.includes('productivity');
-      return true;
-    });
+    return entries.filter((entry) => topDomain(entry.data.category) === filter);
   }, [entries, filter]);
 
   const fuse = useMemo(() => new Fuse(filteredByCategory, FUSE_OPTIONS), [filteredByCategory]);
@@ -60,18 +80,23 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
   const featured = filteredEntries[0];
   const rest = filteredEntries.slice(1);
 
+  // If the active filter ever has no entries (e.g. content changed), fall back
+  // to "All" so the page is never empty.
+  const safeFilter = filters.includes(filter) ? filter : 'All';
+  const showingAll = safeFilter === 'All';
+
   return (
     <div className="w-full">
       {/* Filters + Search */}
       <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start lg:items-center justify-between">
         <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 w-full lg:w-auto">
-          {FILTERS.map((f) => (
+          {filters.map((f) => (
             <button
               key={f}
               type="button"
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${
-                filter === f
+                safeFilter === f
                   ? 'bg-text text-bg border-text'
                   : 'text-muted hover:text-text border-border/40 hover:border-text/20'
               }`}
@@ -103,13 +128,13 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
 
       {filteredEntries.length > 0 ? (
         <div className="space-y-6">
-          {/* Featured Hero */}
-          {featured && !search.trim() && filter === 'All' && (
+          {/* Featured Hero — only on the unfiltered default view */}
+          {featured && !search.trim() && showingAll && (
             <JournalCard entry={featured} featured />
           )}
 
           {/* Divider */}
-          {featured && !search.trim() && filter === 'All' && rest.length > 0 && (
+          {featured && !search.trim() && showingAll && rest.length > 0 && (
             <div className="flex items-center gap-4 pt-4">
               <span className="label-mono">More essays</span>
               <div className="flex-1 h-px bg-border/30" />
@@ -118,7 +143,7 @@ export const JournalList = ({ entries }: { entries: JournalEntry[] }) => {
 
           {/* Editorial List */}
           <div className="grid gap-4">
-            {(search.trim() || filter !== 'All' ? filteredEntries : rest).map((entry) => (
+            {(search.trim() || !showingAll ? filteredEntries : rest).map((entry) => (
               <JournalCard key={entry.id} entry={entry} />
             ))}
           </div>
