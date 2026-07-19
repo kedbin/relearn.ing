@@ -3,7 +3,6 @@ import { ArrowRight } from 'lucide-react';
 import { NotebookCard } from '../ui/NotebookCard';
 import { SectionHeader } from '../ui/SectionHeader';
 import { Tag } from '../ui/Tag';
-import { Motif } from '../ui/Motif';
 
 interface Project {
   id: string;
@@ -30,9 +29,7 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
         <div className="grid md:grid-cols-2 gap-4">
           {featured.map((project) => (
             <a key={project.id} href={`/projects/${project.id}`} className="group block">
-              <NotebookCard className="h-full flex flex-col overflow-hidden !p-0">
-                <Motif seed={project.id} category="Relearn Engineering" className="h-28 w-full" />
-                <div className="p-5 flex flex-col flex-grow">
+              <NotebookCard className="h-full flex flex-col">
                 <span className="label-mono block mb-3">{project.data.date}</span>
                 <h3 className="card-title text-xl text-text mb-2 group-hover:text-note transition-colors">
                   {project.data.title}
@@ -41,13 +38,12 @@ export const SelectedProjects = ({ projects }: { projects: Project[] }) => {
                   {project.data.description}
                 </p>
                 <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.data.techStack.slice(0, 4).map((tech) => (
+                  {project.data.techStack.slice(0, 3).map((tech) => (
                     <Tag key={tech}>{tech}</Tag>
                   ))}
                 </div>
                 <div className="flex items-center gap-1.5 mt-5 text-sm text-note font-medium transition-all group-hover:gap-2.5">
                   View project <ArrowRight className="w-4 h-4" />
-                </div>
                 </div>
               </NotebookCard>
             </a>

@@ -30,7 +30,7 @@ export const JournalPreview = ({ entries }: { entries: JournalEntry[] }) => {
   return (
     <section className="py-24 px-6 border-t border-border/30">
       <div className="max-w-7xl mx-auto">
-        <SectionHeader label="Journal" title="Latest from the Journal" />
+        <SectionHeader title="Latest from the Journal" />
 
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Featured Entry — text-led, no preview picture */}
