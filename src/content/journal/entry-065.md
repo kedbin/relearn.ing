@@ -21,6 +21,10 @@ publish_social: false
 linkedin: |
   I just finished a 4-day Google Cloud Gemini Enterprise FDE bootcamp, and my notes turned out to be mostly about failure modes rather than prompts.
   
+  Which is the useful part. I'm not trying to demo an agent, I'm trying to get one through production review without it becoming a liability - and every session that actually stuck was about what stops it doing something dumb at 2AM.
+  
+  So I'm writing it up in public: half a reference for future me, half because someone else is probably stuck on the same day-one questions.
+  
   Part 1 is up (4 minutes): policy over prompts, skills as files, /grill-me, event sourcing, and the three code bouncers that sit outside the model.
   https://www.youtube.com/watch?v=ean_pqrlnA0
   
