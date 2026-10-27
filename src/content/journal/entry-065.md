@@ -19,46 +19,19 @@ youtube_url: "https://www.youtube.com/watch?v=ean_pqrlnA0"
 youtube_video_id: "ean_pqrlnA0"
 publish_social: false
 linkedin: |
-  Most AI agent demos fail in production for a boring reason: the model did what you asked, and nothing stopped it from doing something else.
+  I just finished a 4-day Google Cloud Gemini Enterprise FDE bootcamp, and my notes turned out to be mostly about failure modes rather than prompts.
   
-  The most useful sentence from four days in Google Cloud's FDE workshop for Gemini Enterprise wasn't about prompting:
+  Put the useful bits into two 4-minute videos and a writeup:
   
-  "Prompts are probabilistic. Policy enforcement has to be deterministic."
-  
-  A prompt is a polite wish. A hook is a padlock.
-  
-  If you're putting agents anywhere near production, five things from Day One are worth stealing this week:
-  
-  1. Put the guardrails outside the model.
-  pre_tool_call blocks roles/owner. DLP runs post_model_transform. Token budgets sit on the app tier. None of that lives in the prompt, which is exactly why no jailbreak can argue with it - and you can unit-test every one of them without calling the LLM.
-  
-  2. Treat skills as files, not prompt text.
-  skill.md + scripts/ + references/ + assets/ is basically a Page Object Model for a brain: deterministic scripts the model calls instead of re-deriving CLI flags from memory. Ninety skills stuffed into one prompt is ~180,000 tokens per turn; a registry lookup is ~300. Pin them by SHA-256 and "it worked in staging" stops being a mystery.
-  
-  3. Make the agent interview you first.
-  /grill-me refuses to write code until it has asked what done actually means. Ask for a banana, you get a green plantain. Let it grill you, and you discover you meant a lemon.
-  
-  4. Log events, not state.
-  CRUD overwrites the row and erases the evidence. Append-only turns with periodic snapshots let you replay the exact turn where something broke - the trace viewer you wish you'd had at 2AM.
-  
-  5. Don't hold a socket open for a human.
-  When a task crosses an approval threshold, park it at INPUT-REQUIRED and pick it up later. Clip a W3C traceparent to the first request and one click across five agents becomes one waterfall instead of five log files.
-  
-  Two protocol gotchas that ate real hours in the room: a single debug print() on stdout breaks a stdio MCP server's JSON-RPC framing, and "text" instead of "text/plain" gets your agent card rejected at the enterprise door.
-  
-  I recorded Day One as a two-part walkthrough rather than a highlight reel, because the mechanics are the useful part:
-  
-  Part 1 - policy over prompts, flat-pack skills, /grill-me, event sourcing, three code bouncers:
+  - Part 1 - policy over prompts, skills as files, /grill-me, event sourcing, and the three code bouncers outside the model:
   https://www.youtube.com/watch?v=ean_pqrlnA0
   
-  Part 2 - MCP vs A2A, the protocol gotchas, human-in-the-loop pauses, tracing, both labs:
+  - Part 2 - MCP vs A2A, the stdio print() and text/plain gotchas, the $5k human-in-the-loop pause, and traceparent tracing:
   https://www.youtube.com/watch?v=2_t66Yi0C54
   
-  Full writeup with code and numbers: https://relearn.ing/journal/entry-065/
+  Full writeup: https://relearn.ing/journal/entry-065/
   
-  Curious where others have landed on #2 - pinned skills vs one giant prompt feels like the fork in the road right now.
-  
-  #AIAgents #MCP #GeminiEnterprise #SoftwareEngineering
+  #AIAgents #MCP #GeminiEnterprise
 threads: |
   I spent four days in Google Cloud's FDE workshop for Gemini Enterprise. Day One's whole thesis fits in one line:
   
