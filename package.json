@@ -16,10 +16,13 @@
     "journal:update": "node scripts/update-journal-frontmatter.mjs",
     "journal:check": "node scripts/check-journal-entry.mjs",
     "journal:linkedin-slides-plan": "python3 scripts/build-linkedin-slide-plan.py",
-    "journal:linkedin-slides": "python3 scripts/generate-linkedin-slides.py",
+    "journal:linkedin-slides": "node scripts/generate-linkedin-slides-html.mjs",
+    "journal:linkedin-slides:legacy": "python3 scripts/generate-linkedin-slides.py",
     "journal:linkedin-slides-review": "bash /home/kedbin/.opencode/skill/linkedin-slides-review/scripts/review-linkedin-slides.sh",
     "journal:youtube-upload": "node scripts/upload-youtube-video.mjs",
-    "journal:youtube-batch": "node scripts/upload-youtube-batch.mjs"
+    "journal:youtube-batch": "node scripts/upload-youtube-batch.mjs",
+    "journal:audio-upload": "bash scripts/upload-audio-r2.sh",
+    "journal:youtube-auth": "node scripts/youtube-upload.mjs --authorize-only"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
