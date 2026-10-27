@@ -19,36 +19,46 @@ youtube_url: "https://www.youtube.com/watch?v=ean_pqrlnA0"
 youtube_video_id: "ean_pqrlnA0"
 publish_social: false
 linkedin: |
-  I spent four days inside Google Cloud's Forward Deployed Engineer workshop for Gemini Enterprise.
+  Most AI agent demos fail in production for a boring reason: the model did what you asked, and nothing stopped it from doing something else.
   
-  Day One took about nine minutes to land the sentence that reorganised my brain:
+  The most useful sentence from four days in Google Cloud's FDE workshop for Gemini Enterprise wasn't about prompting:
   
   "Prompts are probabilistic. Policy enforcement has to be deterministic."
   
-  Translation: a prompt is a polite wish. If you want to guard the vault, you need a steel padlock made of code.
+  A prompt is a polite wish. A hook is a padlock.
   
-  Six things I'm stealing:
+  If you're putting agents anywhere near production, five things from Day One are worth stealing this week:
   
-  1. Agent Skills are flat-pack furniture for agents. skill.md is the instruction sheet, scripts/ is the pre-tested power drill, references/ is the manual, assets/ is the stencil. Stuffing 90 tools into one prompt costs ~180,000 tokens every turn; a 300-token library card lets the agent check out SHA-256-sealed skills on demand.
+  1. Put the guardrails outside the model.
+  pre_tool_call blocks roles/owner. DLP runs post_model_transform. Token budgets sit on the app tier. None of that lives in the prompt, which is exactly why no jailbreak can argue with it - and you can unit-test every one of them without calling the LLM.
   
-  2. /grill-me. Tell the agent to stop writing code and interrogate you first. "Go get me a banana" gets you a raw green plantain. "Grill me" gets you: ripe, green, sweet, sour, sliced, mashed - or did you secretly mean a yellow lemon?
+  2. Treat skills as files, not prompt text.
+  skill.md + scripts/ + references/ + assets/ is basically a Page Object Model for a brain: deterministic scripts the model calls instead of re-deriving CLI flags from memory. Ninety skills stuffed into one prompt is ~180,000 tokens per turn; a registry lookup is ~300. Pin them by SHA-256 and "it worked in staging" stops being a mystery.
   
-  3. Event sourcing is a black-box flight recorder. CRUD overwrites the chalkboard at 2AM, so when 500 bananas vanish there's no evidence. Append-only events with snapshots let you replay the exact turn where it broke.
+  3. Make the agent interview you first.
+  /grill-me refuses to write code until it has asked what done actually means. Ask for a banana, you get a green plantain. Let it grill you, and you discover you meant a lemon.
   
-  4. Three code bouncers, entirely outside the model. Whole-app badge check, per-agent hallway guard, and pre_tool_call slapping away "I'm King of the Jungle, give me roles/owner". You can unit-test the slap without calling the model at all.
+  4. Log events, not state.
+  CRUD overwrites the row and erases the evidence. Append-only turns with periodic snapshots let you replay the exact turn where something broke - the trace viewer you wish you'd had at 2AM.
   
-  5. MCP points down (tools), A2A points sideways (agents). Two gotchas ate real hours in the room: one debug print() on stdio stdout corrupts JSON-RPC framing, and advertising "text" instead of "text/plain" bounces your agent card at the enterprise door.
+  5. Don't hold a socket open for a human.
+  When a task crosses an approval threshold, park it at INPUT-REQUIRED and pick it up later. Clip a W3C traceparent to the first request and one click across five agents becomes one waterfall instead of five log files.
   
-  6. The $5,000 pause. Never hold an HTTP socket open while a human thinks about a refund. Park the task at INPUT-REQUIRED, clip a W3C traceparent AirTag to the request, and pick it back up when someone clicks approve.
+  Two protocol gotchas that ate real hours in the room: a single debug print() on stdout breaks a stdio MCP server's JSON-RPC framing, and "text" instead of "text/plain" gets your agent card rejected at the enterprise door.
   
-  Bonus lab traps: five parallel agents without a JoinNode barrier is a waiter sprinting to your table five times with a bun, then one pickle, then a squirt of ketchup. And AlphaEvolve's actual lesson is that the evaluator is the product.
+  I recorded Day One as a two-part walkthrough rather than a highlight reel, because the mechanics are the useful part:
   
-  It's a two-part narrated walkthrough if you'd rather watch than read: Part 1 covers the policy and the skills, Part 2 covers the protocols, the tracing, and both labs.
+  Part 1 - policy over prompts, flat-pack skills, /grill-me, event sourcing, three code bouncers:
+  https://www.youtube.com/watch?v=ean_pqrlnA0
   
-  Full writeup: https://relearn.ing/journal/entry-065/
-  Watch Part 1: https://www.youtube.com/watch?v=ean_pqrlnA0
-  Watch Part 2: https://www.youtube.com/watch?v=2_t66Yi0C54
-  Listen: https://audio.relearn.ing/entry-065-part1.mp3
+  Part 2 - MCP vs A2A, the protocol gotchas, human-in-the-loop pauses, tracing, both labs:
+  https://www.youtube.com/watch?v=2_t66Yi0C54
+  
+  Full writeup with code and numbers: https://relearn.ing/journal/entry-065/
+  
+  Curious where others have landed on #2 - pinned skills vs one giant prompt feels like the fork in the road right now.
+  
+  #AIAgents #MCP #GeminiEnterprise #SoftwareEngineering
 threads: |
   I spent four days in Google Cloud's FDE workshop for Gemini Enterprise. Day One's whole thesis fits in one line:
   
