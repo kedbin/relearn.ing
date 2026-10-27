@@ -1,7 +1,7 @@
 ---
 title: "Day One of the FDE Workshop: Steel Padlocks, Flat-Pack Skills, and Five Waiters With One Pickle"
 date: "2026-10-27"
-summary: "Four days inside Google Cloud's Forward Deployed Engineer workshop for Gemini Enterprise, distilled into one rule: prompts are probabilistic, so policy enforcement has to be deterministic. Day One covered flat-pack Agent Skills, the /grill-me interrogation loop, black-box event sourcing, three code bouncers outside the model, MCP-versus-A2A direction, the stdio print() and text/plain traps, the $5,000 INPUT-REQUIRED pause, W3C traceparent AirTags, the JoinNode pickle trap, SPIFFE identities, and AlphaEvolve's evaluator-first loop. The second half is the pipeline that turned all of it into two narrated videos: paint-doodle vector economics, Wav2Vec2 CTC alignment, and why you should never atempo your TTS."
+summary: "Four days inside Google Cloud's Forward Deployed Engineer workshop for Gemini Enterprise, distilled into one rule: prompts are probabilistic, so policy enforcement has to be deterministic. Day One covered flat-pack Agent Skills, the /grill-me interrogation loop, black-box event sourcing, three code bouncers outside the model, MCP-versus-A2A direction, the stdio print() and text/plain traps, the $5,000 INPUT-REQUIRED pause, W3C traceparent AirTags, the JoinNode pickle trap, SPIFFE identities, and AlphaEvolve's evaluator-first loop. Narrated in two parts."
 status: "Draft"
 category: "AI Engineering / Agent Platforms"
 highlights:
@@ -13,7 +13,7 @@ highlights:
   - "MCP is vertical (one agent reaching for a tool), A2A is horizontal (peer agents delegating). Two gotchas cost real hours: a single print() on stdio stdout breaks JSON-RPC framing, and 'text' instead of 'text/plain' bounces you at the enterprise door."
   - "Do not hold an HTTP socket open while a human thinks. Park the task at INPUT-REQUIRED, clip a W3C traceparent AirTag to the request, and resume when the boss clicks approve."
   - "Five parallel agents without a JoinNode barrier is a waiter who sprints to your table five times with a bun, then one pickle, then ketchup. And AlphaEvolve's real lesson is that the evaluator is the product."
-  - "Pipeline learnings: paint-doodle SVGs vectorise 35x cheaper than shaded art, Wav2Vec2 CTC beats linear syllable guessing by over a second, and atempo plus frame-slicing will make your TTS sound like a rushed robot."
+  - "Narrated in two parts: Part 1 covers the policy rule, flat-pack skills, /grill-me, event sourcing and the three code bouncers; Part 2 covers MCP versus A2A, the protocol gotchas, human-in-the-loop pauses, distributed tracing, both labs, and AlphaEvolve."
 audioUrl: "https://audio.relearn.ing/entry-065-part1.mp3"
 youtube_url: "https://www.youtube.com/watch?v=ean_pqrlnA0"
 youtube_video_id: "ean_pqrlnA0"
@@ -43,7 +43,7 @@ linkedin: |
   
   Bonus lab traps: five parallel agents without a JoinNode barrier is a waiter sprinting to your table five times with a bun, then one pickle, then a squirt of ketchup. And AlphaEvolve's actual lesson is that the evaluator is the product.
   
-  Second half of the writeup is the pipeline that turned this into two narrated videos: paint-doodle vector economics, Wav2Vec2 CTC word alignment, and why you should never atempo your TTS.
+  It's a two-part narrated walkthrough if you'd rather watch than read: Part 1 covers the policy and the skills, Part 2 covers the protocols, the tracing, and both labs.
   
   Full writeup: https://relearn.ing/journal/entry-065/
   Watch Part 1: https://www.youtube.com/watch?v=ean_pqrlnA0
@@ -88,7 +88,6 @@ youtube_tags:
   - "SPIFFE"
   - "AlphaEvolve"
   - "distributed tracing"
-  - "TTS pipeline"
 youtube_privacy_status: "unlisted"
 ---
 
@@ -297,80 +296,6 @@ None of that works without a fast, deterministic, uncheatable scoring function. 
 
 In this era, QEs do not get replaced by coding agents. QEs write the fitness functions that steer coding agents. Practical notes from the module: negate minimisation metrics (`score = -latency`) so every objective is monotonically maximising, and never let the evolving code touch the harness that grades it.
 
-### The Other Half: Building the Video Itself
-
-The workshop content is half of this entry. The other half is the pipeline that turned it into two narrated, word-synced paint-doodle videos — because the pipeline kept teaching the same lesson: **deterministic seams around a probabilistic engine**.
-
-#### Paint-doodle economics: 1,139 paths versus 32
-
-We analysed a reference "dangerously self-educated" explainer and ran `vtracer` on frames from both that style and our earlier shaded illustrations.
-
-| Source | `<path>` elements | File size |
-| --- | --- | --- |
-| Shaded AI illustration | 1,139 | 549 KB |
-| Paint-doodle frame 1 | 32 | 24 KB |
-| Paint-doodle frame 2 | 56 | 47 KB |
-
-That is roughly a **35×** geometry difference, and it is not an accident. The style obeys four rules: solid warm cream canvas with zero gradients, bold uniform black outlines, a small reusable pose pack, and progressive pop-in doodles that draw themselves as each phrase is spoken. An LLM hand-writing 1,139 shaded bezier splines is a 130× deficit; an LLM choosing among ten poses is trivial.
-
-#### Never speed up the audio
-
-The worst early experiment: create a time-stretched reference (`atempo=1.22`), slice internal silence frames over 90ms, then apply another `atempo=1.10` in post. Prosody compounds into a rushed robot.
-
-What actually worked was leaving the waveforms alone. Only trim dead air before the first word and after the last. Let the TTS model handle cadence through instruction — a brisk, lively, expressive storytelling pace with natural emphasis pauses on commas and dashes — plus `cfg_scale=3.0`. Then level each sentence to `-19.0 LUFS` before concatenation, and master the final mix to `-14.00 LUFS`.
-
-Same principle as the hooks: stop post-processing the probabilistic part into submission. Constrain it at the source and verify at the seam.
-
-#### Writing for the ear
-
-Three rules that changed the narration more than any model upgrade:
-
-1. **Contractions everywhere.** "It is" and "let us" sound like a legal filing; "it's" and "let's" sound like a person.
-2. **Emphasis lives in punctuation.** Put a comma or an em-dash after the phrase you want stressed, and the model lands the stress and takes a micro-breath before the payoff.
-3. **Vocal events go mid-sentence, before terminal punctuation.** The sentence splitter uses `(?<=[.!?])\s+`. A line ending in `interview me first! (laugh)` gets sliced after the `!`, and `(laugh)` becomes a standalone one-token TTS unit that sounds like a dying kazoo. Write `When you type grill me, (laugh) you're asking Gemini to stop writing code.` Also pass the **raw** text (tags intact) into synthesis, while the subtitle path uses the cleaned text.
-
-#### Wav2Vec2 CTC forced alignment beats syllable guessing
-
-Once the script has expressive commas, em-dashes, sighs and laughs, Breeze TTS inserts real `0.5s–1.2s` pauses mid-sentence. Any linear syllable-ratio estimate drifts — we measured up to **1.21s** of cumulative error, which is an eternity for karaoke subtitles.
-
-The fix is neural CTC forced alignment on CPU:
-
-```bash
-python tools/align_words_wav2vec2.py \
-  --wav out/fde_day1_part1_narration.wav \
-  --cues out/fde_day1_part1_cues.json
-```
-
-Under the hood: exact sentence windows first (generation is one sentence per chunk, so drift is zero at the boundaries), then `WAV2VEC2_ASR_BASE_960H` posteriors at 20ms frames with `torch.set_num_threads(8)`, phonetic expansion of numbers and acronyms (`403 → FOUR OH THREE`, `A2A → A TWO A`, `SPIFFE → SPIFFY`), omission of vocal-event tags from the letter targets so CTC blank states absorb the laughs, and a vectorised NumPy Viterbi trellis through `[blank, c0, blank, …]` that runs in about `0.5ms` per sentence.
-
-All **26 sentences** align in roughly **6.1 seconds** with 20ms precision. Every doodle pop-in and every red karaoke word is then driven by an actual acoustic timestamp, not a guess.
-
-#### 53 cues × 3 sub-beats = 159 visual events
-
-Splitting a six-minute video into 14 storyboard panels means each panel sits on screen for about 27 seconds. That is not a video, that is a slide deck with delusions.
-
-The formula that fixed it: every single sentence gets its own `420×320` doodle prop, and inside each sentence three progressive sub-beats pop in at 0%, 33%, and 66% of its duration, alongside a deterministic code or assertion box. 53 sentences × 3 beats = **159 visual events**, roughly one new pop-in every **2.1 seconds**.
-
-Pacing rules that came out of contact-sheet reviews:
-
-- Trigger on the **spoken word timestamp**, not at `t=0` of the sentence. Keep the character alone on screen until the topic word is actually said.
-- Act title cards need **1.8s–2.0s** of hold time, or the eye never focuses.
-- Write text **inside** writable props — the sticky note, the napkin spec, the chalkboard — not floating above a blank surface.
-- Never repeat the same doodle back to back.
-
-#### Damped one-shot motion, not infinite wiggle
-
-The first version applied `math.sin(dt * 3.8)` to every prop forever, which made every doodle look like it was gently malfunctioning.
-
-The replacement is six damped one-shot prop effects (elastic pop, slide-up settle, tilt snap, whip from the right, double-tap pulse, damped pendulum) and five damped character motions (slide in, pop up, emphasis breath, single nod, reaction hop), selected deterministically with `(global_shot * 5 + cue_idx) % 6`. Non-repeating, and everything settles still so the viewer can read it.
-
-Two production bugs worth filing away:
-
-- **Penpot nested transform bug.** `vtracer` emits `<path transform="translate(dx, dy)">`. Wrap that in a scaled `<g>` and the translate applies in unscaled pixels, shifting eyes and mouths by `(dx*(1-s), dy*(1-s))`. Bake the translate into the path coordinates instead and the poses render intact.
-- **Parallel workers need one contract.** Splitting cue generation across two workers produced one set with poses embedded in the prop SVG and one without. Enforce a single shared `wrapSvg()` template, then render all cues through one layout.
-
-The render itself is unglamorous and fast: `1920×1080` at `30fps`, 7,061 frames for Part 1 in **38.7s** (182.7 fps across 8 workers), 6,969 frames for Part 2 in **37.8s**. Part 1 runs `235.36s`, Part 2 runs `232.27s`.
-
 ### What Day One Actually Changed
 
 Six things I am keeping, in the order I would defend them:
@@ -398,16 +323,13 @@ Which is exactly why you wrap it in padlocks.
 | AlphaEvolve compute recovered | 0.7% of Google's Borg fleet |
 | FlashAttention speedup | 32.5% |
 | Strassen 4×4 record | 48 vs 49 multiplications |
-| Shaded illustration vs paint-doodle paths | 1,139 vs 32 (~35×) |
-| Linear alignment drift | up to 1.21s |
-| CTC alignment: 26 sentences | ~6.1s, 20ms frames |
-| Cues × sub-beats | 53 × 3 = 159 events, ~2.1s apart |
 | Part 1 / Part 2 runtime | 3:55 / 3:52 |
 
 ### Watch and Listen
 
 - **Part 1 — Padlocks, flat-pack skills, `/grill-me`, event sourcing, three bouncers:** [watch](https://www.youtube.com/watch?v=ean_pqrlnA0) · [listen](https://audio.relearn.ing/entry-065-part1.mp3)
 - **Part 2 — MCP versus A2A, the two gotchas, the $5,000 pause, tracing, both labs:** [watch](https://www.youtube.com/watch?v=2_t66Yi0C54) · [listen](https://audio.relearn.ing/entry-065-part2.mp3)
-- **Part 2 — MCP versus A2A, the two gotchas, the $5,000 pause, tracing, both labs:** [listen](https://audio.relearn.ing/entry-065-part2.mp3)
+
+_The build pipeline behind the two videos — vector economics, TTS prosody, CTC alignment, cue pacing — gets its own entry._
 
 **Full article at relearn.ing:** https://relearn.ing/journal/entry-065/
