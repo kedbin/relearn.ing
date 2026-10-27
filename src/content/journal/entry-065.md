@@ -19,21 +19,23 @@ youtube_url: "https://www.youtube.com/watch?v=ean_pqrlnA0"
 youtube_video_id: "ean_pqrlnA0"
 publish_social: false
 linkedin: |
-  I just finished a 4-day Google Cloud Gemini Enterprise FDE bootcamp, and my notes turned out to be mostly about failure modes rather than prompts.
+  I just spent four days in a Google Cloud bootcamp about enterprise AI agents, and came back with notes that are roughly 10% prompting and 90% "please don't let it delete the database".
   
-  Which is the useful part. I'm not trying to demo an agent, I'm trying to get one through production review without it becoming a liability - and every session that actually stuck was about what stops it doing something dumb at 2AM.
+  The short version: a prompt is a polite wish. A policy is a lock. Most teams are guarding production with a sticky note that says PLEASE DO NOT and hoping the vibes hold.
   
-  So I'm writing it up in public: half a reference for future me, half because someone else is probably stuck on the same day-one questions.
+  So I turned it into two short videos with doodles, bananas, and one extremely bad waiter.
   
-  Part 1 is up (4 minutes): policy over prompts, skills as files, /grill-me, event sourcing, and the three code bouncers that sit outside the model.
+  Part 1 (4 min): why you want a lock instead of a wish, why AI skills are basically flat-pack furniture for a robot, and the slash command that makes the AI interrogate you before it writes anything.
   https://www.youtube.com/watch?v=ean_pqrlnA0
   
-  Part 2 drops tomorrow, and it has the one that actually bit people in the room: two protocol gotchas that cost an afternoon. One of them is a single print() statement.
+  Part 2 tomorrow: the two mistakes that broke everyone's demo in the room (one is a single line of code someone forgot to delete), and why a $5,000 refund should get a human pause button instead of a 40-minute wait on hold.
   https://www.youtube.com/watch?v=2_t66Yi0C54
   
-  Writeup: https://relearn.ing/journal/entry-065/
+  If you've ever been told "we should add AI" and nodded while quietly panicking: these are for you.
   
-  #AIAgents #MCP #GeminiEnterprise
+  Code and the long version: https://relearn.ing/journal/entry-065/
+  
+  #AIAgents #GeminiEnterprise #MCP
 threads: |
   I spent four days in Google Cloud's FDE workshop for Gemini Enterprise. Day One's whole thesis fits in one line:
   
