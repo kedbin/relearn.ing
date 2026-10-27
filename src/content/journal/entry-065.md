@@ -21,15 +21,13 @@ publish_social: false
 linkedin: |
   I just finished a 4-day Google Cloud Gemini Enterprise FDE bootcamp, and my notes turned out to be mostly about failure modes rather than prompts.
   
-  Put the useful bits into two 4-minute videos and a writeup:
-  
-  - Part 1 - policy over prompts, skills as files, /grill-me, event sourcing, and the three code bouncers outside the model:
+  Part 1 is up (4 minutes): policy over prompts, skills as files, /grill-me, event sourcing, and the three code bouncers that sit outside the model.
   https://www.youtube.com/watch?v=ean_pqrlnA0
   
-  - Part 2 - MCP vs A2A, the stdio print() and text/plain gotchas, the $5k human-in-the-loop pause, and traceparent tracing:
+  Part 2 drops tomorrow, and it has the one that actually bit people in the room: two protocol gotchas that cost an afternoon. One of them is a single print() statement.
   https://www.youtube.com/watch?v=2_t66Yi0C54
   
-  Full writeup: https://relearn.ing/journal/entry-065/
+  Writeup: https://relearn.ing/journal/entry-065/
   
   #AIAgents #MCP #GeminiEnterprise
 threads: |
