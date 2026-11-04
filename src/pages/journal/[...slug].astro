@@ -5,9 +5,12 @@ import { ArrowLeft, Calendar, Tag, Sparkles, ArrowRight } from 'lucide-react';
 import AudioPlayer from '../../components/AudioPlayer';
 import { NotebookCard } from '../../components/ui/NotebookCard';
 import { Tag as TagBadge } from '../../components/ui/Tag';
+import { FDE_WORKSHOP_SERIES, isJournalVisible, visibleFdeSeries } from '../../lib/journal-visibility';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('journal');
+  const entries = await getCollection('journal', entry =>
+    isJournalVisible(entry, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
+  );
   return entries.map(entry => ({
     params: { slug: entry.id },
     props: { entry },
@@ -16,6 +19,13 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const isFdeEntry = FDE_WORKSHOP_SERIES.some(item => item.id === entry.id);
+const visibleEntries = isFdeEntry
+  ? await getCollection('journal', item =>
+      isJournalVisible(item, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
+    )
+  : [];
+const series = visibleFdeSeries(visibleEntries.map(item => item.id));
 ---
 
 <Layout title={entry.data.title}>
@@ -28,6 +38,32 @@ const { Content } = await render(entry);
         <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
         Back to Journal
       </a>
+
+      {entry.data.draft && (
+        <p class="mb-6 rounded-xl border border-border p-4 font-mono text-sm text-note" role="note">
+          Preview draft — not included in the production site. Video uploads and social publishing are pending approval.
+        </p>
+      )}
+
+      {isFdeEntry && (
+        <nav aria-label="FDE workshop series" class="mb-10 rounded-xl border border-border/50 bg-surface/50 p-5">
+          <p class="mb-3 font-mono text-xs uppercase tracking-wider text-muted">FDE workshop · Four-day field notes</p>
+          <ol class="flex flex-wrap gap-3">
+            {series.map(item => (
+              <li>
+                <a
+                  href={`/journal/${item.id}/`}
+                  aria-current={entry.id === item.id ? 'page' : undefined}
+                  class:list={[
+                    'inline-block rounded-lg border px-3 py-2 text-sm transition-colors',
+                    entry.id === item.id ? 'border-green text-text' : 'border-border text-muted hover:text-text',
+                  ]}
+                >Day {item.day} · {item.title}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )}
 
       {/* Header */}
       <div class="mb-12 border-b border-border/50 pb-8">
@@ -123,3 +159,10 @@ const { Content } = await render(entry);
     </div>
   </section>
 </Layout>
+
+<style>
+  /* Long resource names and tables must not widen the mobile viewport. */
+  article { overflow-wrap: anywhere; }
+  article :global(table) { display: block; max-width: 100%; overflow-x: auto; }
+  article :global(pre) { max-width: 100%; overflow-x: auto; }
+</style>

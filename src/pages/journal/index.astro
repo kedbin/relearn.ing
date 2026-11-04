@@ -3,7 +3,11 @@ import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { JournalList } from '../../components/JournalList';
 
-const entries = await getCollection('journal');
+import { isJournalVisible } from '../../lib/journal-visibility';
+
+const entries = await getCollection('journal', entry =>
+  isJournalVisible(entry, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
+);
 const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 
 const entriesWithContent = sortedEntries.map(entry => ({
