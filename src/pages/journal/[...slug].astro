@@ -8,6 +8,7 @@ import Highlights from '../../components/article/Highlights.astro';
 import Toc from '../../components/article/Toc.astro';
 import LiteYouTube from '../../components/article/LiteYouTube.astro';
 import EntryFooter from '../../components/article/EntryFooter.astro';
+import ArticlePen from '../../components/article/pen/ArticlePen.astro';
 import { tocHeadings, shouldShowToc, bodyEmbedsVideo } from '../../components/article/article-utils';
 import {
   getEntries, entryNo, domainOf, topicOf, domainDotClass, readingTime, formatDate, relatedEntries, neighbours,
@@ -107,7 +108,7 @@ const related = relatedEntries(entry, all, 3);
           </div>
         )}
         <div class="wrap-narrow">
-          <div class="prose-lab">
+          <div class="prose-lab" data-pen-prose>
             <Content />
           </div>
           <p class="mt-16 flex items-center gap-3 text-faint" aria-hidden="true">
@@ -125,6 +126,7 @@ const related = relatedEntries(entry, all, 3);
       </div>
     </div>
   </article>
+  <ArticlePen entry={entry.id} title={d.title} />
 
   <div class="mb-24 mt-12 md:mb-32">
     <EntryFooter entry={entry} prev={prev} next={next} related={related} />
