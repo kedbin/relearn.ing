@@ -1,5 +1,5 @@
 ---
-title: "binasoy.kim: The Personal Portfolio"
+title: "binasoy.kim: Portfolio and résumé"
 date: "2025-12-17"
 description: "The central hub for my digital identity. A portfolio documenting the cycle of learning, unlearning, and relearning. Built with SCSS, HTML, and JavaScript."
 repoUrl: "https://github.com/kedbin/binasoy.kim"
