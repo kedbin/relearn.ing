@@ -24,12 +24,12 @@ const trails = TRAILS.map((t) => ({ ...t, entries: t.ids.flatMap((id) => byId.ge
 const countLabel = (count: number) => `${count} ${count === 1 ? 'entry' : 'entries'}`;
 ---
 
-<Layout title="Journal">
+<Layout title="Journal" description="Browse entries on coding agents, automation, work and decision-making.">
   <journal-index class="block">
     <header class="wrap pb-7 pt-12 md:pb-9 md:pt-16">
       <p class="label"><i class="sq" aria-hidden="true"></i>Journal</p>
-      <h1 class="h-display mt-5 text-[3.75rem] md:text-[6rem]">The <em>notebook</em><span class="text-accent">.</span></h1>
-      <p class="dek mt-5 max-w-xl text-lg leading-relaxed md:text-xl">Every experiment, numbered. What I tried, what broke, and what I’d do differently.</p>
+      <h1 class="h-display mt-5 text-[3.75rem] md:text-[6rem]">Entry archive</h1>
+      <p class="dek mt-5 max-w-xl text-lg leading-relaxed md:text-xl">Coding agents, automation and decisions at work. Browse by date or narrow the list by topic.</p>
     </header>
 
     <div data-filter-edge hidden aria-hidden="true" class="h-px"></div>

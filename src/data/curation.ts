@@ -6,25 +6,29 @@
 
 export interface StartPick {
   id: string;
-  kind: 'A build' | 'A wrong assumption' | 'A changed habit';
+  topic: string;
+  heading: string;
   why: string;
 }
 
 export const START_HERE: StartPick[] = [
   {
     id: 'entry-027',
-    kind: 'A build',
-    why: 'Moving 135 MB of audio out of the repo and onto Cloudflare R2 took deploys from about five minutes to eight seconds.',
+    topic: 'Deployment',
+    heading: 'The eight-second deploy',
+    why: 'How moving audio to R2 cut deploys from five minutes to eight seconds.',
   },
   {
     id: 'entry-055',
-    kind: 'A wrong assumption',
-    why: 'I spent days designing a Power Apps workflow before learning the real pain was thirty minutes of spreadsheet formatting.',
+    topic: 'Automation',
+    heading: 'The Excel script that beat the agent',
+    why: 'Why an HR team needed a formatting script instead of a new workflow.',
   },
   {
     id: 'entry-035',
-    kind: 'A changed habit',
-    why: 'Swapping “until it feels done” for stopping rules decided in advance, for study, sleep and training.',
+    topic: 'Decisions',
+    heading: 'Deciding when to stop',
+    why: 'Setting a stopping rule before a study session or a workout.',
   },
 ];
 
