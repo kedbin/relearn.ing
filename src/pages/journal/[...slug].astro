@@ -1,168 +1,214 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCollection, render } from 'astro:content';
-import { ArrowLeft, Calendar, Tag, Sparkles, ArrowRight } from 'lucide-react';
+import { render } from 'astro:content';
 import AudioPlayer from '../../components/AudioPlayer';
-import { NotebookCard } from '../../components/ui/NotebookCard';
-import { Tag as TagBadge } from '../../components/ui/Tag';
-import { FDE_WORKSHOP_SERIES, isJournalVisible, visibleFdeSeries } from '../../lib/journal-visibility';
+import ReadingProgress from '../../components/article/ReadingProgress.astro';
+import SeriesNav from '../../components/article/SeriesNav.astro';
+import Highlights from '../../components/article/Highlights.astro';
+import Toc from '../../components/article/Toc.astro';
+import LiteYouTube from '../../components/article/LiteYouTube.astro';
+import EntryFooter from '../../components/article/EntryFooter.astro';
+import { tocHeadings, shouldShowToc, bodyEmbedsVideo } from '../../components/article/article-utils';
+import {
+  getEntries, entryNo, domainOf, topicOf, domainDotClass, readingTime, formatDate, relatedEntries, neighbours,
+  type Entry,
+} from '../../lib/content';
+import { FDE_WORKSHOP_SERIES, visibleFdeSeries } from '../../lib/journal-visibility';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('journal', entry =>
-    isJournalVisible(entry, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
-  );
-  return entries.map(entry => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  const entries = await getEntries();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry, all: entries } }));
 }
 
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const isFdeEntry = FDE_WORKSHOP_SERIES.some(item => item.id === entry.id);
-const visibleEntries = isFdeEntry
-  ? await getCollection('journal', item =>
-      isJournalVisible(item, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
-    )
-  : [];
-const series = visibleFdeSeries(visibleEntries.map(item => item.id));
+interface Props { entry: Entry; all: Entry[] }
+const { entry, all } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const d = entry.data;
+const domain = domainOf(d.category);
+const minutes = readingTime(entry.body);
+
+const isFde = FDE_WORKSHOP_SERIES.some((s) => s.id === entry.id);
+const series = isFde ? visibleFdeSeries(all.map((e) => e.id)) : [];
+
+const toc = tocHeadings(headings);
+const showToc = shouldShowToc(toc);
+
+const showVideo = !!d.youtube_video_id && !bodyEmbedsVideo(entry.body, d.youtube_video_id);
+const { prev, next } = neighbours(entry, all);
+const related = relatedEntries(entry, all, 3);
 ---
 
-<Layout title={entry.data.title}>
-  <section class="pt-28 pb-24 px-6 min-h-screen">
-    <div class="max-w-4xl mx-auto">
-      <a
-        href="/journal"
-        class="group inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface-2/40 px-3.5 py-1.5 text-sm text-muted hover:text-text hover:border-text/30 transition-colors mb-10"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Back to Journal
-      </a>
+<Layout title={d.title} description={d.summary} type="article">
+  <ReadingProgress />
 
-      {entry.data.draft && (
-        <p class="mb-6 rounded-xl border border-border p-4 font-mono text-sm text-note" role="note">
-          Preview draft — not included in the production site. Video uploads and social publishing are pending approval.
+  <article class="pb-8 pt-10 md:pt-16" data-entry={entry.id}>
+    <!-- ───────── Header ───────── -->
+    <header class="wrap-narrow">
+      <nav aria-label="Breadcrumb" class="reveal">
+        <ol class="num flex items-center gap-2 text-xs text-muted">
+          <li><a href="/journal/" class="transition-colors hover:text-accent">Journal</a></li>
+          <li aria-hidden="true" class="text-faint">/</li>
+          <li aria-current="page"><span class="text-accent">№</span> {entryNo(entry.id)}</li>
+        </ol>
+      </nav>
+
+      {d.draft && (
+        <p class="label mt-8 !text-accent reveal" role="note">
+          <i class="sq"></i>Preview draft · not in the production build. Video and social publishing pending approval.
         </p>
       )}
 
-      {isFdeEntry && (
-        <nav aria-label="FDE workshop series" class="mb-10 rounded-xl border border-border/50 bg-surface/50 p-5">
-          <p class="mb-3 font-mono text-xs uppercase tracking-wider text-muted">FDE workshop · Four-day field notes</p>
-          <ol class="flex flex-wrap gap-3">
-            {series.map(item => (
-              <li>
-                <a
-                  href={`/journal/${item.id}/`}
-                  aria-current={entry.id === item.id ? 'page' : undefined}
-                  class:list={[
-                    'inline-block rounded-lg border px-3 py-2 text-sm transition-colors',
-                    entry.id === item.id ? 'border-green text-text' : 'border-border text-muted hover:text-text',
-                  ]}
-                >Day {item.day} · {item.title}</a>
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
+      <p class="reveal mt-10 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px] text-muted md:mt-14" style="--d: 1">
+        <span class="inline-flex items-center gap-2"><span class={`dot ${domainDotClass(domain)}`}></span>{topicOf(d.category)}</span>
+        <span class="text-faint" aria-hidden="true">·</span>
+        <time class="num" datetime={d.date}>{formatDate(d.date, { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+        <span class="text-faint" aria-hidden="true">·</span>
+        <span class="num">{minutes} min read</span>
+        {d.audioUrl && (<><span class="text-faint" aria-hidden="true">·</span><span>Narrated</span></>)}
+      </p>
 
-      {/* Header */}
-      <div class="mb-12 border-b border-border/50 pb-8">
-        <div class="flex flex-wrap items-center gap-3 mb-6">
-          <div class="flex items-center gap-2 text-muted font-medium bg-surface border border-border/40 px-3 py-1 rounded-full text-xs font-mono">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{entry.data.date}</span>
-          </div>
-          <TagBadge variant={entry.data.category.startsWith('Relearn Life') ? 'life' : 'engineering'}>
-            {entry.data.category}
-          </TagBadge>
-          <span class="text-muted uppercase tracking-wider text-xs font-mono">{entry.data.status}</span>
+      <h1
+        class="h-display article-title mt-5 text-[2.75rem] sm:text-[3.25rem] md:text-[4.5rem]"
+        transition:name={`title-${entry.id}`}
+      >{d.title}</h1>
+
+      <p class="reveal mt-7 font-serif text-[1.25rem] leading-[1.5] text-muted md:text-[1.375rem]" style="text-wrap: pretty; --d: 2">
+        {d.summary}
+      </p>
+
+      {d.audioUrl && (
+        <div class="reveal mt-10" style="--d: 3">
+          <AudioPlayer src={d.audioUrl} title="Listen" client:visible />
         </div>
+      )}
+    </header>
 
-        <h1 class="display-serif text-3xl md:text-5xl lg:text-6xl text-text mb-6 leading-[1.1]">
-          {entry.data.title}
-        </h1>
-
-        <p class="text-xl md:text-2xl text-text/80 leading-relaxed font-light max-w-3xl border-l-2 border-green/50 pl-5">
-          {entry.data.summary}
-        </p>
+    <!-- ───────── Series + takeaways ───────── -->
+    {(series.length > 1 || d.highlights.length > 0) && (
+      <div class="wrap-narrow mt-14 space-y-14 md:mt-16">
+        {series.length > 1 && <SeriesNav current={entry.id} series={series} />}
+        <Highlights items={d.highlights} />
       </div>
+    )}
 
-      <div class="grid lg:grid-cols-[1fr_300px] gap-12 items-start">
-        {/* Mobile Sidebar */}
-        <div class="lg:hidden mb-8 space-y-6">
-          {entry.data.audioUrl && (
-            <AudioPlayer src={entry.data.audioUrl} title="Listen to Entry" client:load />
-          )}
-          <NotebookCard>
-            <div class="flex items-center gap-2 text-text font-bold mb-4 font-mono text-sm">
-              <Sparkles className="w-4 h-4 text-note" />
-              <h3>Key Takeaways</h3>
-            </div>
-            <ul class="space-y-3">
-              {entry.data.highlights.map((highlight: string) => (
-                <li class="flex items-start gap-3 text-muted text-sm">
-                  <span class="text-green mt-1">•</span>
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </NotebookCard>
+    <!-- ───────── Body (with xl TOC rail) ───────── -->
+    <div class="article-grid mt-16 md:mt-20">
+      {showToc && (
+        <aside class="article-rail hidden xl:block">
+          <Toc headings={toc} variant="rail" />
+        </aside>
+      )}
+
+      <div class="article-main min-w-0">
+        {showToc && (
+          <div class="wrap-narrow mb-12 xl:hidden">
+            <Toc headings={toc} variant="inline" />
+          </div>
+        )}
+        <div class="wrap-narrow">
+          <div class="prose-lab">
+            <Content />
+          </div>
+          <p class="mt-16 flex items-center gap-3 text-faint" aria-hidden="true">
+            <span class="h-px flex-1 bg-line/10"></span>
+            <span class="num text-xs"><span class="text-accent">№</span> {entryNo(entry.id)} · end</span>
+            <span class="h-px flex-1 bg-line/10"></span>
+          </p>
         </div>
 
-        {/* Main Content */}
-        <article class="min-w-0 prose prose-lg max-w-none
-            prose-headings:font-serif prose-headings:font-bold prose-headings:text-text
-            prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pb-4 prose-h2:border-b prose-h2:border-border/50
-            prose-h3:text-2xl prose-h3:text-text prose-h3:mt-12 prose-h3:mb-6
-            prose-p:text-muted prose-p:leading-8 prose-p:mb-8
-            prose-a:text-text
-            prose-strong:text-text prose-strong:font-semibold
-            prose-li:text-muted prose-li:marker:text-green prose-li:mb-4
-            prose-blockquote:border-l-green prose-blockquote:bg-surface/50 prose-blockquote:py-6 prose-blockquote:px-8 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-muted prose-blockquote:mb-8
-            prose-pre:bg-surface prose-pre:border prose-pre:border-border/60
-          ">
-          <Content />
-        </article>
-
-        {/* Desktop Sidebar */}
-        <aside class="hidden lg:block sticky top-32 space-y-6">
-          {entry.data.audioUrl && (
-            <AudioPlayer src={entry.data.audioUrl} title="Listen to Entry" client:load />
-          )}
-
-          <NotebookCard>
-            <div class="flex items-center gap-2 text-text font-bold mb-4 font-mono text-sm">
-              <Sparkles className="w-4 h-4 text-note" />
-              <h3>TL;DR</h3>
-            </div>
-            <ul class="space-y-3">
-              {entry.data.highlights.map((highlight: string) => (
-                <li class="text-sm text-muted leading-relaxed flex gap-3">
-                  <span class="text-green/50 mt-1">•</span>
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          </NotebookCard>
-
-          <NotebookCard>
-            <h4 class="text-text font-bold text-sm mb-2 font-mono">Join the discussion</h4>
-            <p class="text-xs text-muted mb-4">
-              This log is part of a public experiment. Reply via email or Threads.
-            </p>
-            <a href="https://www.threads.com/@relearn.ing" target="_blank" rel="noreferrer" class="text-xs font-bold text-note hover:text-text flex items-center gap-1">
-              Discuss on Threads <ArrowRight className="w-3 h-3" />
-            </a>
-          </NotebookCard>
-        </aside>
+        {showVideo && (
+          <div class="wrap-narrow mt-20">
+            <LiteYouTube id={d.youtube_video_id!} title={d.youtube_title || d.title} />
+          </div>
+        )}
       </div>
     </div>
-  </section>
+  </article>
+
+  <div class="mb-24 mt-12 md:mb-32">
+    <EntryFooter entry={entry} prev={prev} next={next} related={related} />
+  </div>
 </Layout>
 
 <style>
-  /* Long resource names and tables must not widen the mobile viewport. */
-  article { overflow-wrap: anywhere; }
-  article :global(table) { display: block; max-width: 100%; overflow-x: auto; }
-  article :global(pre) { max-width: 100%; overflow-x: auto; }
+  /* Centre the 700px reading column; on xl, the TOC sits in the left margin. */
+  .article-grid { position: relative; }
+  @media (min-width: 1280px) {
+    .article-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) min(700px, 100%) minmax(0, 1fr);
+      column-gap: 3.5rem;
+      max-width: 1440px;
+      margin-inline: auto;
+      padding-inline: 2rem;
+    }
+    .article-main { grid-column: 2; }
+    .article-rail { grid-column: 1; justify-self: end; width: 100%; max-width: 15rem; }
+    .article-main :global(.wrap-narrow) { max-width: none; }
+  }
+</style>
+
+<style is:global>
+  /* ── Page-scoped .prose-lab refinements (candidates to promote into global.css) ── */
+  [data-entry] .article-title { overflow-wrap: break-word; hyphens: manual; }
+  [data-entry] .prose-lab { overflow-wrap: break-word; }
+  [data-entry] .prose-lab > :first-child { margin-top: 0; }
+
+  /* Code blocks: full-bleed on mobile instead of overflowing; quieter border in both themes. */
+  [data-entry] .prose-lab pre {
+    max-width: none;
+    line-height: 1.65;
+    font-size: 0.8125rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (max-width: 767px) {
+    [data-entry] .prose-lab pre {
+      margin-inline: -1.25rem;
+      max-width: none;
+      border-radius: 0;
+      border-inline: 0;
+      padding-inline: 1.25rem;
+    }
+  }
+  [data-entry] .prose-lab pre code { font-family: inherit; }
+  [data-entry] .prose-lab :not(pre) > code { overflow-wrap: anywhere; }
+
+  /* Tables: scroll inside themselves; tabular digits, hairline header. */
+  [data-entry] .prose-lab table { max-width: 100%; -webkit-overflow-scrolling: touch; font-variant-numeric: tabular-nums; }
+  [data-entry] .prose-lab th { white-space: nowrap; border-bottom-color: rgb(var(--line) / 0.25); }
+  [data-entry] .prose-lab td code { white-space: nowrap; }
+  [data-entry] .prose-lab tr:last-child td { border-bottom: 0; }
+
+  /* Blockquote: no double-italic emphasis, comfortable measure. */
+  [data-entry] .prose-lab blockquote { padding-block: 0.15em; }
+  [data-entry] .prose-lab blockquote em { font-style: normal; }
+  [data-entry] .prose-lab blockquote > * + * { margin-top: 0.8em; }
+
+  /* Embedded iframes / leftover utility wrappers in markdown (e.g. `not-prose aspect-video`). */
+  [data-entry] .prose-lab .not-prose { margin-top: 2em; margin-bottom: 2em; }
+  [data-entry] .prose-lab iframe { display: block; border-radius: 0.5rem; background: rgb(var(--surface)); }
+  [data-entry] .prose-lab img { height: auto; }
+
+  /* "References" sections written as `[1] Author…` paragraphs: smaller sans, hanging numbers. */
+  [data-entry] .prose-lab h2#references ~ p,
+  [data-entry] .prose-lab h2#sources ~ p {
+    font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.78em;
+    line-height: 1.6;
+    color: rgb(var(--muted));
+    margin-top: 0.75em;
+  }
+  [data-entry] .prose-lab h2#references ~ p em,
+  [data-entry] .prose-lab h2#sources ~ p em { color: rgb(var(--text) / 0.85); }
+
+  /* GFM footnotes */
+  [data-entry] .prose-lab .footnotes {
+    margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid;
+    font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif; font-size: 0.8em; color: rgb(var(--muted));
+  }
+  [data-entry] .prose-lab .footnotes h2 { font-size: 1.5em; margin-top: 0; }
+  [data-entry] .prose-lab .footnotes li, [data-entry] .prose-lab .footnotes p { color: rgb(var(--muted)); }
+  [data-entry] .prose-lab .data-footnote-backref { text-decoration: none; font-family: 'Geist Mono Variable', ui-monospace, monospace; }
+
 </style>

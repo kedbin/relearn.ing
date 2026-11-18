@@ -1,0 +1,36 @@
+---
+import { entryNo } from '../../lib/content';
+
+interface Props {
+  current: string;
+  series: readonly { id: string; day: number; title: string }[];
+}
+const { current, series } = Astro.props;
+---
+
+<nav aria-labelledby="series-label" class="series-nav">
+  <p id="series-label" class="label"><i class="sq"></i>Series · FDE Workshop, day by day</p>
+  <ol class="mt-4 border-b">
+    {series.map((s) => {
+      const here = s.id === current;
+      return (
+        <li class="border-t">
+          <a
+            href={`/journal/${s.id}/`}
+            aria-current={here ? 'page' : undefined}
+            class:list={[
+              'group grid grid-cols-[4.5rem_1fr_auto] items-baseline gap-x-3 py-3 text-[0.95rem] transition-colors duration-200',
+              here ? 'text-text' : 'text-muted hover:text-text',
+            ]}
+          >
+            <span class:list={['num text-xs', here ? 'text-accent' : 'text-faint group-hover:text-accent']}>Day {s.day}</span>
+            <span class:list={['min-w-0', here && 'font-medium']}>{s.title}</span>
+            <span class="num text-[11px] text-faint">
+              {here ? <span class="text-accent">Reading</span> : <>№ {entryNo(s.id)}</>}
+            </span>
+          </a>
+        </li>
+      );
+    })}
+  </ol>
+</nav>

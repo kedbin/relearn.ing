@@ -1,0 +1,18 @@
+---
+interface Props { items: string[] }
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <section aria-labelledby="takeaways-label" class="takeaways">
+    <p id="takeaways-label" class="label"><i class="sq"></i>Key takeaways</p>
+    <ol class="mt-4 border-b">
+      {items.map((h, i) => (
+        <li class="grid grid-cols-[2.25rem_1fr] gap-x-3 border-t py-4">
+          <span class="num pt-[0.2em] text-xs text-accent">{String(i + 1).padStart(2, '0')}</span>
+          <span class="text-[15px] leading-relaxed text-text/85 md:text-base" style="text-wrap: pretty">{h}</span>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}

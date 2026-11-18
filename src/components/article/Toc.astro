@@ -1,0 +1,98 @@
+---
+import type { Heading } from './article-utils';
+
+interface Props {
+  headings: Heading[];
+  /** 'rail' = sticky xl margin list, 'inline' = collapsible <details> for smaller screens */
+  variant: 'rail' | 'inline';
+}
+const { headings, variant } = Astro.props;
+---
+
+{variant === 'rail' ? (
+  <nav aria-label="Table of contents" class="toc-rail sticky top-28 max-h-[calc(100dvh-9rem)] overflow-y-auto pb-8 pr-2">
+    <p class="label"><i class="sq"></i>Contents</p>
+    <ol class="mt-5 space-y-0.5 border-l">
+      {headings.map((h) => (
+        <li>
+          <a
+            href={`#${h.slug}`}
+            data-toc-link={h.slug}
+            class:list={[
+              'toc-link -ml-px block border-l border-transparent py-1.5 text-[13px] leading-snug text-muted transition-colors duration-200 hover:text-text',
+              h.depth === 3 ? 'pl-7 text-[12.5px] text-faint' : 'pl-4',
+            ]}
+          >{h.text}</a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+) : (
+  <details class="toc-inline group border-y">
+    <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 [&::-webkit-details-marker]:hidden">
+      <span class="label"><i class="sq"></i>Contents</span>
+      <span class="num flex items-center gap-3 text-xs text-faint">
+        {headings.filter((h) => h.depth === 2).length} sections
+        <svg class="h-3 w-3 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 4.5 3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </summary>
+    <ol class="pb-4">
+      {headings.map((h) => (
+        <li>
+          <a
+            href={`#${h.slug}`}
+            class:list={[
+              'block py-2 text-[15px] leading-snug transition-colors hover:text-accent',
+              h.depth === 3 ? 'pl-5 text-sm text-muted' : 'text-text/85',
+            ]}
+          >{h.text}</a>
+        </li>
+      ))}
+    </ol>
+  </details>
+)}
+
+<style>
+  .toc-link[aria-current='true'] {
+    color: rgb(var(--accent));
+    border-left-color: rgb(var(--accent));
+  }
+</style>
+
+<script>
+  let observer: IntersectionObserver | undefined;
+
+  function initToc() {
+    observer?.disconnect();
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+    if (!links.length) return;
+    const heads = links
+      .map((a) => document.getElementById(a.dataset.tocLink || ''))
+      .filter((el): el is HTMLElement => !!el);
+
+    const setActive = (id: string) => {
+      links.forEach((a) => {
+        if (a.dataset.tocLink === id) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    };
+
+    // Active = the last heading that has crossed the upper third of the viewport.
+    const pick = () => {
+      const line = innerHeight * 0.3;
+      let current = heads[0]?.id;
+      for (const h of heads) {
+        if (h.getBoundingClientRect().top <= line) current = h.id;
+        else break;
+      }
+      if (current) setActive(current);
+    };
+
+    observer = new IntersectionObserver(pick, { rootMargin: '0px 0px -60% 0px', threshold: [0, 1] });
+    heads.forEach((h) => observer!.observe(h));
+    pick();
+  }
+
+  document.addEventListener('astro:page-load', initToc);
+  document.addEventListener('astro:before-swap', () => observer?.disconnect());
+</script>
