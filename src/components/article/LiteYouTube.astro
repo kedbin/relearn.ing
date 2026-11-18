@@ -1,0 +1,64 @@
+---
+/** Privacy-friendly YouTube: thumbnail + play button; swaps in a youtube-nocookie iframe on click. Works as a plain link without JS. */
+interface Props { id: string; title: string }
+const { id, title } = Astro.props;
+const safeId = id.replace(/[^\w-]/g, '');
+---
+
+<section aria-labelledby="walkthrough-h" class="walkthrough">
+  <p class="label"><i class="sq"></i>Video</p>
+  <h2 id="walkthrough-h" class="h-display mt-3 text-[2.1rem] md:text-[2.5rem]">Watch the <em>walkthrough</em></h2>
+  <a
+    href={`https://www.youtube.com/watch?v=${safeId}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-lite-yt={safeId}
+    data-title={title}
+    class="lite-yt group relative mt-6 block aspect-video overflow-hidden rounded-lg border bg-surface"
+    aria-label={`Play video: ${title}`}
+  >
+    <img
+      src={`https://i.ytimg.com/vi/${safeId}/hqdefault.jpg`}
+      alt=""
+      loading="lazy"
+      decoding="async"
+      width="480"
+      height="360"
+      class="absolute inset-0 h-full w-full object-cover opacity-90 transition duration-500 ease-out-quint group-hover:scale-[1.015] group-hover:opacity-100"
+    />
+    <span class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true"></span>
+    <span class="absolute bottom-5 left-5 right-5 flex items-center gap-4 text-white">
+      <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white/95 text-[#111] shadow-lg transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+        <svg class="ml-1 h-5 w-5" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3 1.8v10.4a.6.6 0 0 0 .9.5l8.4-5.2a.6.6 0 0 0 0-1L3.9 1.3a.6.6 0 0 0-.9.5Z"/></svg>
+      </span>
+      <span class="min-w-0">
+        <span class="block truncate text-sm font-medium">{title}</span>
+        <span class="mt-0.5 block font-mono text-[11px] uppercase tracking-[0.08em] text-white/70">YouTube · loads on click</span>
+      </span>
+    </span>
+  </a>
+</section>
+
+<script>
+  function initLiteYt() {
+    document.querySelectorAll<HTMLAnchorElement>('[data-lite-yt]').forEach((a) => {
+      if (a.dataset.bound) return;
+      a.dataset.bound = '1';
+      a.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        e.preventDefault();
+        const id = a.dataset.liteYt!;
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        iframe.title = a.dataset.title || 'YouTube video';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        iframe.allowFullscreen = true;
+        iframe.className = 'mt-6 block aspect-video w-full rounded-lg border bg-surface';
+        a.replaceWith(iframe);
+        iframe.focus();
+      });
+    });
+  }
+  document.addEventListener('astro:page-load', initLiteYt);
+</script>

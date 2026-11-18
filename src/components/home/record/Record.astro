@@ -1,0 +1,689 @@
+---
+/**
+ * "The record": every entry plotted on a real time axis like a seismograph
+ * (height = length, colour = domain, gaps = life happening).
+ *
+ * Server-rendered first: every bar is a real <a>, so the chart works with JS off.
+ * The <script> layers an instrument on top: a 1:1 playhead with a date readout,
+ * brush selection with handles and a live results panel, keyboard scrubbing,
+ * and long-press brushing on touch. Pure math lives in ./math.ts.
+ */
+import type { Entry } from '../../../lib/content';
+import { entryNo, entryNumber, domainOf, wordCount, readingTime, formatDate, topicOf } from '../../../lib/content';
+import { DAY, dayTs as ts } from './math';
+
+interface Props { entries: Entry[] }
+const { entries } = Astro.props;
+
+const chrono = [...entries].sort((a, b) => ts(a.data.date) - ts(b.data.date) || entryNumber(a.id) - entryNumber(b.id));
+const start = ts(chrono[0].data.date) - 6 * DAY;
+const end = Math.max(Date.now(), ts(chrono[chrono.length - 1].data.date)) + 6 * DAY;
+const span = end - start;
+
+const words = chrono.map((e) => wordCount(e.body));
+const maxW = Math.max(...words);
+
+// Spread same-day entries so they don't overlap.
+const sameDayIdx = new Map<string, number>();
+const bars = chrono.map((e, i) => {
+  const k = sameDayIdx.get(e.data.date) ?? 0;
+  sameDayIdx.set(e.data.date, k + 1);
+  const f = (ts(e.data.date) - start) / span;
+  return {
+    e, f,
+    x: f * 100,
+    shift: k * 5,
+    h: 14 + Math.sqrt(words[i] / maxW) * 86,
+    d: domainOf(e.data.category),
+    w: words[i],
+    i,
+  };
+});
+const latest = bars[bars.length - 1];
+
+// Month ticks
+const ticks: { x: number; label: string; year: boolean }[] = [];
+const m = new Date(start);
+m.setUTCDate(1); m.setUTCMonth(m.getUTCMonth() + 1);
+while (m.getTime() < end) {
+  ticks.push({
+    x: ((m.getTime() - start) / span) * 100,
+    label: m.getUTCMonth() === 0 ? String(m.getUTCFullYear()) : m.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }),
+    year: m.getUTCMonth() === 0,
+  });
+  m.setUTCMonth(m.getUTCMonth() + 1);
+}
+
+// Longest silence: an honest metric, annotated on the chart.
+let gap = 0, gapFrom = 0, gapTo = 0;
+for (let i = 1; i < chrono.length; i++) {
+  const g = Math.round((ts(chrono[i].data.date) - ts(chrono[i - 1].data.date)) / DAY);
+  if (g > gap) { gap = g; gapFrom = ts(chrono[i - 1].data.date); gapTo = ts(chrono[i].data.date); }
+}
+const gx1 = ((gapFrom - start) / span) * 100;
+const gx2 = ((gapTo - start) / span) * 100;
+
+const colour = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' } as const;
+const dot = { Engineering: 'dot-eng', Life: 'dot-life', Work: 'dot-work' } as const;
+---
+
+<div class="wrap">
+  <div class="flex items-end justify-between gap-4">
+    <h2 id="record-h" class="label"><i class="sq" aria-hidden="true"></i>Every entry, by date</h2>
+    <p class="hidden font-mono text-[11px] text-muted md:block">
+      bar height = entry length · <span class="text-eng">■</span> engineering <span class="text-life">■</span> life <span class="text-work">■</span> work
+    </p>
+  </div>
+
+  <div class="record relative mt-8" data-record>
+    <div
+      class="plot relative h-[150px] border-b md:h-[210px]"
+      data-plot
+      data-start={start}
+      data-end={end}
+      aria-label={`The record: ${entries.length} entries over time. Left and right arrows move between entries, Shift plus arrows selects a window, Enter opens the entry, Escape clears.`}
+    >
+      <!-- faint gridlines -->
+      <div class="pointer-events-none absolute inset-0 flex flex-col justify-between" aria-hidden="true">
+        <span class="h-px bg-line/[0.06]"></span><span class="h-px bg-line/[0.06]"></span><span class="h-px bg-line/[0.06]"></span><span></span>
+      </div>
+
+      <!-- brush selection (JS only) -->
+      <div class="sel pointer-events-none absolute inset-y-0 left-0 w-full" data-sel aria-hidden="true">
+        <span class="sel-fill" data-sel-fill></span>
+        <span class="sel-edge" data-edge="a"><i></i></span>
+        <span class="sel-edge" data-edge="b"><i></i></span>
+      </div>
+
+      <ol class="absolute inset-0" aria-label={`All ${entries.length} journal entries in chronological order`}>
+        {bars.map((b) => (
+          <li class="contents">
+            <a
+              href={`/journal/${b.e.id}/`}
+              class={`bar ${b.e.id === latest.e.id ? 'is-latest' : ''}`}
+              style={`left:calc(${b.x.toFixed(3)}% + ${b.shift}px);--h:${b.h.toFixed(1)}%;--i:${b.i}`}
+              data-f={b.f.toFixed(6)}
+              data-s={b.shift}
+              data-t={ts(b.e.data.date)}
+              data-w={b.w}
+              data-no={entryNo(b.e.id)}
+              data-title={b.e.data.title}
+              data-topic={topicOf(b.e.data.category)}
+              data-dot={dot[b.d]}
+              data-min={readingTime(b.e.body)}
+              aria-label={`№ ${entryNo(b.e.id)}: ${b.e.data.title}, ${formatDate(b.e.data.date)}`}
+            >
+              <span class="col"><span class={`stem ${colour[b.d]}`}></span></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+
+      <!-- the silence, annotated -->
+      {gap > 45 && (
+        <div class="pointer-events-none absolute inset-y-0 hidden items-center justify-center md:flex" style={`left:calc(${gx1}% + 14px);width:calc(${gx2 - gx1}% - 28px)`} aria-hidden="true">
+          <span class="absolute inset-x-0 top-1/2 border-t border-dashed" style="border-color:rgb(var(--line)/0.18)"></span>
+          <span class="relative bg-bg px-3 text-center font-serif text-[15px] italic leading-snug text-muted">
+            {gap} days without an entry
+          </span>
+        </div>
+      )}
+
+      <!-- latest marker -->
+      <div class="latest-tag pointer-events-none absolute z-[1] hidden -translate-x-full whitespace-nowrap pr-5 text-right md:block" style={`left:calc(${latest.x}% + ${latest.shift}px);bottom:calc(${latest.h.toFixed(1)}% - 7px)`} aria-hidden="true">
+        <span class="relative bg-bg py-0.5 pl-1.5 font-mono text-[11px] text-accent">№ {entryNo(latest.e.id)} · latest →</span>
+      </div>
+
+      <!-- playhead (JS only) -->
+      <div class="ph pointer-events-none absolute inset-y-0 left-0 z-[3]" data-ph aria-hidden="true">
+        <span class="ph-line"></span>
+        <span class="ph-chip num" data-ph-chip></span>
+      </div>
+    </div>
+
+    <!-- month axis -->
+    <div class="relative h-8 font-mono text-[10px] uppercase tracking-[0.06em] text-faint" aria-hidden="true">
+      {ticks.map((t, i) => (
+        <span class={`absolute top-2 -translate-x-1/2 ${t.year ? 'text-text' : i % 2 ? 'hidden md:inline' : ''}`} style={`left:${t.x}%`}>
+          {t.label}
+        </span>
+      ))}
+      <span class="absolute right-0 top-2 text-accent">now</span>
+    </div>
+
+    <!-- status line: reserved height, filled by JS (hint / focused entry) -->
+    <p class="status h-5 truncate font-mono text-[11px] text-faint" data-status aria-hidden="true"></p>
+
+    <!-- live results panel (JS only) -->
+    <div class="panel" data-panel>
+      <div class="panel-in">
+        <div class="panel-body border-t" data-panel-body>
+          <div class="flex items-center justify-between gap-4 py-3">
+            <p class="num truncate text-[11px] uppercase tracking-[0.06em] text-muted" data-sum></p>
+            <span class="flex shrink-0 items-center gap-5">
+            <a href="/journal/" class="link hidden text-[13px] sm:inline" data-open-journal tabindex="-1">Open in journal →</a>
+            <button type="button" class="clear inline-flex h-10 shrink-0 items-center gap-2 font-mono text-[11px] text-muted transition-colors hover:text-text" data-clear tabindex="-1">
+              <span class="kbd hidden md:inline-flex">Esc</span> Clear <span aria-hidden="true">×</span>
+            </button>
+            </span>
+          </div>
+          <ul class="rows" data-rows aria-label="Entries in the selected window"></ul>
+        </div>
+      </div>
+    </div>
+
+    <p class="sr-only" aria-live="polite" data-live></p>
+  </div>
+</div>
+
+<style>
+  .plot { touch-action: pan-y; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  .plot.is-on { cursor: crosshair; }
+  .plot:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 6px; }
+
+  .bar {
+    position: absolute; bottom: 0; height: 100%;
+    width: 11px; margin-left: -5px;          /* generous hit area, thin visual */
+    outline-offset: 1px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .col {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    transform-origin: bottom;
+  }
+  .stem {
+    display: block; width: 2px; height: var(--h);
+    border-radius: 1px 1px 0 0;
+    opacity: 0.8;
+    transition: opacity 150ms, transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  @media (min-width: 768px) { .stem { width: 3px; } }
+
+  /* no-JS hover path */
+  .record:not(.is-js):hover .stem, .record:not(.is-js):focus-within .stem { opacity: 0.28; }
+  .record:not(.is-js) .bar:hover .stem, .record:not(.is-js) .bar:focus-visible .stem { opacity: 1; transform: scaleX(1.7); }
+
+  /* instrument states */
+  .plot.is-scrub .stem, .plot.has-sel .stem { opacity: 0.26; }
+  .plot.has-sel .bar.in .stem { opacity: 0.95; }
+  .plot .bar.is-near .stem { opacity: 1; transform: scaleX(1.8); transition-duration: 0ms; }
+
+  .bar.is-latest .stem { background: rgb(var(--accent)); opacity: 1; }
+  .bar.is-latest::after {
+    content: ''; position: absolute; bottom: calc(var(--h) - 4px); left: 50%;
+    width: 9px; height: 9px; margin-left: -4.5px; border-radius: 9999px;
+    background: rgb(var(--accent));
+    pointer-events: none;
+  }
+
+  /* playhead */
+  .ph { width: 1px; opacity: 0; will-change: transform; }
+  .ph.on { opacity: 1; }
+  .ph-line { position: absolute; inset: 0; background: rgb(var(--accent)); }
+  .ph-chip {
+    position: absolute; bottom: calc(100% + 6px); left: 0;
+    white-space: nowrap; padding: 2px 6px;
+    font-size: 10.5px; letter-spacing: 0.06em; line-height: 16px;
+    color: rgb(var(--bg)); background: rgb(var(--accent));
+    border-radius: 2px;
+    will-change: transform;
+  }
+  .ph-chip::after { /* tick joining the chip to the line */
+    content: ''; position: absolute; top: 100%; left: var(--tick, 50%);
+    width: 1px; height: 6px; background: rgb(var(--accent));
+  }
+
+  /* selection */
+  .sel { opacity: 0; z-index: 2; }
+  .sel.on { opacity: 1; }
+  .sel-fill {
+    position: absolute; inset-block: 0; left: 0; width: 1px;
+    transform-origin: left; background: rgb(var(--accent) / 0.08);
+    will-change: transform;
+  }
+  .sel-edge {
+    position: absolute; inset-block: 0; left: -10px; width: 21px;
+    pointer-events: auto; cursor: ew-resize; touch-action: none;
+    will-change: transform;
+  }
+  .sel-edge::before {
+    content: ''; position: absolute; inset-block: 0; left: 10px; width: 1px;
+    background: rgb(var(--accent) / 0.7);
+  }
+  .sel-edge i {
+    position: absolute; top: 50%; left: 7px; width: 7px; height: 22px; margin-top: -11px;
+    border-radius: 2px; border: 1px solid rgb(var(--accent)); background: rgb(var(--bg));
+    transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sel-edge:hover i, .sel-edge.drag i { transform: scaleY(1.25); }
+  .sel:not(.on) .sel-edge { pointer-events: none; }
+
+  .status:empty::before { content: '\00a0'; }
+
+  /* results panel: opens once (grid rows 0fr → 1fr), then has a fixed height so dragging never shifts the page */
+  .panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 280ms cubic-bezier(0.22, 1, 0.36, 1); }
+  .panel.on { grid-template-rows: 1fr; }
+  .panel-in { min-height: 0; overflow: hidden; }
+  .panel-body { opacity: 0; transform: translateY(-6px); transition: opacity 200ms, transform 280ms cubic-bezier(0.22, 1, 0.36, 1); margin-top: 0.5rem; }
+  .panel.on .panel-body { opacity: 1; transform: none; }
+  .rows { height: 15.5rem; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; list-style: none; margin: 0; padding: 0; }
+  .rows:empty::before {
+    content: 'No entries in this window.';
+    display: block; padding: 1rem 0; font-family: var(--font-serif, serif); font-style: italic; color: rgb(var(--muted));
+  }
+  :global(.rec-row) {
+    display: grid; grid-template-columns: 3.25rem minmax(0, 1fr) auto auto; align-items: center; gap: 0.75rem;
+    min-height: 40px; padding: 0.4rem 0.5rem 0.4rem 0; border-top: 1px solid rgb(var(--line) / var(--hair-a));
+    transition: background-color 150ms;
+  }
+  :global(.rec-row:hover), :global(.rec-row:focus-visible) { background: rgb(var(--surface) / 0.7); }
+  :global(.rec-row:hover .rt), :global(.rec-row:focus-visible .rt) { color: rgb(var(--accent)); }
+  :global(.rec-row .rn) { font-size: 11px; color: rgb(var(--accent)); padding-left: 0.25rem; }
+  :global(.rec-row .rt) { font-size: 0.9rem; color: rgb(var(--text)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 150ms; }
+  :global(.rec-row .rp) { display: none; align-items: center; gap: 0.5rem; font-size: 12px; color: rgb(var(--muted)); }
+  :global(.rec-row .rm) { font-size: 11px; color: rgb(var(--faint)); min-width: 3.5ch; text-align: right; }
+  @media (min-width: 768px) { :global(.rec-row .rp) { display: inline-flex; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .panel, .panel-body { transition: none; }
+  }
+</style>
+
+<script>
+  import { clamp, fracToTime, nearestIndex, indicesInRange, monthBounds, formatReadout, formatDay, summarize, timeToFrac } from './math';
+
+  type Mode = 'idle' | 'press' | 'scrub' | 'brush' | 'edge' | 'move';
+
+  const ac = new Map<HTMLElement, AbortController>();
+
+  function initRecord() {
+    document.querySelectorAll<HTMLElement>('[data-record]').forEach((rec) => {
+      if (rec.dataset.bound) return;
+      rec.dataset.bound = '1';
+      bind(rec);
+    });
+  }
+
+  function bind(rec: HTMLElement) {
+    const $ = <T extends HTMLElement>(s: string) => rec.querySelector<T>(s)!;
+    const plot = $('[data-plot]');
+    const ph = $('[data-ph]');
+    const chip = $('[data-ph-chip]');
+    const sel = $('[data-sel]');
+    const fill = $('[data-sel-fill]');
+    const edgeA = $('[data-edge="a"]');
+    const edgeB = $('[data-edge="b"]');
+    const status = $('[data-status]');
+    const panel = $('[data-panel]');
+    const sum = $('[data-sum]');
+    const rows = $('[data-rows]');
+    const clearBtn = $<HTMLButtonElement>('[data-clear]');
+    const openJournal = $<HTMLAnchorElement>('[data-open-journal]');
+    const isoOf = (t: number) => new Date(t).toISOString().slice(0, 10);
+    const live = $('[data-live]');
+    const bars = [...plot.querySelectorAll<HTMLAnchorElement>('.bar')];
+    if (!bars.length) return;
+
+    const start = +plot.dataset.start!;
+    const end = +plot.dataset.end!;
+    const B = bars.map((a) => ({
+      a,
+      f: +a.dataset.f!, s: +a.dataset.s!, t: +a.dataset.t!, words: +a.dataset.w!,
+      no: a.dataset.no!, title: a.dataset.title!, topic: a.dataset.topic!, dot: a.dataset.dot!, min: a.dataset.min!,
+    }));
+    const N = B.length;
+    const coarse = matchMedia('(pointer: coarse)').matches;
+
+    const ctl = new AbortController();
+    ac.set(rec, ctl);
+    const sig = { signal: ctl.signal };
+
+    // Enhance: one tab stop for the whole plot (roving), bars stay links for no-JS / virtual cursor.
+    rec.classList.add('is-js');
+    plot.classList.add('is-on');
+    plot.tabIndex = 0;
+    plot.setAttribute('role', 'group');
+    bars.forEach((a) => (a.tabIndex = -1));
+    clearBtn.tabIndex = 0;
+    openJournal.tabIndex = 0;
+
+    const hint = coarse
+      ? 'Tap an entry · hold, then drag to select a window'
+      : 'Drag to select a window · double-click for a month · ← → to scrub';
+    status.textContent = hint;
+
+    // ── geometry ──
+    let W = plot.clientWidth;
+    let px: number[] = [];
+    const layout = () => { W = plot.clientWidth || 1; px = B.map((b) => b.f * W + b.s + 0.5); };
+    layout();
+    const tAt = (x: number) => fracToTime(clamp(x, 0, W) / W, start, end);
+    const xAt = (t: number) => timeToFrac(t, start, end) * W;
+    const localX = (e: PointerEvent | MouseEvent) => e.clientX - plot.getBoundingClientRect().left;
+
+    // ── state ──
+    let mode: Mode = 'idle';
+    let headX = -1;            // playhead px (−1 = hidden)
+    let headT = 0;
+    let near = -1;             // emphasised bar
+    let kIdx = N - 1;          // keyboard / tapped entry
+    let anchorIdx = -1;        // shift-selection anchor
+    let selA: number | null = null, selB: number | null = null; // times
+    let picked = '';
+    let raf = 0;
+
+    // ── render (rAF-batched) ──
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    let chipW = 0, chipKey = '';
+    function paint() {
+      raf = 0;
+      if (headX >= 0) {
+        const x = Math.round(clamp(headX, 0, W - 1));
+        ph.style.transform = `translateX(${x}px)`;
+        const txt = formatReadout(headT);
+        if (txt !== chipKey) { chip.textContent = txt; chipKey = txt; chipW = chip.offsetWidth; }
+        const cx = clamp(x - chipW / 2, -2, W - chipW + 2);
+        chip.style.transform = `translateX(${Math.round(cx - x)}px)`;
+        chip.style.setProperty('--tick', `${Math.round(x - cx)}px`);
+        ph.classList.add('on');
+      } else ph.classList.remove('on');
+
+      if (selA !== null && selB !== null) {
+        const a = clamp(xAt(Math.min(selA, selB)), 0, W);
+        const b = clamp(xAt(Math.max(selA, selB)), 0, W);
+        fill.style.transform = `translateX(${a}px) scaleX(${Math.max(b - a, 1)})`;
+        edgeA.style.transform = `translateX(${Math.round(a)}px)`;
+        edgeB.style.transform = `translateX(${Math.round(b)}px)`;
+        sel.classList.add('on');
+      } else sel.classList.remove('on');
+    }
+
+    function setNear(i: number) {
+      if (i === near) return;
+      if (near >= 0) B[near].a.classList.remove('is-near');
+      near = i;
+      if (i >= 0) {
+        B[i].a.classList.add('is-near');
+        const b = B[i];
+        status.textContent = `№ ${b.no} · ${b.title} · ${b.topic} · ${b.min} min`;
+        status.classList.add('text-muted');
+      } else {
+        status.textContent = hint;
+        status.classList.remove('text-muted');
+      }
+    }
+
+    function headTo(x: number, snapIdx = -1) {
+      if (snapIdx >= 0) { headX = px[snapIdx]; headT = B[snapIdx].t; setNear(snapIdx); }
+      else { headX = x; headT = tAt(x); setNear(nearestIndex(px, x)); }
+      plot.classList.add('is-scrub');
+      schedule();
+    }
+    function hideHead() {
+      headX = -1; setNear(-1); plot.classList.remove('is-scrub'); schedule();
+    }
+
+    // ── selection + panel ──
+    const inSel = (): number[] => {
+      if (selA === null || selB === null) return [];
+      return indicesInRange(px, xAt(Math.min(selA, selB)), xAt(Math.max(selA, selB)));
+    };
+    function setSel(a: number | null, b: number | null) {
+      selA = a; selB = b;
+      const on = a !== null && b !== null;
+      plot.classList.toggle('has-sel', on);
+      if (!on) {
+        B.forEach((x) => x.a.classList.remove('in'));
+        panel.classList.remove('on');
+        picked = '';
+        schedule();
+        return;
+      }
+      const idx = inSel();
+      const key = idx.join(',') + '|' + Math.round(xAt(a!)) + ',' + Math.round(xAt(b!));
+      if (key !== picked) {
+        const set = new Set(idx);
+        B.forEach((x, i) => x.a.classList.toggle('in', set.has(i)));
+        sum.textContent = summarize(idx.map((i) => B[i]), a!, b!);
+        if (idx.length) {
+          const ts = idx.map((i) => B[i].t);
+          openJournal.href = `/journal/?from=${isoOf(Math.min(...ts))}&to=${isoOf(Math.max(...ts))}`;
+        }
+        openJournal.hidden = idx.length === 0;
+        if (idx.join(',') !== picked.split('|')[0]) renderRows(idx);
+        picked = key;
+      }
+      panel.classList.add('on');
+      schedule();
+    }
+    function renderRows(idx: number[]) {
+      const frag = document.createDocumentFragment();
+      for (const i of idx) {
+        const b = B[i];
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'rec-row';
+        a.href = b.a.href;
+        a.innerHTML = `<span class="rn num"></span><span class="rt"></span><span class="rp"><i class="dot ${b.dot}"></i><span></span></span><span class="rm num"></span>`;
+        (a.children[0] as HTMLElement).textContent = `№ ${b.no}`;
+        (a.children[1] as HTMLElement).textContent = b.title;
+        (a.children[2].lastChild as HTMLElement).textContent = b.topic;
+        (a.children[3] as HTMLElement).textContent = `${b.min} min`;
+        li.appendChild(a);
+        frag.appendChild(li);
+      }
+      rows.replaceChildren(frag);
+    }
+    function clearSel(say = true) {
+      if (selA === null) return;
+      setSel(null, null);
+      anchorIdx = -1;
+      if (say) live.textContent = 'Selection cleared.';
+    }
+    const announceSel = () => { if (selA !== null) live.textContent = sum.textContent || ''; };
+    const selectIdxRange = (i: number, j: number) => {
+      const lo = Math.min(px[i], px[j]) - 3, hi = Math.max(px[i], px[j]) + 3;
+      setSel(tAt(lo), tAt(hi));
+    };
+
+    // ── navigation ──
+    const open = (i: number) => B[i].a.click(); // untrusted click → handled by the browser / ClientRouter
+
+    // ── pointer ──
+    let downX = 0, downY = 0, downT = 0, pid = -1, ptype = '';
+    let pressTimer = 0, moved = false, grabOff = 0, edgeFixed = 0, lastTap = -1, downInSel = false;
+    let pendingTap: { idx: number; x: number } | null = null;
+    let navTimer = 0;
+
+    const startBrush = (x: number) => {
+      mode = 'brush';
+      const t = tAt(x);
+      setSel(t, t);
+      headTo(x);
+    };
+
+    plot.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || !e.isPrimary) return;
+      const x = localX(e);
+      downX = x; downY = e.clientY; downT = tAt(x); pid = e.pointerId; ptype = e.pointerType; moved = false;
+      pendingTap = null;
+      const edge = (e.target as HTMLElement).closest<HTMLElement>('[data-edge]');
+      if (edge && selA !== null && selB !== null) {
+        mode = 'edge';
+        edge.classList.add('drag');
+        const lo = Math.min(selA, selB), hi = Math.max(selA, selB);
+        edgeFixed = edge.dataset.edge === 'a' ? hi : lo;
+        plot.setPointerCapture(pid);
+        e.preventDefault();
+        return;
+      }
+      if (ptype === 'touch') {
+        mode = 'press';
+        clearTimeout(pressTimer);
+        pressTimer = window.setTimeout(() => {
+          if (mode !== 'press') return;
+          navigator.vibrate?.(8);
+          startBrush(downX);
+          try { plot.setPointerCapture(pid); } catch { /* pointer gone */ }
+        }, 300);
+        return;
+      }
+      // mouse / pen
+      downInSel = selA !== null && selB !== null && x >= xAt(Math.min(selA, selB)) && x <= xAt(Math.max(selA, selB));
+      mode = 'press';
+      if (downInSel) grabOff = downT - Math.min(selA!, selB!);
+      plot.setPointerCapture(pid);
+      e.preventDefault(); // no text selection / native link drag
+    }, sig);
+
+    plot.addEventListener('pointermove', (e) => {
+      const x = localX(e);
+      if (e.pointerId !== pid || mode === 'idle') {
+        if (e.pointerType !== 'touch' && mode === 'idle') headTo(x);
+        return;
+      }
+      const dx = x - downX, dy = e.clientY - downY;
+      if (mode === 'press') {
+        if (ptype === 'touch') {
+          if (Math.hypot(dx, dy) > 10) {
+            clearTimeout(pressTimer);
+            moved = true;
+            mode = Math.abs(dx) > Math.abs(dy) ? 'scrub' : 'idle';
+          }
+        } else if (Math.abs(dx) > 3) {
+          moved = true;
+          if (downInSel) mode = 'move';
+          else startBrush(downX);
+        }
+        if (mode === 'press' && ptype !== 'touch') { headTo(x); return; }
+      }
+      if (mode === 'edge') setSel(edgeFixed, tAt(x));
+      else if (mode === 'brush') setSel(downT, tAt(x));
+      else if (mode === 'move') {
+        const len = Math.abs(selB! - selA!);
+        const lo = clamp(tAt(x) - grabOff, start, end - len);
+        setSel(lo, lo + len);
+      } else if (mode !== 'scrub') return;
+      headTo(x);
+    }, sig);
+
+    const finish = (e: PointerEvent, cancelled = false) => {
+      if (e.pointerId !== pid) return;
+      clearTimeout(pressTimer);
+      const m = mode;
+      mode = 'idle';
+      edgeA.classList.remove('drag'); edgeB.classList.remove('drag');
+      try { plot.releasePointerCapture(pid); } catch { /* already released */ }
+      if (cancelled) { if (ptype === 'touch' && m !== 'brush') hideHead(); return; }
+      const x = localX(e);
+      if (m === 'brush' || m === 'edge' || m === 'move') {
+        // a zero-width brush is just a click
+        if (selA !== null && selB !== null && Math.abs(xAt(selA) - xAt(selB)) < 2) clearSel(false);
+        else announceSel();
+        if (ptype === 'touch') { const i = nearestIndex(px, x); kIdx = i; headTo(0, i); }
+        return;
+      }
+      if (m === 'scrub') { const i = nearestIndex(px, x); kIdx = i; headTo(0, i); return; }
+      if (m === 'press' && !moved) pendingTap = { idx: nearestIndex(px, x), x };
+    };
+    plot.addEventListener('pointerup', (e) => finish(e), sig);
+    plot.addEventListener('pointercancel', (e) => finish(e, true), sig);
+    plot.addEventListener('pointerleave', (e) => {
+      if (e.pointerType === 'touch' || mode !== 'idle') return;
+      if (document.activeElement === plot) headTo(0, kIdx); else hideHead();
+    }, sig);
+
+    // Block page scroll only once a long-press brush (or a handle drag) is under way.
+    plot.addEventListener('touchmove', (e) => { if (mode === 'brush' || mode === 'edge' || mode === 'move') e.preventDefault(); }, { passive: false, signal: ctl.signal });
+    plot.addEventListener('contextmenu', (e) => { if (ptype === 'touch') e.preventDefault(); }, sig);
+
+    plot.addEventListener('click', (e) => {
+      if (!e.isTrusted) return;                     // our own open() → default navigation
+      const tap = pendingTap; pendingTap = null;
+      const onBar = (e.target as HTMLElement).closest('a');
+      if (!tap) {                                   // AT / virtual cursor activation: let the link work
+        if (onBar && moved) e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      if (ptype !== 'touch' && (e.metaKey || e.ctrlKey || e.shiftKey)) { window.open(B[tap.idx].a.href, '_blank', 'noopener'); return; }
+      const insideSel = selA !== null && selB !== null && tap.x >= xAt(Math.min(selA, selB)) - 1 && tap.x <= xAt(Math.max(selA, selB)) + 1;
+      if (selA !== null && !insideSel) { clearSel(); if (ptype === 'touch') { kIdx = tap.idx; headTo(0, tap.idx); } return; }
+      if (ptype === 'touch') {
+        if (lastTap === tap.idx && headX >= 0) { open(tap.idx); return; }
+        lastTap = tap.idx; kIdx = tap.idx; headTo(0, tap.idx);
+        const b = B[tap.idx];
+        live.textContent = `№ ${b.no}, ${b.title}. Tap again to open.`;
+        return;
+      }
+      // mouse/pen: wait out the double-click window, give instant visual feedback meanwhile
+      kIdx = tap.idx; headTo(0, tap.idx);
+      clearTimeout(navTimer);
+      if (e.detail > 1) return;
+      navTimer = window.setTimeout(() => open(tap.idx), 230);
+    }, sig);
+
+    plot.addEventListener('dblclick', (e) => {
+      if (ptype === 'touch') return;
+      clearTimeout(navTimer);
+      e.preventDefault();
+      const i = nearestIndex(px, localX(e));
+      const [m0, m1] = monthBounds(B[i].t);
+      setSel(m0, m1 - 1);
+      announceSel();
+    }, sig);
+
+    // ── keyboard ──
+    const announce = (i: number) => {
+      const b = B[i];
+      live.textContent = `№ ${b.no}, ${b.title}. ${formatDay(b.t)}, ${b.topic}, ${b.min} minutes. ${i + 1} of ${N}.`;
+    };
+    plot.addEventListener('focus', () => { if (mode === 'idle' && !plot.matches(':hover')) headTo(0, kIdx); }, sig);
+    plot.addEventListener('blur', () => { if (!plot.matches(':hover')) hideHead(); }, sig);
+    plot.addEventListener('keydown', (e) => {
+      const k = e.key;
+      if (k === 'ArrowLeft' || k === 'ArrowRight' || k === 'Home' || k === 'End') {
+        e.preventDefault();
+        if (near >= 0 && headX >= 0 && near !== kIdx) kIdx = near; // continue from where the mouse left it
+        const prev = kIdx;
+        kIdx = k === 'Home' ? 0 : k === 'End' ? N - 1 : clamp(kIdx + (k === 'ArrowLeft' ? -1 : 1), 0, N - 1);
+        headTo(0, kIdx);
+        if (e.shiftKey) {
+          if (anchorIdx < 0) anchorIdx = prev;
+          selectIdxRange(anchorIdx, kIdx);
+          live.textContent = sum.textContent || '';
+        } else {
+          anchorIdx = -1;
+          announce(kIdx);
+        }
+      } else if (k === 'Enter') {
+        e.preventDefault(); open(kIdx);
+      } else if (k === 'Escape') {
+        if (selA !== null) { e.preventDefault(); clearSel(); }
+      }
+    }, sig);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || e.target === plot || selA === null || e.defaultPrevented) return;
+      const inRec = rec.contains(e.target as Node);
+      clearSel();
+      if (inRec) plot.focus();
+    }, sig);
+    clearBtn.addEventListener('click', () => { clearSel(); plot.focus({ preventScroll: true }); }, sig);
+
+    // Click outside clears.
+    document.addEventListener('pointerdown', (e) => {
+      if (selA !== null && !rec.contains(e.target as Node)) clearSel(false);
+    }, sig);
+
+    const ro = new ResizeObserver(() => { layout(); if (selA !== null) setSel(selA, selB); if (headX >= 0 && near >= 0 && mode === 'idle') headTo(0, near); else schedule(); });
+    ro.observe(plot);
+    ctl.signal.addEventListener('abort', () => { ro.disconnect(); cancelAnimationFrame(raf); clearTimeout(navTimer); clearTimeout(pressTimer); });
+
+  }
+
+  document.addEventListener('astro:before-swap', () => { ac.forEach((c) => c.abort()); ac.clear(); });
+  initRecord();
+  document.addEventListener('astro:page-load', initRecord);
+</script>

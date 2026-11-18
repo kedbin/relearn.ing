@@ -1,77 +1,94 @@
 ---
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import PaletteTrigger from '../components/site/palette/PaletteTrigger.astro';
 import '../styles/global.css';
-
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  /** Hide the global footer CTA strip (e.g. on article pages that have their own). */
+  bare?: boolean;
 }
 
-const { title, description = "Field notes on debugging sleep, focus, tools, and decision-making." } = Astro.props;
+const {
+  title,
+  description = 'A working notebook by Kim Binasoy: numbered entries on things built, assumptions that turned out wrong, and habits changed.',
+  image = '/og.png',
+  type = 'website',
+} = Astro.props;
+const fullTitle = title === 'Home' ? 'relearn.ing — a public lab notebook' : `${title} · relearn.ing`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(image, Astro.site);
 const currentPath = Astro.url.pathname;
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="theme-color" content="#0a0c10" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title} | relearn.ing</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" />
+    <link rel="alternate" type="application/rss+xml" title="relearn.ing" href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#f4f5f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0d0f14" media="(prefers-color-scheme: dark)" />
 
-    <!-- Theme FOUC prevention + ViewTransitions persistence -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="relearn.ing" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Theme: system by default, explicit choice persisted. Runs before paint and after every swap. -->
     <script is:inline>
-      (function() {
-        function applyTheme() {
-          const theme = localStorage.getItem('theme');
-          if (theme === 'light') {
-            document.documentElement.classList.remove('dark');
-            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f5f3f0');
-          } else {
-            document.documentElement.classList.add('dark');
-            document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0a0c10');
-          }
+      (function () {
+        function apply(doc) {
+          var t = localStorage.getItem('theme');
+          var dark = t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+          doc.documentElement.classList.toggle('dark', dark);
         }
-        applyTheme();
-        document.addEventListener('astro:page-load', applyTheme);
+        apply(document);
+        document.addEventListener('astro:before-swap', function (e) { apply(e.newDocument); });
       })();
     </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
-    <ViewTransitions />
+    <ClientRouter />
+
     <script>
-      import posthog from 'posthog-js'
-
-      if (typeof window !== 'undefined') {
-        posthog.init(import.meta.env.PUBLIC_POSTHOG_API_KEY, {
-          api_host: import.meta.env.PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-          person_profiles: 'identified_only'
-        })
+      // Analytics is optional and off the critical path: only fetched when a key is configured, after idle.
+      const key = import.meta.env.PUBLIC_POSTHOG_API_KEY;
+      if (key) {
+        const load = () =>
+          import('posthog-js').then(({ default: posthog }) => {
+            posthog.init(key, {
+              api_host: import.meta.env.PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+              person_profiles: 'identified_only',
+              capture_pageview: false,
+            });
+            posthog.capture('$pageview');
+            document.addEventListener('astro:page-load', () => posthog.capture('$pageview'));
+          });
+        'requestIdleCallback' in window ? requestIdleCallback(load) : setTimeout(load, 1500);
       }
-
-      document.addEventListener('astro:page-load', () => {
-        posthog.capture('$pageview')
-      })
     </script>
   </head>
-  <body class="bg-bg text-text min-h-screen flex flex-col">
-    <!-- Noise overlay -->
-    <div class="pointer-events-none fixed inset-0 z-[100] opacity-[0.04] mix-blend-soft-light dark:opacity-[0.06]">
-      <div class="h-full w-full bg-[url('/noise.svg')]" />
-    </div>
-
-    <Header client:load currentPath={currentPath} />
-    <main id="main-content" class="flex-grow relative">
+  <body class="flex min-h-dvh flex-col">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded focus:bg-text focus:px-3 focus:py-2 focus:text-bg">Skip to content</a>
+    <Header currentPath={currentPath} />
+    <main id="main" class="relative flex-1">
       <slot />
     </main>
     <Footer />
+    <PaletteTrigger />
   </body>
 </html>

@@ -1,5 +1,5 @@
 ---
-title: "Voiceover Automation: Extending Reach Through Voice Cloning"
+title: "Voiceover Automation: Entries narrated in my cloned voice"
 date: "2025-12-24"
 description: "A skill-based pipeline for transforming written content into narrated audio. Built to make ideas more accessible."
 repoUrl: "https://github.com/kedbin/chatterbox-skills"

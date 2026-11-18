@@ -1,0 +1,41 @@
+---
+/**
+ * The "return channel": a quiet way to hear about the next set of notes.
+ * There is no email backend yet, so this links to RSS and the two social feeds.
+ * When a newsletter exists, pass the form into the default slot: it renders in
+ * place of the link row, and the layout does not change.
+ */
+interface Props {
+  /** Heading line. Defaults to the site-wide version. */
+  title?: string;
+  /** One supporting sentence. */
+  note?: string;
+  /** 'wide' = page section (wrap); 'narrow' = article column (wrap-narrow). */
+  width?: 'wide' | 'narrow';
+}
+const {
+  title = 'Get the next set of notes.',
+  note = 'New entries land in the RSS feed first. Shorter versions go to Threads and LinkedIn.',
+  width = 'wide',
+} = Astro.props;
+const ext = { target: '_blank', rel: 'noopener noreferrer' };
+const hasForm = Astro.slots.has('default');
+---
+
+<aside class:list={[width === 'wide' ? 'wrap' : 'wrap-narrow']} aria-label="Follow relearn.ing">
+  <div class="grid gap-5 border-t pt-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:gap-10">
+    <div>
+      <p class="h-display text-3xl md:text-4xl">{title}</p>
+      <p class="dek mt-3 max-w-[48ch] text-[0.95rem] leading-relaxed">{note}</p>
+    </div>
+    {hasForm ? (
+      <div class="md:min-w-[22rem]"><slot /></div>
+    ) : (
+      <ul class="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm">
+        <li><a href="/rss.xml" class="link inline-flex min-h-10 items-center">RSS feed</a></li>
+        <li><a href="https://www.threads.com/@relearn.ing" {...ext} class="link inline-flex min-h-10 items-center">Threads ↗</a></li>
+        <li><a href="https://www.linkedin.com/in/kedbin/" {...ext} class="link inline-flex min-h-10 items-center">LinkedIn ↗</a></li>
+      </ul>
+    )}
+  </div>
+</aside>

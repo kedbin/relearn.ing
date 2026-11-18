@@ -1,0 +1,210 @@
+---
+interface Props { entry: string; title: string }
+const { entry, title } = Astro.props;
+---
+<article-pen data-entry={entry} data-title={title}>
+  <div data-pen="bar" role="group" aria-label="Selection pen" hidden>
+    <button type="button" data-pen="highlight" aria-keyshortcuts="H">Highlight</button>
+    <button type="button" data-pen="copy">Copy quote</button>
+    <button type="button" data-pen="share" hidden>Share</button>
+    <button type="button" data-pen="remove" hidden>Remove</button>
+  </div>
+  <span class="sr-only" role="status" data-pen="notice"></span>
+  <div id="pen-reference" data-pen="reference" hidden>
+    <span class="label"><i class="sq" aria-hidden="true"></i>Reference</span>
+    <p id="pen-reference-text"></p>
+    <a class="link" href="#" hidden>Go to footnote →</a>
+  </div>
+  <button type="button" data-pen="launcher" class="num" aria-haspopup="dialog" aria-controls="pen-drawer" hidden>
+    <span aria-hidden="true">✎</span><span>Marks</span>
+  </button>
+  <dialog id="pen-drawer" data-pen="drawer" aria-labelledby="pen-drawer-title">
+    <div class="pen-panel">
+      <span class="label"><i class="sq" aria-hidden="true"></i>Reading pen</span>
+      <div class="pen-heading">
+        <h2 class="h-display" id="pen-drawer-title">Your marks</h2>
+        <button type="button" data-pen="close" class="btn-line" autofocus>Close</button>
+      </div>
+      <p class="dek">Highlights saved in this browser for this entry.</p>
+      <ol data-pen="list"></ol>
+      <div class="pen-actions">
+        <button type="button" data-pen="export" class="btn-line">Export as Markdown</button>
+        <button type="button" data-pen="clear" class="btn-line">Clear all</button>
+      </div>
+      <div data-pen="confirm" hidden>
+        <p>Remove all highlights from this entry?</p>
+        <div class="pen-actions">
+          <button type="button" data-pen="cancel" class="btn-line">Keep marks</button>
+          <button type="button" data-pen="clear-now" class="btn-solid">Remove all</button>
+        </div>
+      </div>
+      <p role="status" data-pen="drawer-notice"></p>
+    </div>
+  </dialog>
+</article-pen>
+
+<script>
+  import { bindPen } from './pen';
+
+  function init() {
+    const ui = document.querySelector<HTMLElement>('article-pen:not([data-bound])');
+    const prose = document.querySelector<HTMLElement>('[data-pen-prose]');
+    if (!ui || !prose) return;
+    ui.dataset.bound = '';
+    const controller = new AbortController();
+    document.addEventListener('astro:before-swap', () => controller.abort(), { once: true });
+    bindPen(ui, prose, controller.signal);
+  }
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<style is:global>
+  article-pen { display: contents; }
+  article-pen [hidden] { display: none !important; }
+
+  [data-pen="bar"], [data-pen="reference"] {
+    position: fixed;
+    z-index: 65;
+    max-width: var(--pen-width, calc(100vw - 16px));
+    transform-origin: var(--pen-arrow) center;
+    animation: pen-open 120ms ease-out both;
+  }
+  [data-pen="bar"] {
+    display: flex;
+    padding-inline: 5px;
+    border-radius: 999px;
+    background: rgb(var(--text));
+    color: rgb(var(--bg));
+    box-shadow: 0 3px 18px rgb(var(--line) / 0.16);
+    white-space: nowrap;
+    font: 500 0.75rem / 1.2 'Geist Variable', sans-serif;
+    user-select: none;
+  }
+  [data-pen="bar"]::after, [data-pen="reference"]::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--pen-arrow) - 4px);
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+  [data-side="above"]::after { bottom: -4px; }
+  [data-side="below"]::after { top: -4px; }
+  [data-pen="bar"] button { min-height: 40px; padding-inline: 9px; }
+  [data-pen="bar"] button:not(:first-child):not([data-pen="remove"])::before {
+    content: '·';
+    position: absolute;
+    margin-left: -11px;
+    opacity: 0.55;
+  }
+  [data-pen="bar"] button:focus-visible { outline-color: rgb(var(--bg)); outline-offset: -3px; }
+  [data-pen="bar"] button:hover:not(:disabled) { text-decoration: underline; text-underline-offset: 3px; }
+  [data-pen="bar"] button:disabled { opacity: 0.45; }
+
+  [data-pen-prose] .ink {
+    color: inherit;
+    background: linear-gradient(177deg,
+      transparent 9%, rgb(var(--accent) / 0.14) 15%, rgb(var(--accent) / 0.18) 42% 83%, transparent 97%);
+    border-radius: 2px 1px 3px 0;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  [data-pen-prose] .ink[tabindex], [data-pen-prose] .pen-citation { cursor: pointer; }
+  /* The prose root is focusable only to host keyboard selection; never ring the whole article. */
+  [data-pen-prose]:focus, [data-pen-prose]:focus-visible { outline: none; }
+  .pen-stroke {
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
+    transform-origin: left center;
+    background: rgb(var(--accent) / 0.23);
+    clip-path: polygon(0 18%, 96% 10%, 100% 22%, 98% 83%, 3% 93%);
+  }
+  [data-pen-prose] .pen-citation {
+    text-decoration: underline dotted rgb(var(--accent));
+    text-underline-offset: 0.22em;
+  }
+  [data-pen="reference"] {
+    width: max-content;
+    max-width: min(22rem, var(--pen-width, calc(100vw - 16px)));
+    padding: 12px 16px;
+    background: rgb(var(--surface));
+    color: rgb(var(--text));
+    box-shadow: 0 3px 18px rgb(var(--line) / 0.14);
+    border: 1px solid rgb(var(--line) / var(--hair-a));
+    border-radius: 4px;
+    font: 0.8125rem / 1.55 'Geist Variable', sans-serif;
+    overflow-wrap: anywhere;
+  }
+  [data-pen="reference"] p { margin-top: 4px; }
+  [data-pen="reference"] a { display: inline-flex; align-items: center; min-height: 40px; }
+
+  [data-pen="launcher"] {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 49;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding-inline: 14px;
+    border: 1px solid rgb(var(--line) / var(--hair-a));
+    border-radius: 999px;
+    background: rgb(var(--surface));
+    color: rgb(var(--text));
+    font-size: 0.75rem;
+    box-shadow: 0 2px 12px rgb(var(--line) / 0.08);
+  }
+  [data-pen="launcher"] span:first-child { color: rgb(var(--accent)); font-size: 1rem; }
+
+  [data-pen="drawer"] {
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: min(27rem, 100%);
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    background: rgb(var(--bg));
+    color: rgb(var(--text));
+    border-left: 1px solid rgb(var(--line) / var(--hair-a));
+    overscroll-behavior: contain;
+  }
+  [data-pen="drawer"][open] { animation: pen-drawer-in 180ms cubic-bezier(.22,1,.36,1) both; }
+  [data-pen="drawer"]::backdrop { background: rgb(var(--line) / 0.18); }
+  .dark [data-pen="drawer"]::backdrop { background: rgb(var(--bg) / 0.74); }
+  .pen-panel { padding: clamp(20px, 6vw, 34px); }
+  .pen-heading, .pen-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .pen-heading { justify-content: space-between; margin-block: 12px; }
+  .pen-heading h2 { font-size: 2.75rem; }
+  .pen-panel > p { font-size: 0.875rem; }
+  [data-pen="list"] { margin-block: 24px; border-block-end: 1px solid rgb(var(--line) / var(--hair-a)); }
+  [data-pen="list"] li { border-top: 1px solid rgb(var(--line) / var(--hair-a)); overflow-wrap: anywhere; }
+  [data-pen="list"] button {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    padding: 12px 0 10px;
+    text-align: left;
+    font: 1.125rem / 1.4 'Newsreader Variable', Georgia, serif;
+  }
+  [data-pen="list"] small { padding-top: 8px; }
+  [data-pen="list"] button:hover:not(:disabled) { color: rgb(var(--accent)); }
+  [data-pen="list"] button:disabled { color: rgb(var(--muted)); }
+  [data-pen="confirm"], [data-pen="drawer-notice"] { margin-top: 12px; font-size: 0.875rem; }
+  [data-pen="confirm"] p { margin-bottom: 10px; }
+  @keyframes pen-open {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pen-drawer-in {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-pen="bar"], [data-pen="reference"], [data-pen="drawer"][open] { animation: none; }
+  }
+</style>

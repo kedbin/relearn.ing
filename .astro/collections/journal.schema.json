@@ -22,10 +22,52 @@
         "status": {
           "type": "string"
         },
+        "draft": {
+          "type": "boolean"
+        },
         "category": {
           "type": "string"
         },
         "audioUrl": {
+          "type": "string"
+        },
+        "linkedin_video_urn": {
+          "type": "string"
+        },
+        "linkedin_document_urn": {
+          "type": "string"
+        },
+        "linkedin_document_title": {
+          "type": "string"
+        },
+        "youtube_url": {
+          "type": "string"
+        },
+        "youtube_video_id": {
+          "type": "string"
+        },
+        "publish_social": {
+          "type": "boolean"
+        },
+        "linkedin": {
+          "type": "string"
+        },
+        "threads": {
+          "type": "string"
+        },
+        "youtube_title": {
+          "type": "string"
+        },
+        "youtube_description": {
+          "type": "string"
+        },
+        "youtube_tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "youtube_privacy_status": {
           "type": "string"
         },
         "$schema": {

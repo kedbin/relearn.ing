@@ -1,163 +1,99 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCollection, render } from 'astro:content';
-import { ArrowLeft, ArrowUpRight, Github, Calendar, Code2, Link, ArrowRight } from 'lucide-react';
-import AudioPlayer from '../../components/AudioPlayer';
-import { NotebookCard } from '../../components/ui/NotebookCard';
-import { Tag } from '../../components/ui/Tag';
+import { render } from 'astro:content';
+import AudioPlayer from '../../components/article/AudioPlayer.astro';
+import { getProjects, formatDate, readingTime } from '../../lib/content';
+import { splitTitle, demoLabel } from '../../components/projects/projectMeta';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  return projects.map(project => ({
+  const projects = await getProjects();
+  return projects.map((project) => ({
     params: { slug: project.id },
-    props: { project },
+    props: { project, others: projects.filter((p) => p.id !== project.id).slice(0, 3) },
   }));
 }
 
-const { project } = Astro.props;
+const { project, others } = Astro.props;
 const { Content } = await render(project);
+const { name, subtitle } = splitTitle(project.data.title);
+const { date, description, techStack, repoUrl, demoUrl, audioUrl } = project.data;
+const ext = { target: '_blank', rel: 'noopener noreferrer' };
 ---
 
-<Layout title={project.data.title}>
-  <section class="pt-28 pb-24 px-6 min-h-screen">
-    <div class="max-w-4xl mx-auto">
-      <a
-        href="/projects"
-        class="group inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface-2/40 px-3.5 py-1.5 text-sm text-muted hover:text-text hover:border-text/30 transition-colors mb-10"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-        Back to Projects
-      </a>
+<Layout title={name} description={description} type="article">
+  <article class="pb-8 pt-10 md:pt-16">
+    <header class="wrap-narrow">
+      <nav aria-label="Breadcrumb" class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
+        <a href="/projects/" class="transition-colors hover:text-accent">Projects</a>
+        <span class="px-1.5 text-faint" aria-hidden="true">/</span>
+        <span class="text-text" aria-current="page">{name}</span>
+      </nav>
 
-      {/* Header */}
-      <div class="mb-12 border-b border-border/50 pb-8">
-        <div class="flex flex-wrap items-center gap-3 mb-6">
-          <div class="flex items-center gap-2 text-muted font-medium bg-surface border border-border/40 px-3 py-1 rounded-full text-xs font-mono">
-            <Calendar className="w-3.5 h-3.5" />
-            <span>{project.data.date}</span>
-          </div>
+      <h1 class="h-display mt-8 text-5xl md:text-7xl" transition:name={`project-${project.id}`}>{name}</h1>
+      {subtitle && <p class="h-title mt-3 text-xl text-text/80 md:text-2xl">{subtitle}</p>}
+      <p class="dek mt-6 text-lg leading-relaxed md:text-xl">{description}</p>
+
+      <dl class="mt-10 grid grid-cols-2 gap-x-6 gap-y-5 border-y py-5 text-sm sm:grid-cols-[auto_auto_1fr_auto]">
+        <div>
+          <dt class="label !text-faint">Shipped</dt>
+          <dd class="num mt-1.5 text-xs text-text">{formatDate(date)}</dd>
         </div>
-
-        <h1 class="display-serif text-3xl md:text-5xl lg:text-6xl text-text mb-6 leading-[1.1]">
-          {project.data.title}
-        </h1>
-
-        <p class="text-xl md:text-2xl text-muted leading-relaxed font-light max-w-3xl">
-          {project.data.description}
-        </p>
-      </div>
-
-      <div class="grid lg:grid-cols-[1fr_300px] gap-12 items-start">
-        {/* Mobile Sidebar */}
-        <div class="lg:hidden mb-8 space-y-6">
-          {project.data.audioUrl && (
-            <AudioPlayer src={project.data.audioUrl} title="Listen to Overview" client:load />
-          )}
-
-          <NotebookCard>
-            <div class="flex items-center gap-2 text-text font-bold mb-4 font-mono text-sm">
-              <Link className="w-4 h-4 text-note" />
-              <h3>Project Links</h3>
-            </div>
-            <div class="flex flex-col gap-3">
-              {project.data.demoUrl && (
-                <a href={project.data.demoUrl} target="_blank" rel="noreferrer"
-                   class="flex items-center justify-center gap-2 px-4 py-2 bg-text hover:bg-muted text-bg font-semibold rounded-lg transition-colors text-sm">
-                  <span>View Live Demo</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </a>
-              )}
-              {project.data.repoUrl && (
-                <a href={project.data.repoUrl} target="_blank" rel="noreferrer"
-                   class="flex items-center justify-center gap-2 px-4 py-2 bg-surface hover:bg-surface2 text-text font-semibold rounded-lg transition-colors border border-border/60 text-sm">
-                  <Github className="w-4 h-4" />
-                  <span>Source Code</span>
-                </a>
-              )}
-            </div>
-          </NotebookCard>
-
-          <NotebookCard>
-            <div class="flex items-center gap-2 text-text font-bold mb-4 font-mono text-sm">
-              <Code2 className="w-4 h-4 text-note" />
-              <h3>Tech Stack</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              {project.data.techStack.map((tech: string) => (
-                <Tag key={tech}>{tech}</Tag>
-              ))}
-            </div>
-          </NotebookCard>
+        <div class="text-right sm:text-left">
+          <dt class="label !text-faint">Read</dt>
+          <dd class="num mt-1.5 text-xs text-text">{readingTime(project.body)} min</dd>
         </div>
+        <div class="col-span-2 sm:col-span-1">
+          <dt class="label !text-faint">Stack</dt>
+          <dd class="mt-1.5 font-mono text-xs leading-relaxed text-text">{techStack.join(' · ')}</dd>
+        </div>
+        <div class="col-span-2 sm:col-span-1">
+          <dt class="label !text-faint">Links</dt>
+          <dd class="mt-0.5 flex gap-4">
+            {repoUrl && <a href={repoUrl} {...ext} class="link inline-flex min-h-8 items-center">Repo ↗</a>}
+            {demoUrl && <a href={demoUrl} {...ext} class="link inline-flex min-h-8 items-center whitespace-nowrap">{demoLabel(demoUrl)} ↗</a>}
+          </dd>
+        </div>
+      </dl>
 
-        {/* Main Content */}
-        <article class="min-w-0 prose prose-lg max-w-none
-            prose-headings:font-serif prose-headings:font-bold prose-headings:text-text
-            prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pb-4 prose-h2:border-b prose-h2:border-border/50
-            prose-h3:text-2xl prose-h3:text-text prose-h3:mt-12 prose-h3:mb-6
-            prose-p:text-muted prose-p:leading-8 prose-p:mb-8
-            prose-a:text-note prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-text prose-strong:font-semibold
-            prose-li:text-muted prose-li:marker:text-green prose-li:mb-4
-            prose-blockquote:border-l-green prose-blockquote:bg-surface/50 prose-blockquote:py-6 prose-blockquote:px-8 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-muted prose-blockquote:mb-8
-            prose-pre:bg-surface prose-pre:border prose-pre:border-border/60
-            [&>h2:first-child]:!mt-0 [&>*:first-child]:!mt-0
-          ">
-          <Content />
-        </article>
+      {audioUrl && (
+        <div class="mt-8">
+          <AudioPlayer src={audioUrl} title="Listen to the write-up" />
+        </div>
+      )}
+    </header>
 
-        {/* Desktop Sidebar */}
-        <aside class="hidden lg:block sticky top-32 space-y-6">
-          {project.data.audioUrl && (
-            <AudioPlayer src={project.data.audioUrl} title="Listen to Overview" client:load />
-          )}
-
-          <NotebookCard>
-            <div class="flex items-center gap-2 text-text font-bold mb-4 font-mono text-sm">
-              <Link className="w-4 h-4 text-note" />
-              <h3>Project Links</h3>
-            </div>
-            <div class="flex flex-col gap-3">
-              {project.data.demoUrl && (
-                <a href={project.data.demoUrl} target="_blank" rel="noreferrer"
-                   class="flex items-center justify-center gap-2 px-4 py-2.5 bg-text hover:bg-muted text-bg font-semibold rounded-lg transition-colors text-sm">
-                  <span>View Live Demo</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </a>
-              )}
-              {project.data.repoUrl && (
-                <a href={project.data.repoUrl} target="_blank" rel="noreferrer"
-                   class="flex items-center justify-center gap-2 px-4 py-2.5 bg-surface hover:bg-surface2 text-text font-semibold rounded-lg transition-colors border border-border/60 text-sm">
-                  <Github className="w-4 h-4" />
-                  <span>Source Code</span>
-                </a>
-              )}
-            </div>
-          </NotebookCard>
-
-          <NotebookCard>
-            <div class="flex items-center gap-2 text-text font-bold mb-4 font-mono text-sm">
-              <Code2 className="w-4 h-4 text-note" />
-              <h3>Tech Stack</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              {project.data.techStack.map((tech: string) => (
-                <Tag key={tech}>{tech}</Tag>
-              ))}
-            </div>
-          </NotebookCard>
-
-          <NotebookCard>
-            <h4 class="text-text font-bold text-sm mb-2 font-mono">Join the discussion</h4>
-            <p class="text-xs text-muted mb-4">
-              Feedback on this architecture? Reply via email or Threads.
-            </p>
-            <a href="https://www.threads.com/@relearn.ing" target="_blank" rel="noreferrer" class="text-xs font-bold text-note hover:text-text flex items-center gap-1">
-              Discuss on Threads <ArrowRight className="w-3 h-3" />
-            </a>
-          </NotebookCard>
-        </aside>
+    <div class="wrap-narrow mt-12 md:mt-14">
+      <div class="prose-lab">
+        <Content />
       </div>
     </div>
-  </section>
+  </article>
+
+  {others.length > 0 && (
+    <section class="wrap mt-24 md:mt-32" aria-labelledby="others-h">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="label"><i class="sq"></i>Workbench</p>
+          <h2 id="others-h" class="h-display mt-4 text-4xl md:text-5xl">Other <em>projects</em></h2>
+        </div>
+        <a href="/projects/" class="link hidden text-sm sm:inline">All projects →</a>
+      </div>
+      <div class="border-b">
+        {others.map((p) => {
+          const t = splitTitle(p.data.title);
+          return (
+            <a href={`/projects/${p.id}/`} class="index-row group grid grid-cols-[3.5rem_1fr_auto] items-baseline gap-x-4 px-2 py-5 md:grid-cols-[5rem_1fr_14rem_2rem] md:gap-x-6 md:px-3 md:py-6">
+              <span class="num text-xs text-faint transition-colors group-hover:text-accent">{formatDate(p.data.date, { year: 'numeric' })}</span>
+              <span class="min-w-0">
+                <span class="row-title h-title block text-[1.075rem] transition-colors md:text-[1.2rem]">{t.name}</span>
+                {t.subtitle && <span class="dek mt-1 block text-[0.925rem]">{t.subtitle}</span>}
+              </span>
+              <span class="hidden truncate text-right font-mono text-[11px] uppercase tracking-[0.08em] text-faint md:block">{p.data.techStack.slice(0, 2).join(' · ')}</span>
+              <span class="row-arrow self-center text-right text-faint" aria-hidden="true">→</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
 </Layout>

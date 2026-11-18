@@ -1,0 +1,58 @@
+---
+const year = new Date().getFullYear();
+const cols = [
+  {
+    title: 'Read',
+    links: [
+      { name: 'Journal', href: '/journal/' },
+      { name: 'Projects', href: '/projects/' },
+      { name: 'About', href: '/about/' },
+      { name: 'RSS feed', href: '/rss.xml' },
+    ],
+  },
+  {
+    title: 'Elsewhere',
+    links: [
+      { name: 'GitHub', href: 'https://github.com/kedbin', ext: true },
+      { name: 'LinkedIn', href: 'https://www.linkedin.com/in/kedbin/', ext: true },
+      { name: 'Threads', href: 'https://www.threads.com/@relearn.ing', ext: true },
+      { name: 'binasoy.kim', href: 'https://binasoy.kim', ext: true },
+    ],
+  },
+];
+---
+
+<footer class="mt-24 border-t">
+  <div class="wrap grid gap-12 py-16 md:grid-cols-[1.4fr_1fr_1fr]">
+    <div class="max-w-sm">
+      <a href="/" class="flex items-baseline gap-0.5 text-text" aria-label="relearn.ing — home">
+        <span class="font-display text-3xl leading-none tracking-tight">relearn</span><span class="font-mono text-sm text-accent">.ing</span>
+      </a>
+      <p class="mt-4 text-sm leading-relaxed text-muted">
+        A working notebook by Kim Binasoy: things built, assumptions corrected, habits changed.
+      </p>
+    </div>
+    {cols.map((col) => (
+      <div>
+        <p class="label mb-4">{col.title}</p>
+        <ul class="space-y-2.5 text-sm">
+          {col.links.map((l) => (
+            <li>
+              <a
+                href={l.href}
+                class="text-text/80 transition-colors hover:text-accent"
+                {...(l.ext ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              >
+                {l.name}{l.ext && <span class="ml-1 text-faint" aria-hidden="true">↗</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="wrap flex flex-col justify-between gap-2 border-t py-6 font-mono text-[11px] uppercase tracking-[0.08em] text-faint sm:flex-row">
+    <span>© {year} relearn.ing</span>
+    <span>Built in public · <a href="https://github.com/kedbin/relearn.ing" class="hover:text-text" target="_blank" rel="noopener noreferrer">source</a></span>
+  </div>
+</footer>

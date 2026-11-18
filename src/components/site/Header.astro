@@ -1,0 +1,133 @@
+---
+interface Props { currentPath: string }
+const { currentPath } = Astro.props;
+const nav = [
+  { name: 'Journal', href: '/journal/' },
+  { name: 'Projects', href: '/projects/' },
+  { name: 'About', href: '/about/' },
+];
+const isActive = (href: string) => currentPath.startsWith(href.replace(/\/$/, ''));
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-50 border-b border-transparent bg-bg/80 backdrop-blur-md transition-colors duration-300 supports-[backdrop-filter]:bg-bg/70 [&.scrolled]:hair [&.scrolled]:border-b"
+  transition:persist
+>
+  <div class="wrap flex h-16 items-center justify-between gap-6">
+    <a href="/" class="group flex items-baseline gap-0.5 text-text" aria-label="relearn.ing — home">
+      <span class="font-display text-[1.65rem] leading-none tracking-tight">relearn</span><span class="font-mono text-[13px] text-accent transition-transform duration-200 group-hover:translate-x-0.5">.ing</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden items-center gap-1 md:flex">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          data-nav={item.href}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+          class="relative rounded-full px-3.5 py-2 text-sm text-muted transition-colors hover:text-text aria-[current=page]:text-text"
+        >
+          {item.name}
+          <span class="pointer-events-none absolute inset-x-3.5 -bottom-[13px] hidden h-px bg-accent [[aria-current=page]>&]:block"></span>
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-1.5">
+      <button
+        type="button"
+        data-open-palette
+        class="group hidden h-9 items-center gap-2.5 rounded-full border pl-3.5 pr-2 text-sm text-muted transition-colors hover:border-text/30 hover:text-text sm:flex"
+        aria-label="Search entries"
+      >
+        <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.75"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
+        <span>Search</span>
+        <span class="kbd" data-kbd>⌘K</span>
+      </button>
+      <button type="button" data-open-palette class="grid h-10 w-10 place-items-center rounded-full text-muted hover:text-text sm:hidden" aria-label="Search entries">
+        <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.75"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
+      </button>
+
+      <button type="button" id="theme-toggle" class="grid h-10 w-10 place-items-center rounded-full text-muted transition-colors hover:text-text" aria-label="Toggle colour theme">
+        <svg class="h-[18px] w-[18px] dark:hidden" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M16.5 12.2A7 7 0 0 1 7.8 3.5a7 7 0 1 0 8.7 8.7Z" stroke-linejoin="round"/></svg>
+        <svg class="hidden h-[18px] w-[18px] dark:block" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="3.5"/><path d="M10 1.5v2M10 16.5v2M1.5 10h2M16.5 10h2M4 4l1.4 1.4M14.6 14.6 16 16M4 16l1.4-1.4M14.6 5.4 16 4" stroke-linecap="round"/></svg>
+      </button>
+
+      <!-- Mobile nav: a native disclosure, so it opens with JS off. -->
+      <details class="mobile-nav md:hidden" data-mobile-nav>
+        <summary class="grid h-10 w-10 cursor-pointer list-none place-items-center rounded-full text-muted hover:text-text [&::-webkit-details-marker]:hidden" aria-label="Menu">
+          <svg class="icon-open h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7h14M3 13h14" stroke-linecap="round"/></svg>
+          <svg class="icon-close h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15" stroke-linecap="round"/></svg>
+        </summary>
+        <nav aria-label="Mobile" class="absolute inset-x-0 top-full border-y bg-bg">
+          <div class="wrap flex flex-col py-2">
+            {nav.map((item) => (
+              <a href={item.href} data-nav={item.href} aria-current={isActive(item.href) ? 'page' : undefined} class="flex min-h-12 items-center justify-between border-b py-3 text-lg text-text last:border-0 aria-[current=page]:text-accent">
+                {item.name}<span class="font-mono text-xs text-muted" aria-hidden="true">→</span>
+              </a>
+            ))}
+          </div>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    const header = document.getElementById('site-header');
+    if (!header) return;
+
+    // Active state (header is persisted across navigations, so recompute)
+    const path = location.pathname;
+    header.querySelectorAll<HTMLAnchorElement>('[data-nav]').forEach((a) => {
+      const base = (a.dataset.nav || '').replace(/\/$/, '');
+      if (path.startsWith(base)) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+
+    // Close the mobile disclosure on navigation (the header persists across swaps).
+    const mobile = header.querySelector<HTMLDetailsElement>('[data-mobile-nav]');
+    if (mobile) mobile.open = false;
+
+    if (header.dataset.bound) return;
+    header.dataset.bound = '1';
+
+    const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Escape or a click elsewhere closes the mobile menu.
+    document.addEventListener('keydown', (e) => {
+      const m = header.querySelector<HTMLDetailsElement>('[data-mobile-nav]');
+      if (e.key === 'Escape' && m?.open) { m.open = false; m.querySelector('summary')?.focus(); }
+    });
+    document.addEventListener('click', (e) => {
+      const m = header.querySelector<HTMLDetailsElement>('[data-mobile-nav]');
+      if (m?.open && !m.contains(e.target as Node)) m.open = false;
+    });
+
+    // Instant theme switch: no wipe, no crossfade. Transitions are paused for one frame so
+    // colour transitions on links and rows don't trail behind the new palette.
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const root = document.documentElement;
+      const dark = !root.classList.contains('dark');
+      root.classList.add('theme-switching');
+      root.classList.toggle('dark', dark);
+      try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch { /* storage blocked */ }
+      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
+    });
+
+    const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+    header.querySelectorAll('[data-kbd]').forEach((k) => (k.textContent = isMac ? '⌘K' : 'Ctrl K'));
+  }
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
+</script>
+
+<style>
+  .mobile-nav .icon-close { display: none; }
+  .mobile-nav[open] .icon-open { display: none; }
+  .mobile-nav[open] .icon-close { display: block; }
+  .mobile-nav[open] summary { color: rgb(var(--text)); }
+</style>

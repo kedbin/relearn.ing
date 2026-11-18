@@ -1,23 +1,73 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { HeroPanel } from '../components/home/HeroPanel';
-import { JournalPreview } from '../components/home/JournalPreview';
-import { SelectedProjects } from '../components/home/SelectedProjects';
-import { getCollection } from 'astro:content';
+import Hero from '../components/home/Hero.astro';
+import Record from '../components/home/record/Record.astro';
+import ReturnChannel from '../components/site/ReturnChannel.astro';
+import { getEntries, getProjects, entryNo, formatDate } from '../lib/content';
+import { splitTitle } from '../components/projects/projectMeta';
+import { START_HERE } from '../data/curation';
 
-import { isJournalVisible } from '../lib/journal-visibility';
+const entries = await getEntries();
+const projects = await getProjects();
+const [latest] = entries;
 
-const entries = await getCollection('journal', entry =>
-  isJournalVisible(entry, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
-);
-const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
-
-const projects = await getCollection('projects');
-const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const byId = new Map(entries.map((e) => [e.id, e]));
+const starts = START_HERE.flatMap((s) => {
+  const e = byId.get(s.id);
+  return e ? [{ ...s, e }] : [];
+});
 ---
 
 <Layout title="Home">
-  <HeroPanel client:visible />
-  <JournalPreview client:visible entries={sortedEntries} />
-  <SelectedProjects client:visible projects={sortedProjects} />
+  <Hero latest={latest} />
+
+  <!-- ─────────── Start here ─────────── -->
+  {starts.length > 0 && (
+    <section class="wrap mt-20 md:mt-28" aria-labelledby="start-h">
+      <h2 id="start-h" class="label"><i class="sq" aria-hidden="true"></i>New here? Start with these three</h2>
+      <ol class="mt-5 grid border-b md:grid-cols-3 md:border-t md:border-b-0">
+        {starts.map((s) => (
+          <li class="border-t md:border-t-0 md:border-l md:first:border-l-0">
+            <a href={`/journal/${s.e.id}/`} class="group flex h-full flex-col py-6 transition-colors hover:bg-surface/70 md:px-6 md:first:pl-0">
+              <span class="num text-xs text-muted"><span class="text-accent">№</span> {entryNo(s.e.id)} · {s.kind}</span>
+              <span class="h-title mt-3 text-lg transition-colors group-hover:text-accent" transition:name={`title-${s.e.id}`}>{s.e.data.title}</span>
+              <span class="dek mt-3 text-[0.95rem] leading-relaxed">{s.why}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  <!-- ─────────── The record (the site's one graphic) ─────────── -->
+  <section class="mt-20 md:mt-28" aria-labelledby="record-h">
+    <Record entries={entries} />
+    <div class="wrap mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+      <a href="/journal/" class="link">All {entries.length} entries →</a>
+    </div>
+  </section>
+
+  <!-- ─────────── Projects ─────────── -->
+  <section class="wrap mt-24 md:mt-32" aria-labelledby="projects-h">
+    <div class="mb-6 flex items-end justify-between gap-4">
+      <h2 id="projects-h" class="label"><i class="sq" aria-hidden="true"></i>Built along the way</h2>
+      <a href="/projects/" class="link text-sm">All projects →</a>
+    </div>
+    <div class="grid gap-x-10 md:grid-cols-2 lg:grid-cols-3">
+      {projects.slice(0, 3).map((p) => {
+        const t = splitTitle(p.data.title);
+        return (
+          <a href={`/projects/${p.id}/`} class="group border-t py-6">
+            <span class="num text-xs text-muted">{formatDate(p.data.date, { month: 'short', year: 'numeric' })}</span>
+            <span class="h-title mt-3 block text-lg transition-colors group-hover:text-accent">{t.name}</span>
+            {t.subtitle && <span class="dek mt-2 block text-sm leading-relaxed">{t.subtitle}</span>}
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  <div class="mt-24 md:mt-32">
+    <ReturnChannel />
+  </div>
 </Layout>

@@ -1,5 +1,5 @@
 ---
-title: "OpenCode Skills: The AI-Augmented Developer Toolkit"
+title: "OpenCode Skills: Teaching a coding agent my CLI tools"
 date: "2025-12-22"
 description: "A modular skill system for OpenCode that extends AI capabilities through domain-specific tools. Built with Python and designed for cognitive leverage."
 repoUrl: "https://github.com/kedbin/opencode-skills"

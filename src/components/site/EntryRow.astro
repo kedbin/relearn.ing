@@ -1,0 +1,47 @@
+---
+import type { Entry } from '../../lib/content';
+import { entryNo, domainOf, topicOf, domainDotClass, readingTime, formatDate } from '../../lib/content';
+
+interface Props {
+  entry: Entry;
+  /** Show the summary line under the title */
+  dek?: boolean;
+  /** Extra data-* attributes for client-side filtering */
+  attrs?: Record<string, string>;
+}
+const { entry, dek = true, attrs = {} } = Astro.props;
+const d = domainOf(entry.data.category);
+const minutes = readingTime(entry.body);
+---
+
+<a
+  href={`/journal/${entry.id}/`}
+  class="index-row group grid grid-cols-[3rem_1fr_auto] items-baseline gap-x-4 px-2 py-5 md:grid-cols-[4rem_1fr_11rem_7rem_2rem] md:gap-x-6 md:px-3 md:py-6"
+  {...attrs}
+>
+  <span class="num text-xs text-faint transition-colors group-hover:text-accent">{entryNo(entry.id)}</span>
+
+  <span class="min-w-0">
+    <span class="row-title h-title block text-[1.075rem] transition-colors md:text-[1.2rem]" transition:name={`title-${entry.id}`}>
+      {entry.data.title}
+    </span>
+    {dek && <span class="dek mt-1.5 line-clamp-2 max-w-[62ch] text-[0.925rem] leading-relaxed">{entry.data.summary}</span>}
+    <span class="mt-2.5 flex items-center gap-3 text-xs text-muted md:hidden">
+      <span class={`dot ${domainDotClass(d)}`}></span>{topicOf(entry.data.category)}
+      <span class="text-faint">·</span><span class="num">{formatDate(entry.data.date, { month: 'short', day: 'numeric' })}</span>
+    </span>
+  </span>
+
+  <span class="hidden items-center gap-2 truncate text-[13px] text-muted md:flex">
+    <span class={`dot ${domainDotClass(d)}`}></span><span class="truncate">{topicOf(entry.data.category)}</span>
+  </span>
+
+  <span class="num hidden text-right text-xs text-muted md:block">
+    {formatDate(entry.data.date, { month: 'short', day: 'numeric', year: '2-digit' })}
+    <span class="mt-1 block text-faint">
+      {entry.data.audioUrl && <span title="Narrated" aria-label="Narrated">◉ </span>}{minutes} min
+    </span>
+  </span>
+
+  <span class="row-arrow self-center text-right text-faint" aria-hidden="true">→</span>
+</a>

@@ -1,255 +1,291 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/newsreader/opsz.css';
+@import '@fontsource-variable/newsreader/opsz-italic.css';
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ───────────────────────── Tokens ───────────────────────── */
 @layer base {
+  /* "Ink & Graphite" — an engineer's notebook: cool paper, graphite, ultramarine fountain-pen ink. */
   :root {
-    /* Light mode: warm paper aesthetic */
-    --bg: 245 243 240;
-    --surface: 238 235 230;
-    --surface-2: 230 226 220;
-    --border: 205 200 192;
-    --text: 26 24 21;
-    --muted: 106 101 94;
-    --green: 60 120 70;
-    --blue-note: 55 92 140;
-    --red-soft: 165 70 70;
-    --amber: 165 125 50;
-
-    --font-serif: 'Playfair Display', Georgia, serif;
-    --font-sans: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-
-    --background: 40 20% 96%;
-    --foreground: 30 10% 10%;
+    /* Light — cool drafting paper */
+    --bg: 244 245 242;
+    --surface: 234 236 233;
+    --surface-2: 223 226 223;
+    --line: 17 20 28;          /* used at low alpha via .hair */
+    --text: 17 20 28;          /* graphite */
+    --muted: 88 94 106;
+    --faint: 100 106 118;      /* ≥ 4.5:1 on bg and surface (AA for small labels) */
+    --accent: 43 63 214;       /* ultramarine ink */
+    --accent-2: 214 58 92;     /* rare second signal (pen-red correction mark) */
+    --eng: 14 128 118;         /* teal */
+    --life: 132 66 160;        /* plum */
+    --work: 176 122 12;        /* ochre */
+    --hair-a: 0.13;
+    color-scheme: light;
   }
 
   .dark {
-    /* Dark mode: warm near-black aesthetic */
-    --bg: 9 11 15;
-    --surface: 21 23 31;
-    --surface-2: 30 33 42;
-    --border: 78 84 99;
-    --text: 236 232 224;
-    --muted: 176 180 190;
-    --green: 126 168 120;
-    --blue-note: 150 172 210;
-    --red-soft: 181 96 96;
-    --amber: 180 152 91;
+    /* Dark — blue-black slate, like ink on a blackboard */
+    --bg: 13 15 20;
+    --surface: 21 24 31;
+    --surface-2: 30 34 43;
+    --line: 220 226 240;
+    --text: 228 232 240;
+    --muted: 148 156 172;
+    --faint: 132 140 156;      /* ≥ 4.5:1 on bg and surface */
+    --accent: 138 155 255;     /* periwinkle ink */
+    --accent-2: 255 122 150;
+    --eng: 74 208 190;
+    --life: 196 150 255;
+    --work: 238 190 90;
+    --hair-a: 0.11;
+    color-scheme: dark;
+  }
 
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scrollbar-gutter: stable;
   }
 
   body {
-    background: rgb(var(--bg));
-    color: rgb(var(--text));
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    @apply bg-bg text-text font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
   }
 
   ::selection {
-    background: rgb(var(--green) / 0.25);
+    background: rgb(var(--accent) / 0.22);
     color: rgb(var(--text));
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Hairline borders default to the low-alpha line colour */
+  *, ::before, ::after {
+    border-color: rgb(var(--line) / var(--hair-a));
+  }
+
+  html.theme-switching *, html.theme-switching ::before, html.theme-switching ::after { transition: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
+/* ───────────────────────── Components ───────────────────────── */
 @layer components {
-  .display-serif {
-    font-family: var(--font-serif);
-    letter-spacing: -0.03em;
-    line-height: 1.05;
-  }
+  .wrap { @apply mx-auto w-full max-w-wrap px-5 md:px-8; }
+  .wrap-narrow { @apply mx-auto w-full max-w-read px-5 md:px-0; }
 
-  /* Unified card-title system — one serif face across every card (journal
-     featured, journal list, projects). Hierarchy comes from SIZE/WEIGHT, never
-     from swapping to a sans face. text-wrap:balance kills orphan title lines. */
-  .card-title {
-    font-family: var(--font-serif);
-    font-weight: 600;
+  .hair { border-color: rgb(var(--line) / var(--hair-a)); }
+
+  .h-display {
+    @apply font-display font-normal text-text;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+  .h-display em, .h-display i { @apply italic; }
+
+  .h-title {
+    @apply font-sans font-medium text-text;
     letter-spacing: -0.015em;
-    line-height: 1.18;
+    line-height: 1.25;
     text-wrap: balance;
   }
 
-  .meta-mono {
-    font-family: var(--font-mono);
-    letter-spacing: 0.02em;
-    font-size: 0.75rem;
-    text-transform: uppercase;
+  .dek {
+    @apply text-muted;
+    text-wrap: pretty;
   }
 
-  .label-mono {
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+  .label {
+    @apply inline-flex items-center gap-2 font-mono text-[11px] uppercase text-muted;
+    letter-spacing: 0.08em;
+  }
+  .label .sq, .sq {
+    @apply inline-block h-1.5 w-1.5 shrink-0 bg-accent;
+  }
+
+  .num {
+    @apply font-mono;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+  }
+
+  .dot { @apply inline-block h-1.5 w-1.5 shrink-0 rounded-[1px]; }
+  .dot-eng { @apply bg-eng; }
+  .dot-life { @apply bg-life; }
+  .dot-work { @apply bg-work; }
+
+  .link {
+    @apply text-text underline decoration-1 underline-offset-[5px] transition-colors duration-200;
+    text-decoration-color: rgb(var(--text) / 0.3);
+  }
+  .link:hover { @apply text-accent; text-decoration-color: rgb(var(--accent)); }
+
+  .btn {
+    @apply inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-medium transition-all duration-200 ease-out-quint;
+  }
+  .btn-solid { @apply btn bg-text text-bg hover:bg-accent hover:text-bg; }
+  .btn-line { @apply btn border text-text hover:border-text/50 hover:bg-surface; }
+
+  .kbd {
+    @apply inline-flex h-5 min-w-5 items-center justify-center rounded border px-1 font-mono text-[10px] text-muted;
+  }
+
+  /* Ruled index rows (journal / projects lists) */
+  .index-row {
+    @apply relative block border-t transition-colors duration-200;
+  }
+  .index-row:hover { background: rgb(var(--surface) / 0.7); }
+  .index-row:hover .row-title { @apply text-accent; }
+  .index-row .row-arrow { @apply transition-transform duration-200 ease-out-quint; }
+  .index-row:hover .row-arrow { transform: translateX(4px); @apply text-accent; }
+
+  .reveal { animation: reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both; animation-delay: calc(var(--d, 0) * 70ms); }
+
+  /* ── Article body ── */
+  .prose-lab {
+    @apply font-serif text-text;
+    font-size: 1.1875rem;          /* 19px */
+    line-height: 1.7;
+    font-optical-sizing: auto;
+  }
+  @media (min-width: 768px) { .prose-lab { font-size: 1.25rem; } }
+  .prose-lab > * + * { margin-top: 1.25em; }
+  .prose-lab p, .prose-lab li { color: rgb(var(--text) / 0.88); text-wrap: pretty; }
+  .prose-lab h2 {
+    @apply font-display text-text;
+    font-size: 2.1em; line-height: 1.08; letter-spacing: -0.015em;
+    margin-top: 2.2em; margin-bottom: -0.2em; text-wrap: balance;
+    scroll-margin-top: 6rem;
+  }
+  .prose-lab h3 {
+    @apply font-sans font-semibold text-text;
+    font-size: 1.05em; letter-spacing: -0.01em;
+    margin-top: 2em; scroll-margin-top: 6rem;
+  }
+  .prose-lab h4 { @apply font-mono text-sm uppercase tracking-wider text-muted; margin-top: 2em; }
+  .prose-lab a { @apply link; }
+  .prose-lab strong { @apply font-semibold text-text; }
+  .prose-lab em { font-style: italic; }
+  .prose-lab ul, .prose-lab ol { padding-left: 1.3em; }
+  .prose-lab ul { list-style: none; }
+  .prose-lab ul > li { position: relative; }
+  .prose-lab ul > li::before {
+    content: ''; position: absolute; left: -1.05em; top: 0.72em;
+    width: 0.38em; height: 1px; background: rgb(var(--accent));
+  }
+  .prose-lab ol { list-style: decimal; }
+  .prose-lab ol > li::marker { @apply font-mono text-[0.75em] text-muted; }
+  .prose-lab li + li { margin-top: 0.5em; }
+  .prose-lab blockquote {
+    @apply border-l-2 pl-6 italic;
+    border-color: rgb(var(--accent));
+    color: rgb(var(--text) / 0.8);
+  }
+  .prose-lab hr { @apply my-14 border-t; }
+  .prose-lab :not(pre) > code {
+    @apply rounded bg-surface2 px-[0.35em] py-[0.1em] font-mono text-text;
+    font-size: 0.8em;
+  }
+  .prose-lab pre {
+    @apply overflow-x-auto rounded-lg border bg-surface p-5 font-mono leading-relaxed;
+    font-size: 0.8rem;
+  }
+  @media (min-width: 900px) {
+    .prose-lab pre { margin-left: -2rem; margin-right: -2rem; }
+  }
+  .prose-lab pre code { background: none; padding: 0; font-size: inherit; }
+  .prose-lab img, .prose-lab video, .prose-lab iframe { @apply w-full rounded-lg border; }
+  .prose-lab iframe { aspect-ratio: 16 / 9; height: auto; }
+  .prose-lab table { @apply w-full border-collapse font-sans text-[0.8em]; display: block; overflow-x: auto; }
+  .prose-lab th { @apply border-b px-3 py-2 text-left font-mono text-[0.85em] font-medium uppercase tracking-wider text-muted; }
+  .prose-lab td { @apply border-b px-3 py-2.5 align-top; color: rgb(var(--text) / 0.88); }
+  .prose-lab sup a { @apply no-underline font-mono text-accent; font-size: 0.75em; }
+}
+
+/* ── .prose-lab refinements (promoted from the article page) ── */
+@layer components {
+  .article-title { overflow-wrap: break-word; hyphens: manual; }
+  /* ── Page-scoped .prose-lab refinements (candidates to promote into global.css) ── */
+    .prose-lab { overflow-wrap: break-word; }
+  .prose-lab > :first-child { margin-top: 0; }
+
+  /* Code blocks: full-bleed on mobile instead of overflowing; quieter border in both themes. */
+  .prose-lab pre {
+    max-width: none;
+    line-height: 1.65;
+    font-size: 0.8125rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (max-width: 767px) {
+    .prose-lab pre {
+      margin-inline: -1.25rem;
+      max-width: none;
+      border-radius: 0;
+      border-inline: 0;
+      padding-inline: 1.25rem;
+    }
+  }
+  .prose-lab pre code { font-family: inherit; }
+  .prose-lab :not(pre) > code { overflow-wrap: anywhere; }
+
+  /* Tables: scroll inside themselves; tabular digits, hairline header. */
+  .prose-lab table { max-width: 100%; -webkit-overflow-scrolling: touch; font-variant-numeric: tabular-nums; }
+  .prose-lab th { white-space: nowrap; border-bottom-color: rgb(var(--line) / 0.25); }
+  .prose-lab td code { white-space: nowrap; }
+  .prose-lab tr:last-child td { border-bottom: 0; }
+
+  /* Blockquote: no double-italic emphasis, comfortable measure. */
+  .prose-lab blockquote { padding-block: 0.15em; }
+  .prose-lab blockquote em { font-style: normal; }
+  .prose-lab blockquote > * + * { margin-top: 0.8em; }
+
+  /* Embedded iframes / leftover utility wrappers in markdown (e.g. `not-prose aspect-video`). */
+  .prose-lab .not-prose { margin-top: 2em; margin-bottom: 2em; }
+  .prose-lab iframe { display: block; border-radius: 0.5rem; background: rgb(var(--surface)); }
+  .prose-lab img { height: auto; }
+
+  /* "References" sections written as `[1] Author…` paragraphs: smaller sans, hanging numbers. */
+  .prose-lab h2#references ~ p,
+  .prose-lab h2#sources ~ p {
+    font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.78em;
+    line-height: 1.6;
     color: rgb(var(--muted));
+    margin-top: 0.75em;
   }
+  .prose-lab h2#references ~ p em,
+  .prose-lab h2#sources ~ p em { color: rgb(var(--text) / 0.85); }
 
-  .notebook-card {
-    border-radius: 1rem;
-    border: 1px solid rgb(var(--border) / 0.75);
-    background:
-      linear-gradient(180deg, rgb(var(--surface-2) / 0.35), rgb(var(--surface) / 0.65));
-    padding: 1.5rem;
-    box-shadow:
-      0 1px 0 0 rgb(var(--text) / 0.03) inset,
-      0 10px 30px -18px rgb(0 0 0 / 0.8),
-      0 0 0 1px rgb(var(--border) / 0.12);
-    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  /* GFM footnotes */
+  .prose-lab .footnotes {
+    margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid;
+    font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif; font-size: 0.8em; color: rgb(var(--muted));
   }
+  .prose-lab .footnotes h2 { font-size: 1.5em; margin-top: 0; }
+  .prose-lab .footnotes li, .prose-lab .footnotes p { color: rgb(var(--muted)); }
+  .prose-lab .data-footnote-backref { text-decoration: none; font-family: 'Geist Mono Variable', ui-monospace, monospace; }
 
-  /* Lift any notebook-card when its ancestor `.group` is hovered (full-card links). */
-  .group:hover .notebook-card,
-  a.group:hover > .notebook-card {
-    transform: translateY(-3px);
-    border-color: rgb(var(--text) / 0.22);
-    box-shadow:
-      0 1px 0 0 rgb(var(--text) / 0.04) inset,
-      0 22px 45px -22px rgb(0 0 0 / 0.85),
-      0 0 0 1px rgb(var(--border) / 0.25);
-  }
-
-  .artifact-card {
-    border-radius: 1rem;
-    border: 1px solid rgb(var(--border) / 0.6);
-    background: rgb(var(--surface) / 0.5);
-    padding: 0.75rem;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-  }
-
-  .handwritten {
-    font-family: 'Caveat', cursive;
-    color: rgb(var(--blue-note));
-    font-weight: 600;
-    font-style: italic;
-  }
-
-  /* Accent link — used for inline editorial links and metadata links. */
-  .link-accent {
-    color: rgb(var(--text));
-    text-decoration: underline;
-    text-decoration-color: rgb(var(--green) / 0.55);
-    text-underline-offset: 4px;
-    text-decoration-thickness: 1.5px;
-    transition: color 0.2s ease, text-decoration-color 0.2s ease;
-  }
-  .link-accent:hover {
-    color: rgb(var(--green));
-    text-decoration-color: rgb(var(--green));
-  }
-
-  /* Buttons */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.4rem;
-    background: rgb(var(--text));
-    color: rgb(var(--bg));
-    font-weight: 600;
-    border-radius: 9999px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-    box-shadow: 0 8px 24px -10px rgb(0 0 0 / 0.6);
-  }
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 14px 30px -10px rgb(0 0 0 / 0.7);
-  }
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.4rem;
-    border: 1px solid rgb(var(--border) / 0.7);
-    color: rgb(var(--text));
-    font-weight: 500;
-    border-radius: 9999px;
-    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-  }
-  .btn-ghost:hover {
-    border-color: rgb(var(--text) / 0.4);
-    background: rgb(var(--surface-2) / 0.4);
-    transform: translateY(-1px);
-  }
-
-  /* Signature section divider — a faint accent rule with a dot motif. */
-  .field-divider {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    color: rgb(var(--muted));
-  }
-  .field-divider::before,
-  .field-divider::after {
-    content: '';
-    height: 1px;
-    flex: 1;
-    background: linear-gradient(90deg, transparent, rgb(var(--border) / 0.6), transparent);
-  }
-
-  .prose :where(a) {
-    color: rgb(var(--text));
-    text-decoration: underline;
-    text-decoration-color: rgb(var(--green) / 0.5);
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1.5px;
-    transition: color 0.2s ease, text-decoration-color 0.2s ease;
-  }
-  .prose :where(a):hover {
-    color: rgb(var(--green));
-  }
-  .prose :where(code):not(:where(pre code)) {
-    color: rgb(var(--text));
-    background: rgb(var(--surface-2) / 0.78);
-    border: 1px solid rgb(var(--border) / 0.55);
-    border-radius: 0.35rem;
-    padding: 0.12rem 0.35rem;
-    font-weight: 600;
-  }
-
-  .prose :where(code):not(:where(pre code))::before,
-  .prose :where(code):not(:where(pre code))::after {
-    color: inherit;
-  }
-
-  .prose :where(td),
-  .prose :where(th) {
-    border-color: rgb(var(--border) / 0.72);
-  }
-
-  .prose :where(td) {
-    color: rgb(var(--text) / 0.88);
-  }
-
-  .prose :where(th) {
-    color: rgb(var(--text));
-  }
-
-  .dark .prose :where(code):not(:where(pre code)) {
-    color: rgb(248 250 252);
-    background: rgb(var(--surface-2) / 0.95);
-    border-color: rgb(var(--border) / 0.85);
-  }
-
-  .dark .prose :where(td) {
-    color: rgb(226 232 240);
-  }
-
-  .dark .prose :where(th) {
-    color: rgb(248 250 252);
-  }
 }
 
-/* Hero animations */
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float 8s ease-in-out infinite;
-  animation-delay: -2s;
-}
+/* Astro shiki code blocks: honour theme */
+.astro-code, .astro-code span { background-color: transparent !important; }
+.dark .astro-code, .dark .astro-code span { color: var(--shiki-dark) !important; }

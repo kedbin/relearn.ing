@@ -1,58 +1,55 @@
 import typography from '@tailwindcss/typography';
 
+const c = (v) => `rgb(var(--${v}) / <alpha-value>)`;
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
-  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
     extend: {
       colors: {
-        bg: 'rgb(var(--bg) / <alpha-value>)',
-        surface: 'rgb(var(--surface) / <alpha-value>)',
-        surface2: 'rgb(var(--surface-2) / <alpha-value>)',
-        border: 'rgb(var(--border) / <alpha-value>)',
-        text: 'rgb(var(--text) / <alpha-value>)',
-        muted: 'rgb(var(--muted) / <alpha-value>)',
-        green: 'rgb(var(--green) / <alpha-value>)',
-        note: 'rgb(var(--blue-note) / <alpha-value>)',
-        redsoft: 'rgb(var(--red-soft) / <alpha-value>)',
-        amber: 'rgb(var(--amber) / <alpha-value>)',
+        bg: c('bg'),
+        surface: c('surface'),
+        surface2: c('surface-2'),
+        line: c('line'),
+        text: c('text'),
+        muted: c('muted'),
+        faint: c('faint'),
+        accent: c('accent'),
+        eng: c('eng'),
+        life: c('life'),
+        work: c('work'),
+        // legacy aliases so untouched components keep compiling during migration
+        border: c('line'),
+        green: c('accent'),
+        note: c('accent'),
+        amber: c('work'),
+        redsoft: c('accent'),
       },
       fontFamily: {
-        serif: ['var(--font-serif)', 'Georgia', 'serif'],
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        display: ['"Instrument Serif"', 'ui-serif', 'Georgia', 'serif'],
+        serif: ['"Newsreader Variable"', 'ui-serif', 'Georgia', 'serif'],
+        sans: ['"Geist Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"Geist Mono Variable"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
-      animation: {
-        blob: "blob 7s infinite",
-        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
-        'fade-in': 'fadeIn 1s ease-out forwards',
-        'float': 'float 6s ease-in-out infinite',
-        'float-delayed': 'float 8s ease-in-out infinite 2s',
+      maxWidth: {
+        wrap: '1200px',
+        read: '700px',
+      },
+      transitionTimingFunction: {
+        'out-quint': 'cubic-bezier(0.22, 1, 0.36, 1)',
       },
       keyframes: {
-        blob: {
-          "0%": { transform: "translate(0px, 0px) scale(1)" },
-          "33%": { transform: "translate(20px, -30px) scale(1.05)" },
-          "66%": { transform: "translate(-15px, 15px) scale(0.95)" },
-          "100%": { transform: "translate(0px, 0px) scale(1)" },
+        reveal: {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to: { opacity: '1', transform: 'none' },
         },
-        fadeInUp: {
-          '0%': { opacity: '0', transform: 'translateY(20px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
+      },
+      animation: {
+        reveal: 'reveal 600ms cubic-bezier(0.22, 1, 0.36, 1) both',
       },
     },
   },
-  plugins: [
-    typography,
-  ],
-}
+  plugins: [typography],
+};

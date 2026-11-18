@@ -1,0 +1,111 @@
+---
+import EntryRow from '../site/EntryRow.astro';
+import { entryNo, type Entry } from '../../lib/content';
+
+interface Props {
+  entry: Entry;
+  prev?: Entry;
+  next?: Entry;
+  related: Entry[];
+}
+const { entry, prev, next, related } = Astro.props;
+const url = new URL(`/journal/${entry.id}/`, Astro.site ?? 'https://relearn.ing').toString();
+const ext = { target: '_blank', rel: 'noopener noreferrer' };
+---
+
+<footer class="entry-footer">
+  <!-- Discuss + share -->
+  <div class="wrap-narrow">
+    <div class="flex flex-col gap-6 border-y py-6 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-[15px] text-muted">
+        <span class="label mr-2 !text-faint">Discuss</span>
+        <a href="https://www.threads.com/@relearn.ing" {...ext} class="link">Threads ↗</a>
+        <span class="mx-2 text-faint">·</span>
+        <a href="https://www.linkedin.com/in/kedbin/" {...ext} class="link">LinkedIn ↗</a>
+      </p>
+      <div class="flex items-center gap-2" data-share-root data-url={url} data-title={entry.data.title}>
+        <button type="button" data-copy-link class="btn-line h-10 px-4 text-[13px]" aria-live="polite">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6.5 9.5a3 3 0 0 0 4.2 0l2.6-2.6a3 3 0 0 0-4.2-4.2L8 3.8M9.5 6.5a3 3 0 0 0-4.2 0L2.7 9.1a3 3 0 0 0 4.2 4.2L8 12.2" stroke-linecap="round"/></svg>
+          <span data-copy-label>Copy link</span>
+        </button>
+        <button type="button" data-native-share hidden class="btn-line h-10 px-4 text-[13px]">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 10V2M5 5l3-3 3 3M3 9v4.5h10V9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Share
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Older / newer -->
+  {(prev || next) && (
+    <nav aria-label="More entries" class="wrap mt-20 md:mt-28">
+      <div class="grid border-y md:grid-cols-2">
+        {prev ? (
+          <a href={`/journal/${prev.id}/`} rel="prev" class="group flex flex-col gap-4 py-8 transition-colors duration-200 hover:bg-surface/70 md:border-r md:px-8 md:py-10">
+            <span class="num text-xs text-faint"><span class="text-accent">№</span> {entryNo(prev.id)} <span class="ml-1 inline-block transition-transform duration-200 group-hover:-translate-x-1 group-hover:text-accent">←</span> Older</span>
+            <span class="h-title text-xl transition-colors group-hover:text-accent md:text-2xl">{prev.data.title}</span>
+          </a>
+        ) : <span class="hidden md:block md:border-r"></span>}
+        {next ? (
+          <a href={`/journal/${next.id}/`} rel="next" class="group flex flex-col gap-4 border-t py-8 transition-colors duration-200 hover:bg-surface/70 md:items-end md:border-t-0 md:px-8 md:py-10 md:text-right">
+            <span class="num text-xs text-faint">Newer <span class="mr-1 inline-block transition-transform duration-200 group-hover:translate-x-1 group-hover:text-accent">→</span> <span class="text-accent">№</span> {entryNo(next.id)}</span>
+            <span class="h-title text-xl transition-colors group-hover:text-accent md:text-2xl">{next.data.title}</span>
+          </a>
+        ) : <span class="hidden md:block"></span>}
+      </div>
+    </nav>
+  )}
+
+  <!-- Related -->
+  {related.length > 0 && (
+    <section aria-labelledby="related-h" class="wrap mt-20 md:mt-28">
+      <div class="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p class="label"><i class="sq"></i>Keep reading</p>
+          <h2 id="related-h" class="h-display mt-4 text-4xl md:text-5xl">Related <em>entries</em></h2>
+        </div>
+        <a href="/journal/" class="link hidden text-sm sm:inline">All entries →</a>
+      </div>
+      <div class="border-b">
+        {related.map((e) => <EntryRow entry={e} />)}
+      </div>
+    </section>
+  )}
+</footer>
+
+<script>
+  function initShare() {
+    const root = document.querySelector<HTMLElement>('[data-share-root]');
+    if (!root || root.dataset.bound) return;
+    root.dataset.bound = '1';
+    const url = root.dataset.url || location.href;
+    const title = root.dataset.title || document.title;
+
+    const copy = root.querySelector<HTMLButtonElement>('[data-copy-link]');
+    const label = root.querySelector<HTMLElement>('[data-copy-label]');
+    let timer: number | undefined;
+    copy?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        if (label) label.textContent = 'Copied';
+        copy.classList.add('!text-accent');
+      } catch {
+        if (label) label.textContent = 'Copy failed';
+      }
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        if (label) label.textContent = 'Copy link';
+        copy.classList.remove('!text-accent');
+      }, 1800);
+    });
+
+    const share = root.querySelector<HTMLButtonElement>('[data-native-share]');
+    if (share && typeof navigator.share === 'function') {
+      share.hidden = false;
+      share.addEventListener('click', () => {
+        navigator.share({ title, url }).catch(() => {});
+      });
+    }
+  }
+  document.addEventListener('astro:page-load', initShare);
+</script>

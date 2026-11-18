@@ -1,5 +1,5 @@
 ---
-title: "Relearning Flow: The Open-Source Content Pipeline"
+title: "Relearning Flow: Idea to published entry in one conversation"
 date: "2026-01-03"
 description: "A public repository of scrubbed OpenCode skills and agents that power the relearn.ing content creation pipeline. From idea to published audio in one conversation."
 repoUrl: "https://github.com/kedbin/relearning-flow"

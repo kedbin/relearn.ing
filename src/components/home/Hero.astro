@@ -1,0 +1,47 @@
+---
+/**
+ * Homepage opening: the headword, one plain sentence, and one named entry to read.
+ * Nothing animates here; the record further down is the page's only graphic.
+ */
+import type { Entry } from '../../lib/content';
+import { entryNo, formatDate } from '../../lib/content';
+
+interface Props { latest: Entry }
+const { latest } = Astro.props;
+---
+
+<section class="wrap pt-10 md:pt-16" aria-labelledby="hero-word">
+  <h1 id="hero-word" class="word font-display leading-[0.82] tracking-[-0.045em] text-text">
+    <span class="sr-only">relearn.ing</span>
+    <span aria-hidden="true">re<span class="syl">·</span>learn<span class="syl">·</span><span class="ing">ing</span></span>
+  </h1>
+
+  <div class="mt-8 grid gap-8 md:mt-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-14">
+    <p class="max-w-[34ch] font-serif text-[1.3rem] leading-snug text-text md:text-[1.6rem]">
+      A working notebook by Kim Binasoy. What I built, which assumptions turned out wrong, and which habits I changed, one numbered entry at a time.
+    </p>
+
+    <a href={`/journal/${latest.id}/`} class="group block self-end border-t pt-4">
+      <span class="num flex items-center gap-2 text-xs text-muted">
+        <span><span class="text-accent">№</span> {entryNo(latest.id)}</span><span aria-hidden="true">·</span>
+        <span>Latest · {formatDate(latest.data.date)}</span>
+      </span>
+      <span class="h-title mt-2 block text-lg transition-colors group-hover:text-accent md:text-xl" transition:name={`title-${latest.id}`}>{latest.data.title}</span>
+      <span class="mt-3 inline-flex items-center gap-2 text-sm text-muted transition-colors group-hover:text-text">Read it <span class="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .word {
+    font-size: clamp(4.2rem, 19.5vw, 14.5rem);
+    margin-left: -0.04em;
+  }
+  .syl { color: rgb(var(--accent)); font-style: normal; font-size: 0.42em; vertical-align: 0.42em; margin: 0 0.07em; }
+  .ing {
+    font-style: italic;
+    background: linear-gradient(90deg, rgb(var(--text)) 30%, rgb(var(--text) / 0.15));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-right: 0.08em;
+  }
+</style>

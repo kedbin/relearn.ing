@@ -1,0 +1,56 @@
+---
+/** 2px accent bar pinned above the header. CSS scroll-timeline with a rAF scroll fallback. */
+---
+
+<div class="reading-progress" aria-hidden="true"><span></span></div>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 2px;
+    z-index: 60;
+    pointer-events: none;
+  }
+  .reading-progress span {
+    display: block;
+    height: 100%;
+    background: rgb(var(--accent));
+    transform-origin: 0 50%;
+    transform: scaleX(var(--progress, 0));
+  }
+  @supports (animation-timeline: scroll()) {
+    .reading-progress span {
+      animation: reading-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+  @keyframes reading-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+</style>
+
+<script>
+  let bound = false;
+  function initProgress() {
+    if (CSS.supports('animation-timeline: scroll()') || bound) return;
+    bound = true;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const bar = document.querySelector<HTMLElement>('.reading-progress span');
+      if (!bar) return;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.setProperty('--progress', String(max > 0 ? Math.min(1, scrollY / max) : 0));
+    };
+    const onScroll = () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    document.addEventListener('astro:page-load', update);
+    update();
+  }
+  document.addEventListener('astro:page-load', initProgress);
+</script>
