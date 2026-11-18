@@ -9,6 +9,9 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [react(), tailwind({ applyBaseStyles: false }), sitemap()],
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
+  // Allow previewing over Tailscale MagicDNS (dev/preview only; no effect on the static build).
+  server: { allowedHosts: ['.ts.net'] },
+  vite: { preview: { allowedHosts: ['.ts.net'] }, server: { allowedHosts: ['.ts.net'] } },
   markdown: {
     shikiConfig: {
       themes: { light: 'github-light', dark: 'vitesse-dark' },
