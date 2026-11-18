@@ -160,9 +160,12 @@ const dot = { Engineering: 'dot-eng', Life: 'dot-life', Work: 'dot-work' } as co
         <div class="panel-body border-t" data-panel-body>
           <div class="flex items-center justify-between gap-4 py-3">
             <p class="num truncate text-[11px] uppercase tracking-[0.06em] text-muted" data-sum></p>
+            <span class="flex shrink-0 items-center gap-5">
+            <a href="/journal/" class="link hidden text-[13px] sm:inline" data-open-journal tabindex="-1">Open in journal →</a>
             <button type="button" class="clear inline-flex h-10 shrink-0 items-center gap-2 font-mono text-[11px] text-muted transition-colors hover:text-text" data-clear tabindex="-1">
               <span class="kbd hidden md:inline-flex">Esc</span> Clear <span aria-hidden="true">×</span>
             </button>
+            </span>
           </div>
           <ul class="rows" data-rows aria-label="Entries in the selected window"></ul>
         </div>
@@ -325,6 +328,8 @@ const dot = { Engineering: 'dot-eng', Life: 'dot-life', Work: 'dot-work' } as co
     const sum = $('[data-sum]');
     const rows = $('[data-rows]');
     const clearBtn = $<HTMLButtonElement>('[data-clear]');
+    const openJournal = $<HTMLAnchorElement>('[data-open-journal]');
+    const isoOf = (t: number) => new Date(t).toISOString().slice(0, 10);
     const live = $('[data-live]');
     const bars = [...plot.querySelectorAll<HTMLAnchorElement>('.bar')];
     if (!bars.length) return;
@@ -350,6 +355,7 @@ const dot = { Engineering: 'dot-eng', Life: 'dot-life', Work: 'dot-work' } as co
     plot.setAttribute('role', 'group');
     bars.forEach((a) => (a.tabIndex = -1));
     clearBtn.tabIndex = 0;
+    openJournal.tabIndex = 0;
 
     const hint = coarse
       ? 'Tap an entry · hold, then drag to select a window'
@@ -449,6 +455,11 @@ const dot = { Engineering: 'dot-eng', Life: 'dot-life', Work: 'dot-work' } as co
         const set = new Set(idx);
         B.forEach((x, i) => x.a.classList.toggle('in', set.has(i)));
         sum.textContent = summarize(idx.map((i) => B[i]), a!, b!);
+        if (idx.length) {
+          const ts = idx.map((i) => B[i].t);
+          openJournal.href = `/journal/?from=${isoOf(Math.min(...ts))}&to=${isoOf(Math.max(...ts))}`;
+        }
+        openJournal.hidden = idx.length === 0;
         if (idx.join(',') !== picked.split('|')[0]) renderRows(idx);
         picked = key;
       }

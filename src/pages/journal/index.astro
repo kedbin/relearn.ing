@@ -105,6 +105,11 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
           </label>
           <p class="filter-count num whitespace-nowrap text-right text-xs text-muted" data-result-count aria-live="polite" aria-atomic="true">{countLabel(stats.entries)}</p>
         </form>
+        <p class="range-chip mt-2 hidden items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-muted [&:not([hidden])]:flex" data-range hidden>
+          <span class="sq"></span><span>Window</span>
+          <span class="text-text" data-range-label></span>
+          <button type="button" class="ml-1 inline-flex min-h-8 items-center rounded-full border px-2.5 normal-case tracking-normal text-muted transition-colors hover:border-text/40 hover:text-text" data-range-clear aria-label="Clear date window">Clear ×</button>
+        </p>
       </div>
     </div>
 
@@ -266,6 +271,9 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
       const mediaButtons = [...form.querySelectorAll<HTMLButtonElement>('[data-media-filter]')];
       const count = this.querySelector<HTMLElement>('[data-result-count]')!;
       const empty = this.querySelector<HTMLElement>('[data-empty]')!;
+      const range = this.querySelector<HTMLElement>('[data-range]')!;
+      const rangeLabel = range.querySelector<HTMLElement>('[data-range-label]')!;
+      const fmtDay = (iso: string) => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
       const monthList = this.querySelector<HTMLElement>('[data-months]')!;
       const bars = new Map([...this.querySelectorAll<HTMLElement>('[data-record-bar]')].map((bar) => [bar.dataset.recordBar, bar]));
       const months = [...monthList.querySelectorAll<HTMLElement>('[data-month]')].map((month) => {
@@ -313,6 +321,8 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
         sort.value = state.sort;
         for (const button of domainButtons) button.setAttribute('aria-pressed', String(button.dataset.domainFilter === state.domain));
         for (const button of mediaButtons) button.setAttribute('aria-pressed', String(button.dataset.mediaFilter === 'audio' ? state.audio : state.video));
+        range.hidden = !state.from && !state.to;
+        rangeLabel.textContent = `${state.from ? fmtDay(state.from) : 'start'} – ${state.to ? fmtDay(state.to) : 'now'}`;
         render();
       };
 
@@ -350,6 +360,7 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
           update();
         }, { signal });
       }
+      range.querySelector('[data-range-clear]')!.addEventListener('click', () => { state.from = ''; state.to = ''; update(); }, { signal });
       const restore = () => {
         state = readJournalFilters(new URLSearchParams(location.search));
         sync();
