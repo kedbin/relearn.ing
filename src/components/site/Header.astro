@@ -71,6 +71,9 @@ const isActive = (href: string) => currentPath.startsWith(href.replace(/\/$/, ''
 </header>
 
 <script>
+  import { init as initThemeInk } from '../interactive/ThemeInk';
+  initThemeInk();
+
   function initHeader() {
     const header = document.getElementById('site-header');
     if (!header) return;

@@ -4,8 +4,9 @@ import Section from '../components/about/Section.astro';
 import Timeline from '../components/about/Timeline.astro';
 import CertList from '../components/about/CertList.astro';
 import Toolbox from '../components/about/Toolbox.astro';
+import Loop from '../components/interactive/Loop.astro';
 import {
-  profile, facts, now, nowUpdated, stats, experience, certs, skills, principles, vanPhoto,
+  profile, facts, now, nowUpdated, stats, experience, certs, skills, vanPhoto,
 } from '../data/about';
 
 const L = profile.links;
@@ -156,16 +157,11 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
 
   <!-- ─────────── Principles ─────────── -->
   <Section id="principles" label="How this notebook runs">
-    <Fragment slot="title">Four <em>rules</em></Fragment>
-    <ol class="grid gap-x-10 border-b sm:grid-cols-2">
-      {principles.map((p, i) => (
-        <li class="border-t py-7 first:border-t-0 first:pt-0 sm:[&:nth-child(2)]:border-t-0 sm:[&:nth-child(2)]:pt-0">
-          <span class="num text-xs text-accent">{String(i + 1).padStart(2, '0')}</span>
-          <h3 class="h-title mt-3 text-xl">{p.title}</h3>
-          <p class="mt-2 max-w-[44ch] leading-relaxed text-text/80">{p.body}</p>
-        </li>
-      ))}
-    </ol>
+    <Fragment slot="title">The <em>loop</em></Fragment>
+    <p class="dek -mt-1 mb-10 max-w-[52ch] text-[1.0625rem] leading-relaxed">
+      Every entry is one turn of the same cycle, and each stage runs on one of the notebook's four rules.
+    </p>
+    <Loop />
   </Section>
 
   <!-- ─────────── Contact ─────────── -->
