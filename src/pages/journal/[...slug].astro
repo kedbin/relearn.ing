@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { render } from 'astro:content';
-import AudioPlayer from '../../components/AudioPlayer';
+import AudioPlayer from '../../components/article/AudioPlayer.astro';
 import ReadingProgress from '../../components/article/ReadingProgress.astro';
 import SeriesNav from '../../components/article/SeriesNav.astro';
 import Highlights from '../../components/article/Highlights.astro';
@@ -80,7 +80,7 @@ const related = relatedEntries(entry, all, 3);
 
       {d.audioUrl && (
         <div class="reveal mt-10" style="--d: 3">
-          <AudioPlayer src={d.audioUrl} title="Listen" client:visible />
+          <AudioPlayer src={d.audioUrl} title="Listen" />
         </div>
       )}
     </header>

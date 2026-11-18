@@ -1,7 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { render } from 'astro:content';
-import AudioPlayer from '../../components/AudioPlayer';
+import AudioPlayer from '../../components/article/AudioPlayer.astro';
 import { getProjects, formatDate, readingTime } from '../../lib/content';
 import { splitTitle, demoLabel } from '../../components/projects/projectMeta';
 
@@ -57,7 +57,7 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
 
       {audioUrl && (
         <div class="mt-8">
-          <AudioPlayer src={audioUrl} title="Listen to the write-up" client:visible />
+          <AudioPlayer src={audioUrl} title="Listen to the write-up" />
         </div>
       )}
     </header>

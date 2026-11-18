@@ -1,0 +1,208 @@
+---
+/**
+ * Slim inline narration player: play/pause, "Listen · N min", a thin scrubbable line,
+ * elapsed/total and a speed toggle. Ruled, not boxed. Server-rendered; a small vanilla
+ * script enhances it. Without JS a native <audio controls> is shown instead.
+ * Keyboard: button + native range (arrows seek 5s, PageUp/PageDown 30s, Home/End jump).
+ */
+interface Props {
+  src: string;
+  title?: string;
+}
+const { src, title = 'Listen' } = Astro.props;
+---
+
+<div class="audio-player" data-audio-player data-title={title}>
+  <noscript>
+    <div class="border-y py-4">
+      <audio src={src} controls preload="none" class="w-full">
+        <a href={src}>Download the narration</a>
+      </audio>
+    </div>
+  </noscript>
+  <div class="ap-ui flex items-center gap-4 border-y py-4">
+    <!-- src is set by the script: media parsed by the client router's DOMParser is rejected by Chromium. -->
+    <audio preload="metadata" data-audio data-src={src}></audio>
+
+    <button
+      type="button"
+      data-toggle
+      aria-label="Play narration"
+      aria-pressed="false"
+      class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-text text-bg transition-colors duration-200 hover:bg-accent hover:text-bg disabled:cursor-not-allowed disabled:bg-faint/40"
+    >
+      <svg data-icon="loading" class="hidden h-4 w-4 animate-spin" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.6"></circle>
+        <path d="M14 8a6 6 0 0 0-6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+      </svg>
+      <svg data-icon="pause" class="hidden h-3.5 w-3.5" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+        <rect x="2.5" y="1.5" width="3" height="11" rx="0.5"></rect>
+        <rect x="8.5" y="1.5" width="3" height="11" rx="0.5"></rect>
+      </svg>
+      <svg data-icon="play" class="ml-0.5 h-3.5 w-3.5" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
+        <path d="M3 1.8v10.4a.6.6 0 0 0 .9.5l8.4-5.2a.6.6 0 0 0 0-1L3.9 1.3a.6.6 0 0 0-.9.5Z"></path>
+      </svg>
+    </button>
+
+    <div class="min-w-0 flex-1">
+      <div class="flex items-baseline justify-between gap-3">
+        <span class="truncate text-sm font-medium text-text" data-label>{title}</span>
+        <span class="num shrink-0 text-xs text-muted" aria-hidden="true">
+          <span data-time>0:00</span><span class="text-faint"> / <span data-duration>0:00</span></span>
+        </span>
+      </div>
+      <div class="group relative mt-2.5 h-4 rounded-sm has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent">
+        <div class="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-line/20"></div>
+        <div data-fill class="pointer-events-none absolute left-0 top-1/2 h-[2px] w-0 -translate-y-1/2 bg-accent"></div>
+        <div
+          data-thumb
+          class="pointer-events-none absolute left-0 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-has-[:focus-visible]:opacity-100 [[data-playing]_&]:opacity-100"
+        ></div>
+        <input
+          type="range"
+          data-seek
+          min="0"
+          max="0"
+          step="any"
+          value="0"
+          disabled
+          aria-label="Seek narration"
+          aria-valuetext="0:00 of 0:00"
+          class="absolute inset-0 h-full w-full cursor-pointer opacity-0 focus:outline-none disabled:cursor-default"
+        />
+      </div>
+    </div>
+
+    <button
+      type="button"
+      data-speed
+      aria-label="Playback speed 1×. Change speed"
+      class="num h-10 min-w-[3.25rem] shrink-0 rounded-full border px-2.5 text-xs text-muted transition-colors duration-200 hover:border-text/30 hover:text-text disabled:opacity-40"
+    >1×</button>
+  </div>
+</div>
+
+<style>
+  /* Without JS, the native fallback in <noscript> is shown; hide the inert custom UI. */
+  .audio-player:not([data-ready]) .ap-ui { display: none; }
+</style>
+
+<script>
+  import { formatClock, minutesLabel, nextSpeed, speedLabel } from './article-utils';
+
+  const SEEK: Record<string, number> = { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5, PageUp: 30, PageDown: -30 };
+
+  function enhance(root: HTMLElement) {
+    if (root.dataset.ready !== undefined) return;
+    root.dataset.ready = '';
+    const $ = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const audio = $<HTMLAudioElement>('[data-audio]');
+    const toggle = $<HTMLButtonElement>('[data-toggle]');
+    const speed = $<HTMLButtonElement>('[data-speed]');
+    const seek = $<HTMLInputElement>('[data-seek]');
+    const label = $<HTMLElement>('[data-label]');
+    const timeEl = $<HTMLElement>('[data-time]');
+    const durEl = $<HTMLElement>('[data-duration]');
+    const fill = $<HTMLElement>('[data-fill]');
+    const thumb = $<HTMLElement>('[data-thumb]');
+    const icons = {
+      loading: $<SVGElement>('[data-icon="loading"]'),
+      pause: $<SVGElement>('[data-icon="pause"]'),
+      play: $<SVGElement>('[data-icon="play"]'),
+    };
+    const title = root.dataset.title || 'Listen';
+    const ui = $<HTMLElement>('.ap-ui');
+
+    const s = { playing: false, loading: false, error: false, time: 0, duration: 0, rate: 1 };
+
+    function render() {
+      const { playing, loading, error, time, duration, rate } = s;
+      const icon = loading && !playing ? 'loading' : playing ? 'pause' : 'play';
+      for (const [k, svg] of Object.entries(icons)) svg.classList.toggle('hidden', k !== icon);
+      toggle.disabled = error;
+      toggle.setAttribute('aria-label', playing ? 'Pause narration' : 'Play narration');
+      toggle.setAttribute('aria-pressed', String(playing));
+      if (playing) ui.dataset.playing = '';
+      else delete ui.dataset.playing;
+      const mins = minutesLabel(duration);
+      label.textContent = error ? 'Audio unavailable' : mins ? `${title} · ${mins}` : title;
+      timeEl.textContent = formatClock(time);
+      durEl.textContent = formatClock(duration);
+      const pct = duration > 0 ? Math.min(100, (time / duration) * 100) : 0;
+      fill.style.width = `${pct}%`;
+      thumb.style.left = `${pct}%`;
+      seek.max = String(duration || 0);
+      seek.value = String(time);
+      seek.disabled = error || !duration;
+      seek.setAttribute('aria-valuetext', `${formatClock(time)} of ${formatClock(duration)}`);
+      speed.disabled = error;
+      speed.textContent = speedLabel(rate);
+      speed.setAttribute('aria-label', `Playback speed ${speedLabel(rate)}. Change speed`);
+    }
+
+    const set = (patch: Partial<typeof s>) => {
+      Object.assign(s, patch);
+      render();
+    };
+    const setDuration = () => Number.isFinite(audio.duration) && audio.duration > 0 && set({ duration: audio.duration });
+    const jump = (t: number) => {
+      const next = Math.max(0, Math.min(s.duration || 0, t));
+      audio.currentTime = next;
+      set({ time: next });
+    };
+
+    audio.addEventListener('loadedmetadata', setDuration);
+    audio.addEventListener('durationchange', setDuration);
+    audio.addEventListener('timeupdate', () => set({ time: audio.currentTime }));
+    audio.addEventListener('playing', () => set({ loading: false, playing: true }));
+    audio.addEventListener('pause', () => set({ playing: false }));
+    audio.addEventListener('waiting', () => set({ loading: true }));
+    audio.addEventListener('canplay', () => set({ loading: false }));
+    audio.addEventListener('ended', () => set({ playing: false, time: 0 }));
+    audio.addEventListener('error', () => set({ error: true, loading: false, playing: false }));
+    audio.src = audio.dataset.src ?? '';
+
+    toggle.addEventListener('click', async () => {
+      if (s.error) return;
+      if (!audio.paused) return audio.pause();
+      set({ loading: true });
+      try {
+        await audio.play();
+      } catch {
+        set({ loading: false });
+      }
+    });
+
+    seek.addEventListener('input', () => {
+      const t = parseFloat(seek.value);
+      if (Number.isFinite(t)) jump(t);
+    });
+    seek.addEventListener('keydown', (e) => {
+      if (e.key in SEEK) {
+        e.preventDefault();
+        jump(s.time + SEEK[e.key]);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        jump(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        jump(s.duration);
+      }
+    });
+
+    speed.addEventListener('click', () => {
+      s.rate = nextSpeed(s.rate);
+      audio.playbackRate = s.rate;
+      render();
+    });
+
+    // Stop playback when navigating away client-side.
+    document.addEventListener('astro:before-swap', () => audio.pause(), { once: true });
+
+    setDuration();
+    render();
+  }
+
+  const init = () => document.querySelectorAll<HTMLElement>('[data-audio-player]').forEach(enhance);
+  document.addEventListener('astro:page-load', init);
+</script>
