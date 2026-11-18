@@ -1,9 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import EntryRow from '../../components/site/EntryRow.astro';
-import { domainDotClass, domainOf, formatDate, getEntries, siteStats, topicOf, wordCount, type Entry } from '../../lib/content';
-import { FDE_WORKSHOP_SERIES } from '../../lib/journal-visibility';
-import { journalRecordPoints } from '../../components/journal/JournalFilter';
+import { domainDotClass, domainOf, entryNo, formatDate, getEntries, siteStats, topicOf, type Entry } from '../../lib/content';
+import { TRAILS } from '../../data/curation';
 
 const entries = await getEntries();
 const stats = siteStats(entries);
@@ -13,28 +12,16 @@ const domains = (['All', 'Engineering', 'Life', 'Work'] as const).map((name) => 
   count: name === 'All' ? stats.entries : entries.filter((entry) => domainOf(entry.data.category) === name).length,
 }));
 
-const ids = new Set(entries.map((entry) => entry.id));
-const series = FDE_WORKSHOP_SERIES.filter((part) => ids.has(part.id));
+const byId = new Map(entries.map((entry) => [entry.id, entry]));
 const months = new Map<string, Entry[]>();
-const topics = new Map<string, number>();
 for (const entry of entries) {
   const month = new Date(entry.data.date).toISOString().slice(0, 7);
   const group = months.get(month);
   if (group) group.push(entry);
   else months.set(month, [entry]);
-
-  const topic = topicOf(entry.data.category);
-  topics.set(topic, (topics.get(topic) ?? 0) + 1);
 }
-const topicIndex = [...topics].sort(([a], [b]) => a.localeCompare(b, 'en-US'));
+const trails = TRAILS.map((t) => ({ ...t, entries: t.ids.flatMap((id) => byId.get(id) ?? []) })).filter((t) => t.entries.length > 1);
 const countLabel = (count: number) => `${count} ${count === 1 ? 'entry' : 'entries'}`;
-const chart = journalRecordPoints([...entries].reverse().map((entry) => ({
-  id: entry.id,
-  date: new Date(entry.data.date).getTime(),
-  domain: domainOf(entry.data.category),
-  words: wordCount(entry.body),
-})));
-const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
 ---
 
 <Layout title="Journal">
@@ -43,28 +30,6 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
       <p class="label"><i class="sq" aria-hidden="true"></i>Journal</p>
       <h1 class="h-display mt-5 text-[3.75rem] md:text-[6rem]">The <em>notebook</em><span class="text-accent">.</span></h1>
       <p class="dek mt-5 max-w-xl text-lg leading-relaxed md:text-xl">Every experiment, numbered. What I tried, what broke, and what I’d do differently.</p>
-      <p class="num mt-6 text-xs text-muted md:mt-8">
-        {countLabel(stats.entries)} · {Math.round(stats.words / 1000)}k words · {stats.narrated} narrated
-      </p>
-      {chart.length > 0 && (
-        <div class="mt-5" aria-hidden="true">
-          <div class="relative h-9 border-b">
-            {chart.map((bar) => (
-              <span
-                class:list={['record-stem', chartColors[bar.domain]]}
-                style={`left:clamp(0px, calc(${bar.position}% + ${bar.offset}px), 100% - 2px); height:${bar.height}%`}
-                data-record-bar={bar.id}
-                data-words={bar.words}
-              ></span>
-            ))}
-          </div>
-          <div class="mt-2 flex justify-between font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
-            <span>{formatDate(stats.firstDate, { month: 'short', year: 'numeric' })}</span>
-            <span class="hidden sm:inline">The record · by date</span>
-            <span>{formatDate(stats.latestDate, { month: 'short', year: 'numeric' })}</span>
-          </div>
-        </div>
-      )}
     </header>
 
     <div data-filter-edge hidden aria-hidden="true" class="h-px"></div>
@@ -116,23 +81,6 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
     <section class="wrap pt-3" aria-labelledby="index-heading">
       <h2 id="index-heading" class="sr-only">Entry index</h2>
 
-      {series.length > 0 && (
-        <nav class="flex flex-col justify-between border-t py-1 sm:flex-row sm:items-center sm:gap-x-4" aria-label="FDE Workshop series">
-          <p class="flex items-baseline gap-2 pt-2 text-sm sm:py-0">
-            <span class="label">Series</span>
-            <span class="font-mono text-xs text-muted" aria-hidden="true">·</span>
-            <span class="font-medium">FDE Workshop</span>
-          </p>
-          <ul class="num flex flex-wrap items-center gap-x-2 text-xs text-muted">
-            {series.map((part, index) => (
-              <li class="flex items-center gap-2">
-                {index > 0 && <span aria-hidden="true">·</span>}
-                <a href={`/journal/${part.id}/`} class="inline-flex min-h-10 items-center hover:text-accent">Day {part.day}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
 
       <div data-empty hidden class="border-y py-10 md:py-14">
         <h3 class="h-display text-3xl">No matching entries.</h3>
@@ -167,16 +115,20 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
       </div>
     </section>
 
-    <section class="wrap pb-20 pt-14 md:pb-24 md:pt-20" aria-labelledby="topics-heading">
+    <section class="wrap pb-20 pt-14 md:pb-24 md:pt-20" aria-labelledby="trails-heading">
       <div class="border-t pt-6">
-        <h2 id="topics-heading" class="label"><i class="sq" aria-hidden="true"></i>Topics</h2>
-        <ul class="mt-3 flex flex-wrap gap-x-6">
-          {topicIndex.map(([topic, count]) => (
-            <li>
-              <a href={`/journal/?${new URLSearchParams({ q: topic })}`} class="group inline-flex min-h-10 items-center gap-2 text-sm text-text transition-colors hover:text-accent">
-                <span class="underline decoration-text/20 underline-offset-4 group-hover:decoration-accent">{topic}</span>
-                <span class="num text-xs text-muted">{count}</span>
-              </a>
+        <h2 id="trails-heading" class="label"><i class="sq" aria-hidden="true"></i>Trails</h2>
+        <p class="dek mt-2 max-w-xl text-sm">A few threads that run across months. Topics stay searchable with the filter above.</p>
+        <ul class="mt-6 grid gap-x-10 md:grid-cols-2">
+          {trails.map((t) => (
+            <li class="border-t py-5">
+              <p class="h-title text-base">{t.name}</p>
+              <p class="dek mt-1 text-sm">{t.note}</p>
+              <ol class="num mt-3 flex flex-wrap gap-x-4 text-xs">
+                {t.entries.map((e) => (
+                  <li><a href={`/journal/${e.id}/`} class="inline-flex min-h-10 items-center text-muted transition-colors hover:text-accent" title={e.data.title}><span class="text-accent">№</span>&nbsp;{entryNo(e.id)}</a></li>
+                ))}
+              </ol>
             </li>
           ))}
         </ul>
@@ -192,15 +144,6 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
   .media-toggle[aria-pressed="true"] .toggle-mark { border-color: rgb(var(--accent)); color: rgb(var(--accent)); }
   .media-toggle[aria-pressed="true"] svg { display: block; }
 
-  .record-stem {
-    position: absolute;
-    bottom: 0;
-    width: 2px;
-    opacity: 0.9;
-    transition: opacity 200ms;
-  }
-  .record-stem.is-filtered { opacity: 0.15; }
-  .record-stem:not(.is-filtered) { z-index: 1; }
 
   .month-heading {
     position: sticky;
@@ -275,14 +218,10 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
       const rangeLabel = range.querySelector<HTMLElement>('[data-range-label]')!;
       const fmtDay = (iso: string) => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
       const monthList = this.querySelector<HTMLElement>('[data-months]')!;
-      const bars = new Map([...this.querySelectorAll<HTMLElement>('[data-record-bar]')].map((bar) => [bar.dataset.recordBar, bar]));
       const months = [...monthList.querySelectorAll<HTMLElement>('[data-month]')].map((month) => {
         const list = month.querySelector<HTMLElement>('[data-month-rows]')!;
         const badge = month.querySelector<HTMLElement>('[data-month-count]')!;
-        const rows = [...list.querySelectorAll<HTMLElement>('[data-date]')].map((row) => ({
-          row,
-          bar: bars.get(row.dataset.entryId),
-        }));
+        const rows = [...list.querySelectorAll<HTMLElement>('[data-date]')].map((row) => ({ row }));
         return { month, list, badge, rows };
       });
       let state = readJournalFilters(new URLSearchParams(location.search));
@@ -301,10 +240,9 @@ const chartColors = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' };
         const needle = state.query.trim().toLowerCase();
         for (const { month, rows, badge } of months) {
           let visible = 0;
-          for (const { row, bar } of rows) {
+          for (const { row } of rows) {
             const match = matchesJournalFilters(row.dataset, state, needle);
             row.hidden = !match;
-            bar?.classList.toggle('is-filtered', !match);
             if (match) visible++;
           }
           month.hidden = visible === 0;

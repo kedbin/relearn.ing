@@ -1,25 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { journalRecordPoints, matchesJournalFilters, readJournalFilters, writeJournalFilters } from '../JournalFilter';
-
-describe('journal record', () => {
-  it('spaces bars by elapsed time and separates entries on the same day', () => {
-    const day = 86_400_000;
-    const [first, next, twin, last] = journalRecordPoints([
-      { date: 0, words: 16 },
-      { date: day * 10, words: 4 },
-      { date: day * 10, words: 1 },
-      { date: day * 40, words: 0 },
-    ]);
-    expect(last.position - next.position).toBeCloseTo((next.position - first.position) * 3, 2);
-    expect(twin.position).toBe(next.position);
-    expect(twin.offset - next.offset).toBe(3);
-    expect([first.height, next.height, twin.height, last.height]).toEqual([100, 50, 25, 3]);
-  });
-
-  it('handles an empty record', () => {
-    expect(journalRecordPoints([])).toEqual([]);
-  });
-});
+import { matchesJournalFilters, readJournalFilters, writeJournalFilters } from '../JournalFilter';
 
 describe('journal filter query', () => {
   it('round-trips Unicode search and nondefault controls without losing unrelated parameters', () => {

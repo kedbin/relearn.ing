@@ -1,25 +1,3 @@
-const RECORD_PAD = 7 * 86_400_000;
-
-// Input arrives in chronological order. Keep equal dates visibly distinct
-// without spreading the gaps between different dates.
-export function journalRecordPoints<T extends { date: number; words: number }>(entries: readonly T[]) {
-  if (!entries.length) return [];
-  const start = entries[0].date - RECORD_PAD;
-  const span = entries[entries.length - 1].date + RECORD_PAD - start;
-  const maxWords = Math.max(1, ...entries.map((entry) => entry.words));
-  const days = new Map<number, number>();
-  return entries.map((entry) => {
-    const sameDay = days.get(entry.date) ?? 0;
-    days.set(entry.date, sameDay + 1);
-    return {
-      ...entry,
-      position: Number((((entry.date - start) / span) * 100).toFixed(4)),
-      offset: sameDay * 3,
-      height: Math.max(3, Math.sqrt(entry.words / maxWords) * 100),
-    };
-  });
-}
-
 type JournalDomain = 'all' | 'engineering' | 'life' | 'work';
 
 export interface JournalFilters {
