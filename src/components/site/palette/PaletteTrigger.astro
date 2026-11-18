@@ -1,0 +1,96 @@
+---
+/**
+ * Always-loaded, tiny search trigger. Listens for ⌘K / Ctrl+K / "/" and clicks on any
+ * [data-open-palette] (honouring data-query) and imports the real palette only on first intent.
+ * Keystrokes typed while the module loads are buffered into the query so nothing is lost.
+ * Module scripts run once per full load, so these global listeners survive client-side navigation.
+ */
+---
+
+<style is:global>
+  @keyframes palette-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+  type PaletteModule = typeof import('./palette');
+
+  let loading: Promise<PaletteModule> | null = null;
+  let palette: PaletteModule | null = null;
+  let pending = false;
+  let buffer = '';
+
+  function load() {
+    loading ??= import('./palette').then(
+      (m) => (palette = m),
+      (err) => {
+        loading = null;
+        throw err;
+      },
+    );
+    return loading;
+  }
+
+  function intent(query?: string) {
+    if (palette) return palette.openPalette(query);
+    if (pending) return;
+    pending = true;
+    buffer = '';
+    load()
+      .then((m) => {
+        if (!pending) return; // cancelled with Esc while loading
+        const q = query !== undefined || buffer ? (query ?? '') + buffer : undefined;
+        m.openPalette(q);
+      })
+      .catch(() => {})
+      .finally(() => {
+        pending = false;
+      });
+  }
+
+  function isTyping(t: EventTarget | null) {
+    const el = t as HTMLElement | null;
+    return !!el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || el.isContentEditable);
+  }
+
+  document.addEventListener('keydown', (ev) => {
+    if ((ev.key === 'k' || ev.key === 'K') && (ev.metaKey || ev.ctrlKey) && !ev.altKey) {
+      ev.preventDefault();
+      if (palette) palette.togglePalette();
+      else intent();
+      return;
+    }
+    if (pending) {
+      // Buffer printable keys so keystrokes typed right after ⌘K reach the input.
+      if (ev.key === 'Escape') pending = false;
+      else if (ev.key.length === 1 && !ev.metaKey && !ev.ctrlKey && !ev.altKey) {
+        ev.preventDefault();
+        buffer += ev.key;
+      } else if (ev.key === 'Backspace') {
+        ev.preventDefault();
+        buffer = buffer.slice(0, -1);
+      }
+      return;
+    }
+    if (ev.key === '/' && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !isTyping(ev.target) && !palette?.isOpen()) {
+      ev.preventDefault();
+      intent();
+    }
+  });
+
+  document.addEventListener('click', (ev) => {
+    const el = (ev.target as HTMLElement | null)?.closest?.<HTMLElement>('[data-open-palette]');
+    if (!el) return;
+    ev.preventDefault();
+    intent(el.dataset.query);
+  });
+
+  // Warm the module when a trigger is hovered or focused.
+  const warm = (ev: Event) => {
+    if (!loading && (ev.target as HTMLElement | null)?.closest?.('[data-open-palette]')) void load().catch(() => {});
+  };
+  document.addEventListener('pointerover', warm, { passive: true });
+  document.addEventListener('focusin', warm);
+</script>
