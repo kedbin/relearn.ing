@@ -11,37 +11,40 @@
 
 /* ───────────────────────── Tokens ───────────────────────── */
 @layer base {
+  /* "Ink & Graphite" — an engineer's notebook: cool paper, graphite, ultramarine fountain-pen ink. */
   :root {
-    /* Light — warm paper */
-    --bg: 247 245 240;
-    --surface: 239 236 229;
-    --surface-2: 230 226 217;
-    --line: 24 22 18;          /* used at low alpha via .hair */
-    --text: 24 22 19;
-    --muted: 102 97 89;
-    --faint: 150 144 134;
-    --accent: 214 66 33;       /* signal vermilion */
-    --eng: 38 110 140;
-    --life: 150 80 130;
-    --work: 176 128 30;
-    --hair-a: 0.12;
+    /* Light — cool drafting paper */
+    --bg: 244 245 242;
+    --surface: 234 236 233;
+    --surface-2: 223 226 223;
+    --line: 17 20 28;          /* used at low alpha via .hair */
+    --text: 17 20 28;          /* graphite */
+    --muted: 88 94 106;
+    --faint: 138 144 156;
+    --accent: 43 63 214;       /* ultramarine ink */
+    --accent-2: 214 58 92;     /* rare second signal (pen-red correction mark) */
+    --eng: 14 128 118;         /* teal */
+    --life: 132 66 160;        /* plum */
+    --work: 176 122 12;        /* ochre */
+    --hair-a: 0.13;
     color-scheme: light;
   }
 
   .dark {
-    /* Dark — warm ink */
-    --bg: 18 17 15;
-    --surface: 27 26 23;
-    --surface-2: 36 34 30;
-    --line: 240 234 222;
-    --text: 238 233 222;
-    --muted: 165 158 146;
-    --faint: 112 106 97;
-    --accent: 255 106 61;
-    --eng: 108 180 205;
-    --life: 210 140 190;
-    --work: 225 180 90;
-    --hair-a: 0.12;
+    /* Dark — blue-black slate, like ink on a blackboard */
+    --bg: 13 15 20;
+    --surface: 21 24 31;
+    --surface-2: 30 34 43;
+    --line: 220 226 240;
+    --text: 228 232 240;
+    --muted: 148 156 172;
+    --faint: 98 106 122;
+    --accent: 138 155 255;     /* periwinkle ink */
+    --accent-2: 255 122 150;
+    --eng: 74 208 190;
+    --life: 196 150 255;
+    --work: 238 190 90;
+    --hair-a: 0.11;
     color-scheme: dark;
   }
 
@@ -137,7 +140,7 @@
   .btn {
     @apply inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-medium transition-all duration-200 ease-out-quint;
   }
-  .btn-solid { @apply btn bg-text text-bg hover:bg-accent hover:text-white; }
+  .btn-solid { @apply btn bg-text text-bg hover:bg-accent hover:text-bg; }
   .btn-line { @apply btn border text-text hover:border-text/50 hover:bg-surface; }
 
   .kbd {

@@ -31,20 +31,20 @@ rounded cards.
 Utility classes in `global.css`: `.h-display`, `.label`, `.num` (tabular mono numerals),
 `.dek` (summary/standfirst), `.prose-lab` (article body).
 
-## Colour
-These are warm neutrals with a single signal accent, like the orange tape on lab equipment.
+## Colour: "Ink & Graphite"
+This is an engineer's notebook: cool drafting paper, graphite text, and ultramarine fountain-pen ink.
+Dark mode is blue-black slate with periwinkle ink. We deliberately avoid warm cream and terracotta
+(they read as generic "AI brand").
 Tokens are RGB triplets in CSS variables, so `bg-accent/10` works.
 
-| Token | Use |
-|---|---|
-| `bg`, `surface`, `surface2` | Page and subtle fills. Use fills rarely: hover rows, code, callouts. |
-| `line` | Hairlines (1px). Most structure comes from these. |
-| `text`, `muted`, `faint` | Text hierarchy. Body copy is `text` at 85–90%, never `muted`. |
-| `accent` | Signal vermilion. Use it for links on hover, active state, the №, the reading progress bar and *one* focal point per screen. Never for large fills. |
-| `eng`, `life`, `work` | Domain colours (Engineering, Life, Work). Show them only as a 6px square dot plus the label in `muted`. Never as a tinted pill. |
-
-Light mode is warm paper and dark mode is warm ink (not blue-black). The theme follows the
-system setting by default, and the toggle persists the choice.
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `bg` / `surface` / `surface2` | #F4F5F2 / … | #0D0F14 / … | Page and subtle fills. Use them sparingly. |
+| `line` | graphite @ 13% | mist @ 11% | Hairlines. Most structure comes from these. |
+| `text` / `muted` / `faint` | #11141C … | #E4E8F0 … | Text hierarchy. |
+| `accent` | ultramarine #2B3FD6 | periwinkle #8A9BFF | Links on hover, active state, №, focus, *one* focal point per screen. |
+| `accent-2` | pen-red #D63A5C | #FF7A96 | Very rare: a correction mark or a "failure" annotation. |
+| `eng` / `life` / `work` | teal / plum / ochre | brighter versions | Domain dots and chart bars only. |
 
 ## Signature motifs
 1. **The entry number.** Every journal entry has `№ 068` (`.num`, accent `№`). Lists show the

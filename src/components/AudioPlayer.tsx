@@ -97,7 +97,7 @@ export default function AudioPlayer({ src, title = 'Listen' }: AudioPlayerProps)
         disabled={error}
         aria-label={playing ? 'Pause narration' : 'Play narration'}
         aria-pressed={playing}
-        className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-text text-bg transition-colors duration-200 hover:bg-accent hover:text-white disabled:cursor-not-allowed disabled:bg-faint/40"
+        className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-text text-bg transition-colors duration-200 hover:bg-accent hover:text-bg disabled:cursor-not-allowed disabled:bg-faint/40"
       >
         {loading && playing === false ? (
           <svg className="h-4 w-4 animate-spin" viewBox="0 0 16 16" fill="none" aria-hidden="true">
