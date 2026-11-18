@@ -7,6 +7,7 @@
 export interface StartPick {
   id: string;
   topic: string;
+  heading: string;
   why: string;
 }
 
@@ -14,16 +15,19 @@ export const START_HERE: StartPick[] = [
   {
     id: 'entry-027',
     topic: 'Deployment',
+    heading: 'The eight-second deploy',
     why: 'How moving audio to R2 cut deploys from five minutes to eight seconds.',
   },
   {
     id: 'entry-055',
     topic: 'Automation',
+    heading: 'The Excel script that beat the agent',
     why: 'Why an HR team needed a formatting script instead of a new workflow.',
   },
   {
     id: 'entry-035',
     topic: 'Decisions',
+    heading: 'Deciding when to stop',
     why: 'Setting a stopping rule before a study session or a workout.',
   },
 ];
