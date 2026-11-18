@@ -65,15 +65,20 @@ const currentPath = Astro.url.pathname;
     <ClientRouter />
 
     <script>
-      import posthog from 'posthog-js';
+      // Analytics is optional and off the critical path: only fetched when a key is configured, after idle.
       const key = import.meta.env.PUBLIC_POSTHOG_API_KEY;
       if (key) {
-        posthog.init(key, {
-          api_host: import.meta.env.PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
-          person_profiles: 'identified_only',
-          capture_pageview: false,
-        });
-        document.addEventListener('astro:page-load', () => posthog.capture('$pageview'));
+        const load = () =>
+          import('posthog-js').then(({ default: posthog }) => {
+            posthog.init(key, {
+              api_host: import.meta.env.PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com',
+              person_profiles: 'identified_only',
+              capture_pageview: false,
+            });
+            posthog.capture('$pageview');
+            document.addEventListener('astro:page-load', () => posthog.capture('$pageview'));
+          });
+        'requestIdleCallback' in window ? requestIdleCallback(load) : setTimeout(load, 1500);
       }
     </script>
   </head>
