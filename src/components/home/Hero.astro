@@ -1,0 +1,265 @@
+---
+/**
+ * Homepage hero — "the dictionary entry + the record".
+ * The name of the site *is* the thesis: a present participle. It never finishes.
+ * Below it, every entry ever logged is plotted on a real time axis like a
+ * seismograph: height = length, colour = domain, gaps = life happening.
+ */
+import type { Entry } from '../../lib/content';
+import { entryNo, entryNumber, domainOf, wordCount, readingTime, formatDate, topicOf } from '../../lib/content';
+
+interface Props { entries: Entry[] }
+const { entries } = Astro.props;
+
+const DAY = 86_400_000;
+const ts = (d: string) => new Date(d + 'T12:00:00Z').getTime();
+const chrono = [...entries].sort((a, b) => ts(a.data.date) - ts(b.data.date) || entryNumber(a.id) - entryNumber(b.id));
+const start = ts(chrono[0].data.date) - 6 * DAY;
+const end = Math.max(Date.now(), ts(chrono[chrono.length - 1].data.date)) + 6 * DAY;
+const span = end - start;
+
+const words = chrono.map((e) => wordCount(e.body));
+const maxW = Math.max(...words);
+const totalWords = words.reduce((a, b) => a + b, 0);
+
+// Spread same-day entries so they don't overlap.
+const sameDayIdx = new Map<string, number>();
+const bars = chrono.map((e, i) => {
+  const k = sameDayIdx.get(e.data.date) ?? 0;
+  sameDayIdx.set(e.data.date, k + 1);
+  return {
+    e,
+    x: ((ts(e.data.date) - start) / span) * 100,
+    shift: k * 5,
+    h: 14 + Math.sqrt(words[i] / maxW) * 86,
+    d: domainOf(e.data.category),
+    i,
+  };
+});
+const latest = bars[bars.length - 1];
+
+// Month ticks
+const ticks: { x: number; label: string; year: boolean }[] = [];
+const m = new Date(start);
+m.setUTCDate(1); m.setUTCMonth(m.getUTCMonth() + 1);
+while (m.getTime() < end) {
+  ticks.push({
+    x: ((m.getTime() - start) / span) * 100,
+    label: m.getUTCMonth() === 0 ? String(m.getUTCFullYear()) : m.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }),
+    year: m.getUTCMonth() === 0,
+  });
+  m.setUTCMonth(m.getUTCMonth() + 1);
+}
+
+// Longest silence — an honest metric, annotated on the chart.
+let gap = 0, gapFrom = 0, gapTo = 0;
+for (let i = 1; i < chrono.length; i++) {
+  const g = Math.round((ts(chrono[i].data.date) - ts(chrono[i - 1].data.date)) / DAY);
+  if (g > gap) { gap = g; gapFrom = ts(chrono[i - 1].data.date); gapTo = ts(chrono[i].data.date); }
+}
+const gx1 = ((gapFrom - start) / span) * 100;
+const gx2 = ((gapTo - start) / span) * 100;
+
+const since = formatDate(chrono[0].data.date, { month: 'long', year: 'numeric' });
+const days = Math.round((Date.now() - ts(chrono[0].data.date)) / DAY);
+const colour = { Engineering: 'bg-eng', Life: 'bg-life', Work: 'bg-work' } as const;
+---
+
+<section class="hero relative overflow-hidden" aria-labelledby="hero-word">
+  <div class="wrap pt-10 md:pt-16">
+    <!-- Dictionary entry -->
+    <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.08em] text-faint reveal">
+      <span>Entry № {entryNo(latest.e.id)} of an open notebook</span>
+      <span class="hidden h-px flex-1 bg-line/15 sm:block"></span>
+      <span>Toronto · since {since}</span>
+    </div>
+
+    <h1 id="hero-word" class="word reveal mt-6 font-display leading-[0.82] tracking-[-0.045em] text-text md:mt-8" style="--d:1">
+      <span class="sr-only">relearning</span>
+      <span aria-hidden="true">re<span class="syl">·</span>learn<span class="syl">·</span><span class="ing">ing</span></span>
+    </h1>
+
+    <div class="mt-10 grid gap-10 md:mt-12 md:grid-cols-[minmax(0,15rem)_1fr] lg:grid-cols-[minmax(0,15rem)_1fr_1fr] lg:gap-14">
+      <p class="reveal font-mono text-sm text-muted" style="--d:2">
+        /riː·ˈlɜːr·nɪŋ/<br />
+        <span class="mt-1 inline-block font-serif text-base italic text-faint">verb, present participle</span>
+      </p>
+      <ol class="defs reveal space-y-5 font-serif text-[1.2rem] leading-snug text-text/90 md:text-[1.35rem]" style="--d:3">
+        <li><span class="dn">1</span>Taking apart how you work, think, and live, and rebuilding it <em>on purpose</em>.</li>
+        <li><span class="dn">2</span>What an engineer does when the systems he builds for clients run better than his own.</li>
+      </ol>
+      <ol start="3" class="defs reveal space-y-5 font-serif text-[1.2rem] leading-snug text-text/90 md:col-start-2 md:text-[1.35rem] lg:col-start-auto" style="--d:4">
+        <li>
+          <span class="dn">3</span>A continuous process. Note the <em>-ing</em>: it doesn't finish.
+          <span class="mt-3 block font-sans text-sm not-italic text-muted">See the record below: {entries.length} entries, {Math.round(totalWords / 1000)}k words, {days} days and counting.</span>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- The record -->
+  <div class="wrap mt-14 md:mt-16">
+    <div class="flex items-end justify-between gap-4">
+      <p class="label"><i class="sq"></i>The record, so far</p>
+      <p class="hidden font-mono text-[11px] text-faint md:block">
+        bar height = entry length · <span class="text-eng">■</span> engineering <span class="text-life">■</span> life <span class="text-work">■</span> work
+      </p>
+    </div>
+
+    <div class="record relative mt-5" data-record>
+      <div class="plot relative h-[150px] border-b md:h-[210px]">
+        <!-- faint gridlines -->
+        <div class="pointer-events-none absolute inset-0 flex flex-col justify-between" aria-hidden="true">
+          <span class="h-px bg-line/[0.06]"></span><span class="h-px bg-line/[0.06]"></span><span class="h-px bg-line/[0.06]"></span><span></span>
+        </div>
+
+        <ol class="absolute inset-0" aria-label={`All ${entries.length} journal entries in chronological order`}>
+          {bars.map((b) => (
+            <li class="contents">
+              <a
+                href={`/journal/${b.e.id}/`}
+                class={`bar ${b.e.id === latest.e.id ? 'is-latest' : ''}`}
+                style={`left:calc(${b.x.toFixed(3)}% + ${b.shift}px);--h:${b.h.toFixed(1)}%;--i:${b.i}`}
+                data-no={entryNo(b.e.id)}
+                data-title={b.e.data.title}
+                data-meta={`${formatDate(b.e.data.date)} · ${topicOf(b.e.data.category)} · ${readingTime(b.e.body)} min`}
+                aria-label={`№ ${entryNo(b.e.id)}: ${b.e.data.title}`}
+              >
+                <span class={`stem ${colour[b.d]}`}></span>
+              </a>
+            </li>
+          ))}
+        </ol>
+
+        <!-- the silence, annotated -->
+        {gap > 45 && (
+          <div class="pointer-events-none absolute inset-y-0 hidden items-center justify-center md:flex" style={`left:calc(${gx1}% + 14px);width:calc(${gx2 - gx1}% - 28px)`} aria-hidden="true">
+            <span class="absolute inset-x-0 top-1/2 border-t border-dashed" style="border-color:rgb(var(--line)/0.18)"></span>
+            <span class="relative bg-bg px-3 text-center font-serif text-[15px] italic leading-snug text-muted">
+              {gap} days of silence.<br /><span class="font-sans text-xs not-italic text-faint">Logged honestly. Then back to work.</span>
+            </span>
+          </div>
+        )}
+
+        <!-- latest marker -->
+        <div class="latest-tag pointer-events-none absolute z-[1] hidden -translate-x-full whitespace-nowrap pr-5 text-right md:block" style={`left:calc(${latest.x}% + ${latest.shift}px);bottom:calc(${latest.h.toFixed(1)}% - 7px)`} aria-hidden="true">
+          <span class="relative bg-bg py-0.5 pl-1.5 font-mono text-[11px] text-accent">№ {entryNo(latest.e.id)} · latest →</span>
+        </div>
+
+        <!-- tooltip -->
+        <div class="tip pointer-events-none absolute bottom-full z-10 mb-3 w-[min(320px,80vw)] rounded-lg border bg-bg/95 p-3.5 opacity-0 shadow-[0_20px_50px_-20px_rgb(0_0_0/0.4)] backdrop-blur" data-tip aria-hidden="true">
+          <span class="num block text-[11px] text-accent" data-tip-no></span>
+          <span class="h-title mt-1 block text-[15px]" data-tip-title></span>
+          <span class="mt-1.5 block font-mono text-[11px] text-muted" data-tip-meta></span>
+        </div>
+      </div>
+
+      <!-- month axis -->
+      <div class="relative h-8 font-mono text-[10px] uppercase tracking-[0.06em] text-faint" aria-hidden="true">
+        {ticks.map((t, i) => (
+          <span class={`absolute top-2 -translate-x-1/2 ${t.year ? 'text-text' : i % 2 ? 'hidden md:inline' : ''}`} style={`left:${t.x}%`}>
+            {t.label}
+          </span>
+        ))}
+        <span class="absolute right-0 top-2 text-accent">now</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap mt-10 flex flex-wrap items-center gap-3 md:mt-12">
+    <a href={`/journal/${latest.e.id}/`} class="btn-solid">Start with the latest <span aria-hidden="true">→</span></a>
+    <a href="/journal/" class="btn-line">Open the notebook</a>
+    <a href="/journal/entry-001/" class="ml-1 text-sm text-muted transition-colors hover:text-text">or begin at № 001</a>
+  </div>
+</section>
+
+<style>
+  .word {
+    font-size: clamp(4.2rem, 19.5vw, 14.5rem);
+    margin-left: -0.04em;
+  }
+  .syl { color: rgb(var(--accent)); font-style: normal; font-size: 0.42em; vertical-align: 0.42em; margin: 0 0.07em; }
+  .ing {
+    font-style: italic;
+    background: linear-gradient(90deg, rgb(var(--text)) 30%, rgb(var(--text) / 0.15));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-right: 0.08em;
+  }
+
+  .defs { list-style: none; padding: 0; }
+  .defs li { position: relative; padding-left: 2rem; text-wrap: pretty; }
+  .defs .dn {
+    position: absolute; left: 0; top: 0.35em;
+    font-family: var(--font-mono, ui-monospace), monospace;
+    font-size: 0.7rem; color: rgb(var(--accent));
+  }
+  .defs em { font-style: italic; }
+
+  .bar {
+    position: absolute; bottom: 0; height: 100%;
+    width: 11px; margin-left: -5px;          /* generous hit area, thin visual */
+    display: flex; align-items: flex-end; justify-content: center;
+    outline-offset: 1px;
+  }
+  .stem {
+    display: block; width: 2px; height: var(--h);
+    border-radius: 1px 1px 0 0;
+    opacity: 0.8;
+    transform-origin: bottom;
+    animation: grow 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(400ms + var(--i) * 14ms);
+    transition: opacity 150ms, width 150ms, filter 150ms;
+  }
+  @media (min-width: 768px) { .stem { width: 3px; } }
+  .record:hover .stem, .record:focus-within .stem { opacity: 0.28; }
+  .bar:hover .stem, .bar:focus-visible .stem { opacity: 1; width: 5px; }
+  .bar.is-latest .stem { background: rgb(var(--accent)); opacity: 1; }
+  .bar.is-latest::after {
+    content: ''; position: absolute; bottom: calc(var(--h) - 4px); left: 50%;
+    width: 9px; height: 9px; margin-left: -4.5px; border-radius: 9999px;
+    background: rgb(var(--accent));
+    box-shadow: 0 0 0 0 rgb(var(--accent) / 0.5);
+    animation: pulse 2.4s ease-out 1.8s infinite;
+  }
+  @keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgb(var(--accent) / 0.45); }
+    80%, 100% { box-shadow: 0 0 0 10px rgb(var(--accent) / 0); }
+  }
+  .tip { transition: opacity 120ms; }
+  .tip.on { opacity: 1; }
+</style>
+
+<script>
+  function initRecord() {
+    document.querySelectorAll<HTMLElement>('[data-record]').forEach((rec) => {
+      if (rec.dataset.bound) return;
+      rec.dataset.bound = '1';
+      const plot = rec.querySelector<HTMLElement>('.plot')!;
+      const tip = rec.querySelector<HTMLElement>('[data-tip]')!;
+      const no = tip.querySelector<HTMLElement>('[data-tip-no]')!;
+      const title = tip.querySelector<HTMLElement>('[data-tip-title]')!;
+      const meta = tip.querySelector<HTMLElement>('[data-tip-meta]')!;
+      const show = (a: HTMLElement) => {
+        no.textContent = `№ ${a.dataset.no}`;
+        title.textContent = a.dataset.title || '';
+        meta.textContent = a.dataset.meta || '';
+        const pr = plot.getBoundingClientRect();
+        const ar = a.getBoundingClientRect();
+        const w = tip.offsetWidth;
+        const x = Math.min(Math.max(ar.left + ar.width / 2 - pr.left - w / 2, 0), pr.width - w);
+        tip.style.left = `${x}px`;
+        tip.classList.add('on');
+      };
+      const hide = () => tip.classList.remove('on');
+      rec.querySelectorAll<HTMLElement>('.bar').forEach((a) => {
+        a.addEventListener('pointerenter', () => show(a));
+        a.addEventListener('focus', () => show(a));
+        a.addEventListener('pointerleave', hide);
+        a.addEventListener('blur', hide);
+      });
+    });
+  }
+  initRecord();
+  document.addEventListener('astro:page-load', initRecord);
+</script>

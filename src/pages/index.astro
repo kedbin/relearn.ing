@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import EntryRow from '../components/site/EntryRow.astro';
+import Hero from '../components/home/Hero.astro';
 import {
   getEntries, getProjects, siteStats, entryNo, domainOf, topicOf, domainDotClass, readingTime, formatDate,
 } from '../lib/content';
@@ -27,62 +28,10 @@ const fmt = (n: number) => n.toLocaleString('en-US');
 ---
 
 <Layout title="Home">
-  <!-- ─────────── Hero ─────────── -->
-  <section class="wrap pb-16 pt-14 md:pb-24 md:pt-24">
-    <div class="grid items-end gap-14 lg:grid-cols-[1fr_340px] lg:gap-20">
-      <div>
-        <p class="label reveal"><i class="sq"></i>A public lab notebook · since {formatDate(stats.firstDate, { month: 'short', year: 'numeric' })}</p>
-        <h1 class="h-display reveal mt-7 text-[3.4rem] sm:text-7xl md:text-[6.2rem]" style="--d:1">
-          Relearning how to <em>work</em> and <em>live</em><span class="text-accent">.</span>
-        </h1>
-        <p class="dek reveal mt-8 max-w-[34rem] text-lg leading-relaxed md:text-xl" style="--d:2">
-          I'm Kim, an automation engineer. I treat sleep, focus, tools, and decisions like systems to debug, and I log every experiment here in numbered entries, failures included.
-        </p>
-        <div class="reveal mt-10 flex flex-wrap items-center gap-3" style="--d:3">
-          <a href={`/journal/${latest.id}/`} class="btn-solid">Read № {entryNo(latest.id)} <span aria-hidden="true">→</span></a>
-          <a href="/journal/" class="btn-line">Browse all {stats.entries} entries</a>
-        </div>
-      </div>
-
-      <!-- Instrument readout -->
-      <aside class="reveal border-t lg:border-l lg:border-t-0 lg:pl-10" style="--d:4" aria-label="Notebook statistics">
-        <p class="label pt-6 lg:pt-0">Readout</p>
-        <dl class="mt-5 grid grid-cols-2 gap-x-6 gap-y-7">
-          <div>
-            <dt class="text-xs text-muted">Entries logged</dt>
-            <dd class="num mt-1 text-3xl text-text">{stats.entries}</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-muted">Words written</dt>
-            <dd class="num mt-1 text-3xl text-text">{Math.round(stats.words / 1000)}k</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-muted">Narrated</dt>
-            <dd class="num mt-1 text-3xl text-text">{stats.narrated}</dd>
-          </div>
-          <div>
-            <dt class="text-xs text-muted">Days running</dt>
-            <dd class="num mt-1 text-3xl text-text">{fmt(stats.days)}</dd>
-          </div>
-        </dl>
-        <div class="mt-8">
-          <div class="flex h-1.5 w-full overflow-hidden rounded-full bg-surface2" role="img" aria-label={domains.map((x) => `${x.d}: ${x.n}`).join(', ')}>
-            {domains.map((x) => (
-              <span class={`h-full ${x.d === 'Life' ? 'bg-life' : x.d === 'Work' ? 'bg-work' : 'bg-eng'}`} style={`width:${(x.n / stats.entries) * 100}%`}></span>
-            ))}
-          </div>
-          <ul class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
-            {domains.map((x) => (
-              <li class="flex items-center gap-1.5"><span class={`dot ${domainDotClass(x.d)}`}></span>{x.d} <span class="num text-faint">{x.n}</span></li>
-            ))}
-          </ul>
-        </div>
-      </aside>
-    </div>
-  </section>
+  <Hero entries={entries} />
 
   <!-- ─────────── Latest entry ─────────── -->
-  <section class="wrap" aria-labelledby="latest-h">
+  <section class="wrap mt-24 md:mt-32" aria-labelledby="latest-h">
     <a href={`/journal/${latest.id}/`} class="group grid gap-8 border-t pt-10 md:grid-cols-[4rem_1fr] md:gap-6 lg:grid-cols-[4rem_1fr_300px] lg:gap-10">
       <div class="num text-xs text-accent">№ {entryNo(latest.id)}</div>
       <div>
