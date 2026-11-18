@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { profile, principles } from '../about';
+import { profile } from '../about';
 
 describe('about data', () => {
   it('points to binasoy.kim for the person', () => {
@@ -14,8 +14,5 @@ describe('about data', () => {
   });
   it('ships the portrait it references', () => {
     expect(existsSync(resolve(process.cwd(), 'public', profile.photo.src.replace(/^\//, '')))).toBe(true);
-  });
-  it('keeps the four rules the Loop component indexes into', () => {
-    expect(principles).toHaveLength(4);
   });
 });

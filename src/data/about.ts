@@ -27,13 +27,3 @@ export const profile = {
   source: { label: 'kedbin/relearn.ing', href: 'https://github.com/kedbin/relearn.ing' } satisfies Link,
 };
 
-/**
- * The notebook's four rules. No longer rendered on /about, but still read by
- * src/components/interactive/Loop.astro (via loop-data's `rule` index).
- */
-export const principles: { title: string; body: string }[] = [
-  { title: 'Build in public', body: 'Accountability is a feature. The repo is open, and every entry is a commit anyone can read, fork or critique.' },
-  { title: 'Honest metrics', body: 'No hype. Numbers come from the content itself, and if a habit didn’t stick, the chart says so.' },
-  { title: 'Ship v0.1 habits', body: 'Commit, test, deploy, monitor, repeat. A small habit that ships beats a perfect system that never leaves draft.' },
-  { title: 'Failures get logged', body: 'If a prompt failed or an agent hallucinated, it goes in the notebook. The misses teach more than the wins.' },
-];
