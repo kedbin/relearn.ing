@@ -11,12 +11,15 @@ const entries = await getEntries();
 const projects = await getProjects();
 const stats = siteStats(entries, projects);
 
-const [latest, ...rest] = entries;
-const recent = rest.slice(0, 6);
+const [latest] = entries;
 
 // Series: only show if the entries are actually published.
 const ids = new Set(entries.map((e) => e.id));
 const series = FDE_WORKSHOP_SERIES.filter((s) => ids.has(s.id));
+
+// "Recently logged" never repeats what's already above it (latest + series).
+const shown = new Set([latest.id, ...(series.length > 1 ? series.map((s) => s.id) : [])]);
+const recent = entries.filter((e) => !shown.has(e.id)).slice(0, 6);
 
 // Domain composition — honest breakdown of what the notebook is about.
 const domains = (['Engineering', 'Life', 'Work'] as const).map((d) => ({
@@ -66,10 +69,10 @@ const fmt = (n: number) => n.toLocaleString('en-US');
         </div>
         <p class="dek max-w-sm text-sm">Field notes from Google's Forward Deployed Engineer bootcamp, one day per entry, with a video walkthrough for each.</p>
       </div>
-      <ol class="mt-10 grid gap-px overflow-hidden rounded-xl border bg-line/10 sm:grid-cols-2 lg:grid-cols-4">
+      <ol class="mt-10 grid border-y sm:grid-cols-2 lg:grid-cols-4">
         {series.map((s) => (
-          <li class="bg-bg">
-            <a href={`/journal/${s.id}/`} class="group flex h-full flex-col p-6 transition-colors hover:bg-surface">
+          <li class="border-b sm:[&:nth-child(odd)]:border-r lg:border-b-0 lg:border-r lg:last:border-r-0">
+            <a href={`/journal/${s.id}/`} class="group flex h-full flex-col px-1 py-6 transition-colors hover:bg-surface sm:px-6">
               <span class="num text-xs text-faint">Day {s.day} · № {entryNo(s.id)}</span>
               <span class="h-title mt-8 text-lg transition-colors group-hover:text-accent">{s.title}</span>
               <span class="mt-auto pt-6 text-faint transition-transform group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true">→</span>
@@ -85,7 +88,7 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     <div class="mb-6 flex items-end justify-between gap-4">
       <div>
         <p class="label"><i class="sq"></i>Index</p>
-        <h2 id="recent-h" class="h-display mt-4 text-4xl md:text-5xl">Recently logged</h2>
+        <h2 id="recent-h" class="h-display mt-4 text-4xl md:text-5xl">Earlier in the <em>notebook</em></h2>
       </div>
       <a href="/journal/" class="link hidden text-sm sm:inline">All entries →</a>
     </div>

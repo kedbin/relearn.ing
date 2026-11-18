@@ -216,6 +216,71 @@
   .prose-lab sup a { @apply no-underline font-mono text-accent; font-size: 0.75em; }
 }
 
+/* ── .prose-lab refinements (promoted from the article page) ── */
+@layer components {
+  .article-title { overflow-wrap: break-word; hyphens: manual; }
+  /* ── Page-scoped .prose-lab refinements (candidates to promote into global.css) ── */
+    .prose-lab { overflow-wrap: break-word; }
+  .prose-lab > :first-child { margin-top: 0; }
+
+  /* Code blocks: full-bleed on mobile instead of overflowing; quieter border in both themes. */
+  .prose-lab pre {
+    max-width: none;
+    line-height: 1.65;
+    font-size: 0.8125rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (max-width: 767px) {
+    .prose-lab pre {
+      margin-inline: -1.25rem;
+      max-width: none;
+      border-radius: 0;
+      border-inline: 0;
+      padding-inline: 1.25rem;
+    }
+  }
+  .prose-lab pre code { font-family: inherit; }
+  .prose-lab :not(pre) > code { overflow-wrap: anywhere; }
+
+  /* Tables: scroll inside themselves; tabular digits, hairline header. */
+  .prose-lab table { max-width: 100%; -webkit-overflow-scrolling: touch; font-variant-numeric: tabular-nums; }
+  .prose-lab th { white-space: nowrap; border-bottom-color: rgb(var(--line) / 0.25); }
+  .prose-lab td code { white-space: nowrap; }
+  .prose-lab tr:last-child td { border-bottom: 0; }
+
+  /* Blockquote: no double-italic emphasis, comfortable measure. */
+  .prose-lab blockquote { padding-block: 0.15em; }
+  .prose-lab blockquote em { font-style: normal; }
+  .prose-lab blockquote > * + * { margin-top: 0.8em; }
+
+  /* Embedded iframes / leftover utility wrappers in markdown (e.g. `not-prose aspect-video`). */
+  .prose-lab .not-prose { margin-top: 2em; margin-bottom: 2em; }
+  .prose-lab iframe { display: block; border-radius: 0.5rem; background: rgb(var(--surface)); }
+  .prose-lab img { height: auto; }
+
+  /* "References" sections written as `[1] Author…` paragraphs: smaller sans, hanging numbers. */
+  .prose-lab h2#references ~ p,
+  .prose-lab h2#sources ~ p {
+    font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.78em;
+    line-height: 1.6;
+    color: rgb(var(--muted));
+    margin-top: 0.75em;
+  }
+  .prose-lab h2#references ~ p em,
+  .prose-lab h2#sources ~ p em { color: rgb(var(--text) / 0.85); }
+
+  /* GFM footnotes */
+  .prose-lab .footnotes {
+    margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid;
+    font-family: 'Geist Variable', ui-sans-serif, system-ui, sans-serif; font-size: 0.8em; color: rgb(var(--muted));
+  }
+  .prose-lab .footnotes h2 { font-size: 1.5em; margin-top: 0; }
+  .prose-lab .footnotes li, .prose-lab .footnotes p { color: rgb(var(--muted)); }
+  .prose-lab .data-footnote-backref { text-decoration: none; font-family: 'Geist Mono Variable', ui-monospace, monospace; }
+
+}
+
 /* Astro shiki code blocks: honour theme */
 .astro-code, .astro-code span { background-color: transparent !important; }
 .dark .astro-code, .dark .astro-code span { color: var(--shiki-dark) !important; }
