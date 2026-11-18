@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="rgb(16 18 24)"/>
-  <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle"
-    font-family="system-ui, -apple-system, Inter, sans-serif"
-    font-weight="700" font-size="15" fill="rgb(232 228 220)"
-    letter-spacing="-0.04em">R/</text>
+  <rect width="32" height="32" rx="8" fill="#12110f"/>
+  <text x="15" y="23" text-anchor="middle" font-family="'Instrument Serif', Georgia, serif" font-style="italic" font-size="24" fill="#eee9de">r</text>
+  <rect x="21" y="19" width="4" height="4" fill="#ff6a3d"/>
 </svg>
