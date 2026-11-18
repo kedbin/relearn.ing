@@ -1,33 +1,288 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCollection } from 'astro:content';
-import { JournalList } from '../../components/JournalList';
+import EntryRow from '../../components/site/EntryRow.astro';
+import { domainDotClass, domainOf, formatDate, getEntries, siteStats, topicOf, type Entry } from '../../lib/content';
+import { FDE_WORKSHOP_SERIES } from '../../lib/journal-visibility';
 
-import { isJournalVisible } from '../../lib/journal-visibility';
-
-const entries = await getCollection('journal', entry =>
-  isJournalVisible(entry, process.env.JOURNAL_INCLUDE_DRAFTS === 'true'),
-);
-const sortedEntries = entries.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
-
-const entriesWithContent = sortedEntries.map(entry => ({
-  id: entry.id,
-  data: entry.data,
-  body: entry.body,
+const entries = await getEntries();
+const stats = siteStats(entries);
+const domains = (['All', 'Engineering', 'Life', 'Work'] as const).map((name) => ({
+  name,
+  dot: name === 'All' ? 'bg-muted' : domainDotClass(name),
+  count: name === 'All' ? stats.entries : entries.filter((entry) => domainOf(entry.data.category) === name).length,
 }));
+
+const ids = new Set(entries.map((entry) => entry.id));
+const series = FDE_WORKSHOP_SERIES.filter((part) => ids.has(part.id));
+const months = new Map<string, Entry[]>();
+const topics = new Map<string, number>();
+for (const entry of entries) {
+  const month = new Date(entry.data.date).toISOString().slice(0, 7);
+  const group = months.get(month);
+  if (group) group.push(entry);
+  else months.set(month, [entry]);
+
+  const topic = topicOf(entry.data.category);
+  topics.set(topic, (topics.get(topic) ?? 0) + 1);
+}
+const topicIndex = [...topics].sort(([a], [b]) => a.localeCompare(b, 'en-US'));
 ---
 
 <Layout title="Journal">
-  <section class="pt-28 pb-24 px-6">
-    <div class="max-w-5xl mx-auto">
-      <div class="mb-16">
-        <h1 class="display-serif text-4xl md:text-5xl text-text mb-4">Journal</h1>
-        <p class="text-muted max-w-xl">
-          A log of real-world and thought experiments. Documenting the engineering of professional and personal protocols.
-        </p>
+  <journal-index class="block">
+    <header class="wrap pb-10 pt-14 md:pb-14 md:pt-20">
+      <p class="label"><i class="sq" aria-hidden="true"></i>Journal</p>
+      <h1 class="h-display mt-5 text-[3.75rem] md:text-[6rem]">The <em>notebook</em><span class="text-accent">.</span></h1>
+      <p class="dek mt-5 max-w-xl text-lg leading-relaxed md:text-xl">Numbered field notes on what I’m trying, what worked, and what I had to rethink.</p>
+      <p class="num mt-6 text-xs text-muted md:mt-8">
+        {stats.entries} entries · {Math.round(stats.words / 1000)}k words · {stats.narrated} narrated
+      </p>
+    </header>
+
+    <div data-filter-edge hidden aria-hidden="true" class="h-px"></div>
+    <div data-controls hidden class="sticky top-16 z-30 border-b border-transparent bg-bg/85 backdrop-blur-md">
+      <div class="wrap">
+        <form class="filter-bar grid items-center gap-x-5" role="search" aria-label="Filter the journal">
+          <div class="flex flex-wrap items-center gap-x-3.5 sm:gap-x-5" role="group" aria-label="Domain">
+            {domains.map(({ name, dot, count }) => (
+              <button type="button" data-domain-filter={name.toLowerCase()} aria-pressed={name === 'All' ? 'true' : 'false'} class="domain-toggle inline-flex min-h-10 items-center gap-1.5 border-b-2 border-transparent text-sm text-muted transition-colors hover:text-text aria-pressed:border-accent aria-pressed:text-text sm:min-h-12">
+                <i class:list={['dot', dot]} aria-hidden="true"></i>{name} <span class="num text-xs text-muted">{count}</span>
+              </button>
+            ))}
+          </div>
+
+          <div class="flex min-w-0 items-center gap-2 border-b">
+            <label for="journal-search" class="sr-only">Search titles, summaries, and topics</label>
+            <svg class="ml-1 h-3.5 w-3.5 shrink-0 text-muted" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.75"/><path d="m10.5 10.5 3 3" stroke-linecap="round"/></svg>
+            <input id="journal-search" name="q" type="search" autocomplete="off" placeholder="Filter entries…" class="min-h-10 min-w-0 flex-1 bg-transparent text-base placeholder:text-muted sm:text-sm" />
+            <button type="button" data-open-palette class="inline-flex min-h-10 items-center gap-1.5 pl-1 text-xs text-muted hover:text-text" aria-label="Open sitewide search (slash)">
+              <span class="hidden xl:inline">Site search</span><kbd class="kbd" aria-hidden="true">/</kbd>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-4" role="group" aria-label="Media">
+            <button type="button" data-media-filter="audio" aria-pressed="false" class="media-toggle inline-flex min-h-10 items-center gap-1.5 whitespace-nowrap text-sm text-muted transition-colors hover:text-text aria-pressed:text-text">
+              <span class="toggle-mark grid h-3 w-3 shrink-0 place-items-center rounded-[2px] border border-muted" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="hidden h-2.5 w-2.5"><path d="m2.5 6 2.25 2.25 4.75-4.75"/></svg></span>
+              Narrated
+            </button>
+            <button type="button" data-media-filter="video" aria-pressed="false" class="media-toggle inline-flex min-h-10 items-center gap-1.5 whitespace-nowrap text-sm text-muted transition-colors hover:text-text aria-pressed:text-text">
+              <span class="toggle-mark grid h-3 w-3 shrink-0 place-items-center rounded-[2px] border border-muted" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" class="hidden h-2.5 w-2.5"><path d="m2.5 6 2.25 2.25 4.75-4.75"/></svg></span>
+              Has video
+            </button>
+          </div>
+
+          <label class="flex items-center justify-self-end">
+            <span class="sr-only">Sort by date</span>
+            <select name="sort" class="min-h-10 bg-transparent text-sm text-muted hover:text-text">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+          </label>
+        </form>
+      </div>
+    </div>
+
+    <section class="wrap pt-5" aria-labelledby="index-heading">
+      <div class="mb-4 flex min-h-7 items-center justify-between gap-4">
+        <h2 id="index-heading" class="label"><i class="sq" aria-hidden="true"></i>Entry index</h2>
+        <p class="num whitespace-nowrap text-xs text-muted" data-result-count aria-live="polite" aria-atomic="true">{stats.entries} {stats.entries === 1 ? 'entry' : 'entries'}</p>
       </div>
 
-      <JournalList client:visible entries={entriesWithContent} />
-    </div>
-  </section>
+      {series.length > 0 && (
+        <a href={`/journal/${series[0].id}/`} class="group mb-6 flex min-h-12 flex-wrap items-center gap-x-4 gap-y-1 border-y py-3 text-sm transition-colors hover:bg-surface md:mb-8">
+          <span class="label">Series</span>
+          <span class="font-medium transition-colors group-hover:text-accent">FDE Workshop</span>
+          <span class="num ml-auto text-xs text-muted">{series.length} {series.length === 1 ? 'part' : 'parts'}</span>
+          <span class="text-muted transition-transform group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true">→</span>
+        </a>
+      )}
+
+      <div data-empty hidden class="border-y py-10 md:py-14">
+        <h3 class="h-display text-3xl">No matching entries.</h3>
+        <p class="dek mt-2 text-sm">Try a broader search or remove a filter.</p>
+        <a href="/journal/" class="link mt-2 inline-flex min-h-10 items-center text-sm">Clear filters</a>
+      </div>
+
+      <div data-months>
+        {[...months].map(([month, group]) => (
+          <section data-month aria-labelledby={`month-${month}`} class="month-group grid items-start gap-x-6 border-t lg:grid-cols-[9rem_minmax(0,1fr)] xl:grid-cols-[10rem_minmax(0,1fr)]">
+            <h3 id={`month-${month}`} class="label pb-1 pt-4 lg:sticky lg:top-[9.25rem] lg:pt-7">
+              {formatDate(`${month}-01`, { month: 'long', year: 'numeric' })}
+            </h3>
+            <div data-month-rows>
+              {group.map((entry) => (
+                <EntryRow entry={entry} attrs={{
+                  'data-domain': domainOf(entry.data.category).toLowerCase(),
+                  'data-audio': entry.data.audioUrl ? '1' : '0',
+                  'data-video': entry.data.youtube_video_id ? '1' : '0',
+                  'data-search': [entry.data.title, entry.data.summary, topicOf(entry.data.category)].join('\n').toLowerCase(),
+                  'data-date': entry.data.date,
+                }} />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </section>
+
+    <section class="wrap pb-20 pt-14 md:pb-24 md:pt-20" aria-labelledby="topics-heading">
+      <div class="border-t pt-6">
+        <h2 id="topics-heading" class="label"><i class="sq" aria-hidden="true"></i>Topics</h2>
+        <ul class="mt-3 flex flex-wrap gap-x-6">
+          {topicIndex.map(([topic, count]) => (
+            <li>
+              <a href={`/journal/?${new URLSearchParams({ q: topic })}`} class="group inline-flex min-h-10 items-center gap-2 text-sm text-text transition-colors hover:text-accent">
+                <span class="underline decoration-text/20 underline-offset-4 group-hover:decoration-accent">{topic}</span>
+                <span class="num text-xs text-muted">{count}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </journal-index>
 </Layout>
+
+<style>
+  journal-index :global([hidden]) { display: none !important; }
+  [data-controls].is-stuck { border-bottom-color: rgb(var(--line) / var(--hair-a)); }
+
+  .media-toggle[aria-pressed="true"] .toggle-mark { border-color: rgb(var(--accent)); color: rgb(var(--accent)); }
+  .media-toggle[aria-pressed="true"] svg { display: block; }
+
+  [data-month-rows] > :global(a:not([hidden]):nth-child(1 of :not([hidden]))) { border-top-color: transparent; }
+  [data-month-rows] :global(.num.text-faint), [data-month-rows] :global(.num > .text-faint) { color: rgb(var(--muted)); }
+  [data-month-rows] :global(.index-row:hover > .num:first-child) { color: rgb(var(--accent)); }
+
+  .filter-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: 0.25rem;
+  }
+  .filter-bar > :nth-child(-n+2) { grid-column: 1 / -1; }
+  @media (min-width: 640px) {
+    .filter-bar { grid-template-columns: auto minmax(0, 1fr); }
+    .filter-bar > :nth-child(-n+2) { grid-column: auto; }
+  }
+  @media (min-width: 1024px) {
+    .filter-bar { grid-template-columns: auto minmax(0, 1fr) auto auto; }
+  }
+  @media (max-width: 767px) {
+    [data-month-rows] > :global(a.index-row) {
+      grid-template-columns: 2rem minmax(0, 1fr) auto;
+      column-gap: 0.625rem;
+      padding-inline: 0;
+    }
+  }
+</style>
+
+<script>
+  import { matchesJournalFilters, readJournalFilters, writeJournalFilters } from '../../components/journal/JournalFilter';
+
+  class JournalIndex extends HTMLElement {
+    private cleanup?: AbortController;
+    private observer?: IntersectionObserver;
+
+    connectedCallback() {
+      const controls = this.querySelector<HTMLElement>('[data-controls]')!;
+      const edge = this.querySelector<HTMLElement>('[data-filter-edge]')!;
+      const form = controls.querySelector('form')!;
+      const query = form.querySelector<HTMLInputElement>('[name="q"]')!;
+      const sort = form.querySelector<HTMLSelectElement>('[name="sort"]')!;
+      const domainButtons = [...form.querySelectorAll<HTMLButtonElement>('[data-domain-filter]')];
+      const mediaButtons = [...form.querySelectorAll<HTMLButtonElement>('[data-media-filter]')];
+      const count = this.querySelector<HTMLElement>('[data-result-count]')!;
+      const empty = this.querySelector<HTMLElement>('[data-empty]')!;
+      const monthList = this.querySelector<HTMLElement>('[data-months]')!;
+      let months = [...monthList.querySelectorAll<HTMLElement>('[data-month]')].map((month) => {
+        const list = month.querySelector<HTMLElement>('[data-month-rows]')!;
+        return { month, list, rows: [...list.querySelectorAll<HTMLElement>('[data-date]')] };
+      });
+      let state = readJournalFilters(new URLSearchParams(location.search));
+      // The initial DOM is newest-first; reverse it only when the sort changes.
+      let currentSort = 'newest';
+
+      const render = () => {
+        if (state.sort !== currentSort) {
+          months = months.reverse();
+          monthList.append(...months.map(({ month }) => month));
+          for (const group of months) group.list.append(...group.rows.reverse());
+          currentSort = state.sort;
+        }
+
+        let total = 0;
+        const needle = state.query.trim().toLowerCase();
+        for (const { month, rows } of months) {
+          let visible = 0;
+          for (const row of rows) {
+            row.hidden = !matchesJournalFilters(row.dataset, state, needle);
+            if (!row.hidden) visible++;
+          }
+          month.hidden = visible === 0;
+          total += visible;
+        }
+        const message = `${total} ${total === 1 ? 'entry' : 'entries'}`;
+        if (count.textContent !== message) count.textContent = message;
+        empty.hidden = total !== 0;
+      };
+
+      const sync = () => {
+        query.value = state.query;
+        sort.value = state.sort;
+        for (const button of domainButtons) button.setAttribute('aria-pressed', String(button.dataset.domainFilter === state.domain));
+        for (const button of mediaButtons) button.setAttribute('aria-pressed', String(button.dataset.mediaFilter === 'audio' ? state.audio : state.video));
+        render();
+      };
+
+      const update = () => {
+        const url = new URL(location.href);
+        writeJournalFilters(url.searchParams, state);
+        if (url.href !== location.href) history.replaceState(history.state, '', url);
+        sync();
+      };
+
+      this.cleanup = new AbortController();
+      const { signal } = this.cleanup;
+      form.addEventListener('submit', (event) => event.preventDefault(), { signal });
+      query.addEventListener('input', () => { state.query = query.value; update(); }, { signal });
+      sort.addEventListener('change', () => { state.sort = sort.value === 'oldest' ? 'oldest' : 'newest'; update(); }, { signal });
+      for (const button of domainButtons) {
+        button.addEventListener('click', () => {
+          const domain = button.dataset.domainFilter;
+          if (domain === 'all' || domain === 'engineering' || domain === 'life' || domain === 'work') {
+            state.domain = domain;
+            update();
+          }
+        }, { signal });
+      }
+      for (const button of mediaButtons) {
+        button.addEventListener('click', () => {
+          if (button.dataset.mediaFilter === 'audio') state.audio = !state.audio;
+          else state.video = !state.video;
+          update();
+        }, { signal });
+      }
+      const restore = () => {
+        state = readJournalFilters(new URLSearchParams(location.search));
+        sync();
+      };
+      window.addEventListener('popstate', restore, { signal });
+      // Astro installs the new body before updating location.
+      document.addEventListener('astro:after-swap', restore, { signal });
+
+      sync();
+      controls.hidden = false;
+      edge.hidden = false;
+      this.observer = new IntersectionObserver(([entry]) => {
+        controls.classList.toggle('is-stuck', entry.boundingClientRect.bottom <= 65 && !entry.isIntersecting);
+      }, { rootMargin: '-65px 0px 0px 0px' });
+      this.observer.observe(edge);
+    }
+
+    disconnectedCallback() {
+      this.cleanup?.abort();
+      this.observer?.disconnect();
+    }
+  }
+
+  customElements.define('journal-index', JournalIndex);
+</script>

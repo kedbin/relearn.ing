@@ -1,31 +1,40 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { ProjectList } from '../../components/ProjectList';
-import { getCollection } from 'astro:content';
+import ProjectRow from '../../components/projects/ProjectRow.astro';
+import { getProjects, formatDate } from '../../lib/content';
 
-const projects = await getCollection('projects');
-const sortedProjects = projects.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
-
-const projectsWithContent = sortedProjects.map(project => ({
-  id: project.id,
-  data: project.data,
-  body: project.body,
-}));
+const projects = await getProjects();
+const [lead, ...rest] = projects;
+const narrated = projects.filter((p) => !!p.data.audioUrl).length;
+const first = projects[projects.length - 1];
 ---
 
-<Layout title="Projects">
-  <section class="pt-28 pb-24 px-6">
-    <div class="max-w-5xl mx-auto">
-      <div class="mb-16">
-        <h1 class="display-serif text-4xl md:text-5xl text-text mb-4">
-          Things I build to learn,<br />solve, and leverage.
-        </h1>
-        <p class="text-muted max-w-xl mt-4">
-          A collection of systems, products, and experiments that explore ideas at the intersection of AI, automation, and digital infrastructure.
-        </p>
-      </div>
+<Layout
+  title="Projects"
+  description="Systems, tools and experiments Kim Binasoy built to learn: content pipelines, agent skills, voice automation and this notebook itself."
+>
+  <section class="wrap pb-12 pt-14 md:pb-16 md:pt-24">
+    <p class="label reveal"><i class="sq"></i>Workbench · {projects.length} projects</p>
+    <h1 class="h-display reveal mt-7 max-w-5xl text-[3.2rem] sm:text-7xl md:text-[5.8rem]" style="--d:1">
+      Things I built <em>to learn</em><span class="text-accent">.</span>
+    </h1>
+    <div class="reveal mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between" style="--d:2">
+      <p class="dek max-w-[36rem] text-lg leading-relaxed md:text-xl">
+        Every project here started as a problem in the notebook: a step I kept doing by hand, or a tool I wished existed.
+        Each one is open source, and each write-up says what broke.
+      </p>
+      <dl class="flex gap-8 font-mono text-xs text-muted">
+        <div><dt class="text-faint">Since</dt><dd class="num mt-1 text-text">{first && formatDate(first.data.date, { month: 'short', year: 'numeric' })}</dd></div>
+        <div><dt class="text-faint">Open source</dt><dd class="num mt-1 text-text">{projects.filter((p) => p.data.repoUrl).length}/{projects.length}</dd></div>
+        <div><dt class="text-faint">Narrated</dt><dd class="num mt-1 text-text">{narrated}</dd></div>
+      </dl>
+    </div>
+  </section>
 
-      <ProjectList client:load projects={projectsWithContent} />
+  <section class="wrap" aria-label="All projects">
+    <div class="border-b">
+      {lead && <ProjectRow project={lead} lead />}
+      {rest.map((p) => <ProjectRow project={p} />)}
     </div>
   </section>
 </Layout>
