@@ -1,81 +1,37 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import EntryRow from '../components/site/EntryRow.astro';
 import Hero from '../components/home/Hero.astro';
-import {
-  getEntries, getProjects, siteStats, entryNo, domainOf, topicOf, domainDotClass, readingTime, formatDate,
-} from '../lib/content';
-import { FDE_WORKSHOP_SERIES } from '../lib/journal-visibility';
+import Record from '../components/home/record/Record.astro';
+import ReturnChannel from '../components/site/ReturnChannel.astro';
+import { getEntries, getProjects, entryNo, formatDate } from '../lib/content';
+import { splitTitle } from '../components/projects/projectMeta';
+import { START_HERE } from '../data/curation';
 
 const entries = await getEntries();
 const projects = await getProjects();
-const stats = siteStats(entries, projects);
-
 const [latest] = entries;
 
-// Series: only show if the entries are actually published.
-const ids = new Set(entries.map((e) => e.id));
-const series = FDE_WORKSHOP_SERIES.filter((s) => ids.has(s.id));
-
-// "Recently logged" never repeats what's already above it (latest + series).
-const shown = new Set([latest.id, ...(series.length > 1 ? series.map((s) => s.id) : [])]);
-const recent = entries.filter((e) => !shown.has(e.id)).slice(0, 6);
-
-// Domain composition — honest breakdown of what the notebook is about.
-const domains = (['Engineering', 'Life', 'Work'] as const).map((d) => ({
-  d,
-  n: entries.filter((e) => domainOf(e.data.category) === d).length,
-}));
-
-const fmt = (n: number) => n.toLocaleString('en-US');
+const byId = new Map(entries.map((e) => [e.id, e]));
+const starts = START_HERE.flatMap((s) => {
+  const e = byId.get(s.id);
+  return e ? [{ ...s, e }] : [];
+});
 ---
 
 <Layout title="Home">
-  <Hero entries={entries} />
+  <Hero latest={latest} />
 
-  <!-- ─────────── Latest entry ─────────── -->
-  <section class="wrap mt-24 md:mt-32" aria-labelledby="latest-h">
-    <a href={`/journal/${latest.id}/`} class="group grid gap-8 border-t pt-10 md:grid-cols-[4rem_1fr] md:gap-6 lg:grid-cols-[4rem_1fr_300px] lg:gap-10">
-      <div class="num text-xs text-accent">№ {entryNo(latest.id)}</div>
-      <div>
-        <p id="latest-h" class="label"><i class="sq"></i>Latest entry · {formatDate(latest.data.date)}</p>
-        <h2 class="h-display mt-5 text-4xl transition-colors group-hover:text-accent md:text-6xl" transition:name={`title-${latest.id}`}>
-          {latest.data.title}
-        </h2>
-        <p class="dek mt-6 max-w-[60ch] text-lg leading-relaxed">{latest.data.summary}</p>
-        <p class="mt-8 inline-flex items-center gap-2 text-sm font-medium text-text">
-          Read the entry <span class="transition-transform duration-200 group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true">→</span>
-          <span class="ml-3 flex items-center gap-2 text-xs font-normal text-muted">
-            <span class={`dot ${domainDotClass(domainOf(latest.data.category))}`}></span>{topicOf(latest.data.category)} · {readingTime(latest.body)} min
-          </span>
-        </p>
-      </div>
-      {latest.data.highlights?.length > 0 && (
-        <ul class="hidden space-y-4 border-l pl-6 text-sm leading-relaxed text-muted lg:block">
-          <li class="label !text-faint">Key takeaways</li>
-          {latest.data.highlights.slice(0, 3).map((h) => <li>{h}</li>)}
-        </ul>
-      )}
-    </a>
-  </section>
-
-  <!-- ─────────── Series ─────────── -->
-  {series.length > 1 && (
-    <section class="wrap mt-24 md:mt-32" aria-labelledby="series-h">
-      <div class="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p class="label"><i class="sq"></i>Series</p>
-          <h2 id="series-h" class="h-display mt-4 text-4xl md:text-5xl">FDE Workshop, <em>day by day</em></h2>
-        </div>
-        <p class="dek max-w-sm text-sm">Field notes from Google's Forward Deployed Engineer bootcamp, one day per entry, with a video walkthrough for each.</p>
-      </div>
-      <ol class="mt-10 grid border-y sm:grid-cols-2 lg:grid-cols-4">
-        {series.map((s) => (
-          <li class="border-b sm:[&:nth-child(odd)]:border-r lg:border-b-0 lg:border-r lg:last:border-r-0">
-            <a href={`/journal/${s.id}/`} class="group flex h-full flex-col px-1 py-6 transition-colors hover:bg-surface sm:px-6">
-              <span class="num text-xs text-faint">Day {s.day} · № {entryNo(s.id)}</span>
-              <span class="h-title mt-8 text-lg transition-colors group-hover:text-accent">{s.title}</span>
-              <span class="mt-auto pt-6 text-faint transition-transform group-hover:translate-x-1 group-hover:text-accent" aria-hidden="true">→</span>
+  <!-- ─────────── Start here ─────────── -->
+  {starts.length > 0 && (
+    <section class="wrap mt-20 md:mt-28" aria-labelledby="start-h">
+      <h2 id="start-h" class="label"><i class="sq" aria-hidden="true"></i>New here? Start with these three</h2>
+      <ol class="mt-5 grid border-b md:grid-cols-3 md:border-t md:border-b-0">
+        {starts.map((s) => (
+          <li class="border-t md:border-t-0 md:border-l md:first:border-l-0">
+            <a href={`/journal/${s.e.id}/`} class="group flex h-full flex-col py-6 transition-colors hover:bg-surface/70 md:px-6 md:first:pl-0">
+              <span class="num text-xs text-muted"><span class="text-accent">№</span> {entryNo(s.e.id)} · {s.kind}</span>
+              <span class="h-title mt-3 text-lg transition-colors group-hover:text-accent" transition:name={`title-${s.e.id}`}>{s.e.data.title}</span>
+              <span class="dek mt-3 text-[0.95rem] leading-relaxed">{s.why}</span>
             </a>
           </li>
         ))}
@@ -83,54 +39,35 @@ const fmt = (n: number) => n.toLocaleString('en-US');
     </section>
   )}
 
-  <!-- ─────────── Recent index ─────────── -->
-  <section class="wrap mt-24 md:mt-32" aria-labelledby="recent-h">
-    <div class="mb-6 flex items-end justify-between gap-4">
-      <div>
-        <p class="label"><i class="sq"></i>Index</p>
-        <h2 id="recent-h" class="h-display mt-4 text-4xl md:text-5xl">Earlier in the <em>notebook</em></h2>
-      </div>
-      <a href="/journal/" class="link hidden text-sm sm:inline">All entries →</a>
+  <!-- ─────────── The record (the site's one graphic) ─────────── -->
+  <section class="mt-20 md:mt-28" aria-labelledby="record-h">
+    <Record entries={entries} />
+    <div class="wrap mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+      <a href="/journal/" class="link">All {entries.length} entries →</a>
     </div>
-    <div class="border-b">
-      {recent.map((e) => <EntryRow entry={e} />)}
-    </div>
-    <a href="/journal/" class="btn-line mt-8 sm:hidden">All {stats.entries} entries →</a>
   </section>
 
   <!-- ─────────── Projects ─────────── -->
   <section class="wrap mt-24 md:mt-32" aria-labelledby="projects-h">
-    <div class="mb-10 flex items-end justify-between gap-4">
-      <div>
-        <p class="label"><i class="sq"></i>Workbench</p>
-        <h2 id="projects-h" class="h-display mt-4 text-4xl md:text-5xl">Things I built <em>to learn</em></h2>
-      </div>
-      <a href="/projects/" class="link hidden text-sm sm:inline">All projects →</a>
+    <div class="mb-6 flex items-end justify-between gap-4">
+      <h2 id="projects-h" class="label"><i class="sq" aria-hidden="true"></i>Built along the way</h2>
+      <a href="/projects/" class="link text-sm">All projects →</a>
     </div>
-    <div class="grid gap-x-10 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
-      {projects.slice(0, 6).map((p) => (
-        <a href={`/projects/${p.id}/`} class="group border-t py-6">
-          <span class="num text-xs text-faint">{formatDate(p.data.date, { month: 'short', year: 'numeric' })}</span>
-          <span class="h-title mt-3 block text-lg transition-colors group-hover:text-accent">{p.data.title.split(':')[0]}</span>
-          <span class="dek mt-2 line-clamp-2 text-sm leading-relaxed">{p.data.description}</span>
-          <span class="mt-4 block font-mono text-[11px] uppercase tracking-[0.08em] text-faint">{p.data.techStack.slice(0, 3).join(' · ')}</span>
-        </a>
-      ))}
+    <div class="grid gap-x-10 md:grid-cols-2 lg:grid-cols-3">
+      {projects.slice(0, 3).map((p) => {
+        const t = splitTitle(p.data.title);
+        return (
+          <a href={`/projects/${p.id}/`} class="group border-t py-6">
+            <span class="num text-xs text-muted">{formatDate(p.data.date, { month: 'short', year: 'numeric' })}</span>
+            <span class="h-title mt-3 block text-lg transition-colors group-hover:text-accent">{t.name}</span>
+            {t.subtitle && <span class="dek mt-2 block text-sm leading-relaxed">{t.subtitle}</span>}
+          </a>
+        );
+      })}
     </div>
   </section>
 
-  <!-- ─────────── Follow ─────────── -->
-  <section class="wrap mt-24 md:mt-32">
-    <div class="grid items-center gap-8 rounded-2xl bg-surface px-7 py-12 md:grid-cols-[1fr_auto] md:px-14 md:py-16">
-      <div>
-        <h2 class="h-display text-4xl md:text-5xl">Follow the experiment.</h2>
-        <p class="dek mt-4 max-w-lg">New entries every week or so. Read them here, subscribe in your feed reader, or catch the short versions on Threads and LinkedIn.</p>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        <a href="/rss.xml" class="btn-solid">RSS feed</a>
-        <a href="https://www.threads.com/@relearn.ing" target="_blank" rel="noopener noreferrer" class="btn-line">Threads ↗</a>
-        <a href="https://www.linkedin.com/in/kedbin/" target="_blank" rel="noopener noreferrer" class="btn-line">LinkedIn ↗</a>
-      </div>
-    </div>
-  </section>
+  <div class="mt-24 md:mt-32">
+    <ReturnChannel />
+  </div>
 </Layout>

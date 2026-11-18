@@ -89,10 +89,10 @@ export interface Pick { t: number; words: number }
 
 /**
  * Results-panel headline. With entries: "12 entries · Jan 3 – Feb 20, 2026 · 31k words"
- * (range = first..last entry). Empty: "No entries · <window> · the notebook was quiet".
+ * (range = first..last entry). Empty: "No entries · <window>".
  */
 export function summarize(picks: readonly Pick[], windowA: number, windowB: number): string {
-  if (!picks.length) return `No entries · ${formatRange(windowA, windowB)} · the notebook was quiet`;
+  if (!picks.length) return `No entries · ${formatRange(windowA, windowB)}`;
   let lo = Infinity, hi = -Infinity, w = 0;
   for (const p of picks) { if (p.t < lo) lo = p.t; if (p.t > hi) hi = p.t; w += p.words; }
   const n = picks.length;

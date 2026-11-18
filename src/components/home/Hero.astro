@@ -1,73 +1,34 @@
 ---
 /**
- * Homepage hero — "the dictionary entry + the record".
- * The name of the site *is* the thesis: a present participle. It never finishes.
- * Below it, every entry ever logged is plotted on a real time axis like a
- * seismograph: height = length, colour = domain, gaps = life happening.
+ * Homepage opening: the headword, one plain sentence, and one named entry to read.
+ * Nothing animates here; the record further down is the page's only graphic.
  */
 import type { Entry } from '../../lib/content';
-import { entryNo, entryNumber, wordCount, formatDate } from '../../lib/content';
-import Record from './record/Record.astro';
-import { DAY, dayTs as ts } from './record/math';
+import { entryNo, formatDate } from '../../lib/content';
 
-interface Props { entries: Entry[] }
-const { entries } = Astro.props;
-
-const chrono = [...entries].sort((a, b) => ts(a.data.date) - ts(b.data.date) || entryNumber(a.id) - entryNumber(b.id));
-const latest = chrono[chrono.length - 1];
-const totalWords = chrono.reduce((n, e) => n + wordCount(e.body), 0);
-const since = formatDate(chrono[0].data.date, { month: 'long', year: 'numeric' });
-const days = Math.round((Date.now() - ts(chrono[0].data.date)) / DAY);
+interface Props { latest: Entry }
+const { latest } = Astro.props;
 ---
 
-<section class="hero relative overflow-hidden" aria-labelledby="hero-word">
-  <div class="wrap pt-10 md:pt-16">
-    <!-- Dictionary entry -->
-    <div class="flex flex-wrap items-baseline gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.08em] text-faint reveal">
-      <span>Entry № {entryNo(latest.id)} of an open notebook</span>
-      <span class="hidden h-px flex-1 bg-line/15 sm:block"></span>
-      <span>Toronto · since {since}</span>
-    </div>
+<section class="wrap pt-10 md:pt-16" aria-labelledby="hero-word">
+  <h1 id="hero-word" class="word font-display leading-[0.82] tracking-[-0.045em] text-text">
+    <span class="sr-only">relearn.ing</span>
+    <span aria-hidden="true">re<span class="syl">·</span>learn<span class="syl">·</span><span class="ing">ing</span></span>
+  </h1>
 
-    <h1 id="hero-word" class="word reveal mt-6 font-display leading-[0.82] tracking-[-0.045em] text-text md:mt-8" style="--d:1">
-      <span class="sr-only">relearning</span>
-      <span aria-hidden="true">re<span class="syl">·</span>learn<span class="syl">·</span><span class="ing-w"><span class="ing">ing</span><span class="ink">ing</span></span></span>
-    </h1>
-    <script is:inline>
-      // Write the -ing in ink once per session (before first paint, so there's no flash).
-      try {
-        if (!sessionStorage.getItem('rl-ink') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          var w = document.getElementById('hero-word');
-          if (w) { w.classList.add('ink-write'); sessionStorage.setItem('rl-ink', '1'); }
-        }
-      } catch (e) {}
-    </script>
+  <div class="mt-8 grid gap-8 md:mt-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-14">
+    <p class="max-w-[34ch] font-serif text-[1.3rem] leading-snug text-text md:text-[1.6rem]">
+      A working notebook by Kim Binasoy. What I built, which assumptions turned out wrong, and which habits I changed, one numbered entry at a time.
+    </p>
 
-    <div class="mt-10 grid gap-5 md:mt-12 md:gap-10 md:grid-cols-[minmax(0,15rem)_1fr] lg:grid-cols-[minmax(0,15rem)_1fr_1fr] lg:gap-14">
-      <p class="reveal font-mono text-sm text-muted" style="--d:2">
-        /riː·ˈlɜːr·nɪŋ/<br />
-        <span class="mt-1 inline-block font-serif text-base italic text-faint">verb, present participle</span>
-      </p>
-      <ol class="defs reveal space-y-5 font-serif text-[1.2rem] leading-snug text-text/90 md:text-[1.35rem]" style="--d:3">
-        <li><span class="dn">1</span>Taking apart how you work, think, and live, and rebuilding it <em>on purpose</em>.</li>
-        <li><span class="dn">2</span>What an engineer does when the systems he builds for clients run better than his own.</li>
-      </ol>
-      <ol start="3" class="defs reveal space-y-5 font-serif text-[1.2rem] leading-snug text-text/90 md:col-start-2 md:text-[1.35rem] lg:col-start-auto" style="--d:4">
-        <li>
-          <span class="dn">3</span>A continuous process. Note the <em>-ing</em>: it doesn't finish.
-          <span class="mt-3 block font-sans text-sm not-italic text-muted">See the record below: {entries.length} entries, {Math.round(totalWords / 1000)}k words, {days} days and counting.</span>
-        </li>
-      </ol>
-    </div>
-  </div>
-
-  <!-- The record -->
-  <Record entries={entries} />
-
-  <div class="wrap mt-10 flex flex-wrap items-center gap-3 md:mt-12">
-    <a href={`/journal/${latest.id}/`} class="btn-solid">Start with the latest <span aria-hidden="true">→</span></a>
-    <a href="/journal/" class="btn-line">Open the notebook</a>
-    <a href="/journal/entry-001/" class="ml-1 text-sm text-muted transition-colors hover:text-text">or begin at № 001</a>
+    <a href={`/journal/${latest.id}/`} class="group block self-end border-t pt-4">
+      <span class="num flex items-center gap-2 text-xs text-muted">
+        <span><span class="text-accent">№</span> {entryNo(latest.id)}</span><span aria-hidden="true">·</span>
+        <span>Latest · {formatDate(latest.data.date)}</span>
+      </span>
+      <span class="h-title mt-2 block text-lg transition-colors group-hover:text-accent md:text-xl" transition:name={`title-${latest.id}`}>{latest.data.title}</span>
+      <span class="mt-3 inline-flex items-center gap-2 text-sm text-muted transition-colors group-hover:text-text">Read it <span class="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span></span>
+    </a>
   </div>
 </section>
 
@@ -83,39 +44,4 @@ const days = Math.round((Date.now() - ts(chrono[0].data.date)) / DAY);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     padding-right: 0.08em;
   }
-
-  .defs { list-style: none; padding: 0; }
-  .defs li { position: relative; padding-left: 2rem; text-wrap: pretty; }
-  .defs .dn {
-    position: absolute; left: 0; top: 0.35em;
-    font-family: var(--font-mono, ui-monospace), monospace;
-    font-size: 0.7rem; color: rgb(var(--accent));
-  }
-  .defs em { font-style: italic; }
-
-
-  /* Handwriting the -ing: once per session, after the record's bars have grown. */
-  .ing-w { position: relative; display: inline-block; }
-  .ink {
-    position: absolute; inset: 0; padding-right: 0.08em;
-    font-style: italic; color: rgb(var(--accent));
-    text-shadow: 0 0 0.03em rgb(var(--accent) / 0.55);   /* wet-ink bleed */
-    opacity: 0; pointer-events: none;
-  }
-  .word.ink-write .ing, .word.ink-write .ink {
-    -webkit-mask-image: linear-gradient(90deg, black 46%, transparent 54%);
-    mask-image: linear-gradient(90deg, black 46%, transparent 54%);
-    -webkit-mask-size: 260% 100%; mask-size: 260% 100%;
-    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-    -webkit-mask-position: 100% 0; mask-position: 100% 0;
-    animation: write 900ms cubic-bezier(0.45, 0.05, 0.35, 1) 2250ms forwards;
-  }
-  .word.ink-write .ink { opacity: 1; animation: write 900ms cubic-bezier(0.45, 0.05, 0.35, 1) 2250ms forwards, dry 700ms ease-out 3000ms forwards; }
-  @keyframes write { to { -webkit-mask-position: 0 0; mask-position: 0 0; } }
-  @keyframes dry { to { opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) {
-    .word.ink-write .ing, .word.ink-write .ink { animation: none; -webkit-mask-image: none; mask-image: none; }
-    .word.ink-write .ink { opacity: 0; }
-  }
 </style>
-

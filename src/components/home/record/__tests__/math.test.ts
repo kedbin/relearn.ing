@@ -88,6 +88,6 @@ describe('formatting', () => {
     const picks = [{ t: dayTs('2026-01-03'), words: 20_000 }, { t: dayTs('2026-02-20'), words: 11_000 }];
     expect(summarize(picks, 0, 1)).toBe('2 entries · Jan 3 – Feb 20, 2026 · 31k words');
     expect(summarize([picks[0]], 0, 1)).toBe('1 entry · Jan 3, 2026 · 20k words');
-    expect(summarize([], dayTs('2026-06-01'), dayTs('2026-06-01') + 9 * DAY)).toBe('No entries · Jun 1 – Jun 10, 2026 · the notebook was quiet');
+    expect(summarize([], dayTs('2026-06-01'), dayTs('2026-06-01') + 9 * DAY)).toBe('No entries · Jun 1 – Jun 10, 2026');
   });
 });
