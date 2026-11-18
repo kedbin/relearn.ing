@@ -12,10 +12,6 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
 
 const spec: { k: string; v: string; link?: { text: string; href: string } }[] = [
   {
-    k: 'What',
-    v: 'How I work, think and live, treated as a system: taken apart, tested, and rebuilt on purpose, one experiment at a time.',
-  },
-  {
     k: 'Inside',
     v: `${stats.entries} numbered entries across engineering, life and work. What I tried, what broke, and what I’d do differently.`,
   },
@@ -52,8 +48,8 @@ const spec: { k: string; v: string; link?: { text: string; href: string } }[] = 
             decoding="async"
           />
         </div>
-        <figcaption class="mt-3 flex items-center justify-between gap-4 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.08em] text-faint">
-          <span>Fig. 1</span><span>{profile.name}<span class="hidden lg:inline"> · {profile.location}</span></span>
+        <figcaption class="mt-3 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
+          {profile.name} · {profile.location}
         </figcaption>
       </figure>
 
@@ -61,14 +57,14 @@ const spec: { k: string; v: string; link?: { text: string; href: string } }[] = 
         <dl class="reveal max-w-[40rem] border-b lg:mt-16" style="--d:2">
           {spec.map((s) => (
             <div class="grid gap-x-8 gap-y-1.5 border-t py-5 sm:grid-cols-[6rem_1fr]">
-              <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-faint sm:pt-1.5">{s.k}</dt>
+              <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted sm:pt-1.5">{s.k}</dt>
               <dd class="font-serif text-[1.15rem] leading-[1.55] text-text/90 md:text-[1.25rem]">{s.v}{s.link && <> <a href={s.link.href} {...ext} class="link">{s.link.text}</a></>}</dd>
             </div>
           ))}
         </dl>
 
         <div class="reveal mt-12 md:mt-16" style="--d:3">
-          <p class="font-mono text-[11px] uppercase tracking-[0.08em] text-faint">Who writes it · work · résumé</p>
+          <p class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted">Who writes it · work · résumé</p>
           <a href={profile.portfolio.href} {...ext} class="who group mt-3 inline-flex items-baseline gap-3 font-display text-[2.75rem] leading-none tracking-tight text-text transition-colors duration-200 hover:text-accent md:text-[3.75rem]">
             <span class="who-u">{profile.portfolio.label}</span>
             <span class="text-[0.55em] text-accent transition-transform duration-200 ease-out-quint group-hover:-translate-y-1 group-hover:translate-x-1" aria-hidden="true">↗</span>
