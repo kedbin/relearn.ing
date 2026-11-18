@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
@@ -7,7 +6,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://relearn.ing',
   trailingSlash: 'ignore',
-  integrations: [react(), tailwind({ applyBaseStyles: false }), sitemap()],
+  integrations: [tailwind({ applyBaseStyles: false }), sitemap()],
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   // Allow previewing over Tailscale MagicDNS (dev/preview only; no effect on the static build).
   server: { allowedHosts: ['.ts.net'] },

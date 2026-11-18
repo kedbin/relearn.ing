@@ -1,13 +1,9 @@
 import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 
-// Vitest config for the React (.tsx) components used across the Astro site.
-// Astro page (.astro) compilation is covered by `astro build` in CI; these
-// unit/component tests cover the interactive island components and shared
-// utilities.
+// Vitest config for the site's pure TypeScript helpers (no framework runtime).
+// Astro page (.astro) compilation is covered by `astro build` in CI.
 export default defineConfig({
-  plugins: [react()],
   resolve: {
     alias: { 'astro:content': fileURLToPath(new URL('./src/test/astro-content-stub.ts', import.meta.url)) },
   },
