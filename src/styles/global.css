@@ -20,7 +20,7 @@
     --line: 17 20 28;          /* used at low alpha via .hair */
     --text: 17 20 28;          /* graphite */
     --muted: 88 94 106;
-    --faint: 138 144 156;
+    --faint: 100 106 118;      /* ≥ 4.5:1 on bg and surface (AA for small labels) */
     --accent: 43 63 214;       /* ultramarine ink */
     --accent-2: 214 58 92;     /* rare second signal (pen-red correction mark) */
     --eng: 14 128 118;         /* teal */
@@ -38,7 +38,7 @@
     --line: 220 226 240;
     --text: 228 232 240;
     --muted: 148 156 172;
-    --faint: 98 106 122;
+    --faint: 132 140 156;      /* ≥ 4.5:1 on bg and surface */
     --accent: 138 155 255;     /* periwinkle ink */
     --accent-2: 255 122 150;
     --eng: 74 208 190;
@@ -74,6 +74,8 @@
   *, ::before, ::after {
     border-color: rgb(var(--line) / var(--hair-a));
   }
+
+  html.theme-switching *, html.theme-switching ::before, html.theme-switching ::after { transition: none !important; }
 
   @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
