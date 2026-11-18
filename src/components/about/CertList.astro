@@ -1,0 +1,58 @@
+---
+import type { Cert } from '../../data/about';
+import { partitionCerts } from '../../data/about';
+
+interface Props {
+  certs: Cert[];
+}
+const { featured, rest } = partitionCerts(Astro.props.certs);
+---
+
+<!-- Single-column ruled list: issuer | name (+ validity) | issued | ↗ -->
+<ul class="border-b">
+  {featured.map((c, i) => (
+    <li class:list={[i > 0 && 'border-t']}>
+      <a href={c.url} target="_blank" rel="noopener noreferrer"
+        class:list={['group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 pb-5 sm:grid-cols-[10rem_1fr_5.5rem_1rem]', i > 0 ? 'pt-5' : 'pt-0']}
+      >
+        <span class="label">{c.issuer}</span>
+        <span class="num text-right text-xs text-muted sm:hidden">{c.issued}</span>
+        <span class="col-span-2 min-w-0 sm:col-span-1">
+          <span class="h-title block text-[1.05rem] transition-colors group-hover:text-accent">{c.name}</span>
+          {c.expires && <span class="num mt-1 block text-[11px] text-faint">valid to {c.expires}</span>}
+        </span>
+        <span class="num hidden text-right text-xs text-muted sm:block">{c.issued}</span>
+        <span class="hidden text-right text-faint transition-all duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent sm:block" aria-hidden="true">↗</span>
+        <span class="sr-only">(view credential, opens in a new tab)</span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+{rest.length > 0 && (
+  <details class="cert-more group mt-6">
+    <summary class="inline-flex min-h-10 cursor-pointer list-none items-center gap-2 text-sm font-medium text-text transition-colors hover:text-accent">
+      <span class="num inline-block w-3 text-accent transition-transform duration-200 group-open:rotate-45" aria-hidden="true">+</span>
+      <span class="group-open:hidden">Show all {featured.length + rest.length}</span>
+      <span class="hidden group-open:inline">Show fewer</span>
+    </summary>
+    <ul class="mt-4 border-b">
+      {rest.map((c) => (
+        <li class="border-t">
+          <a href={c.url} target="_blank" rel="noopener noreferrer" class="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-3.5 sm:grid-cols-[10rem_1fr_5.5rem_1rem]">
+            <span class="label !text-faint">{c.issuer}</span>
+            <span class="num text-right text-xs text-muted sm:hidden">{c.issued}</span>
+            <span class="col-span-2 text-[0.95rem] text-text/90 transition-colors group-hover:text-accent sm:col-span-1">{c.name}</span>
+            <span class="num hidden text-right text-xs text-muted sm:block">{c.issued}</span>
+            <span class="hidden text-right text-faint transition-colors group-hover:text-accent sm:block" aria-hidden="true">↗</span>
+            <span class="sr-only">(opens in a new tab)</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </details>
+)}
+
+<style>
+  .cert-more summary::-webkit-details-marker { display: none; }
+</style>

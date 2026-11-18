@@ -1,0 +1,44 @@
+---
+import type { Project } from '../../lib/content';
+import { formatDate } from '../../lib/content';
+import { splitTitle, demoLabel } from './projectMeta';
+
+interface Props {
+  project: Project;
+  /** Larger "lead" treatment for the featured project */
+  lead?: boolean;
+}
+const { project, lead = false } = Astro.props;
+const { name, subtitle } = splitTitle(project.data.title);
+const { repoUrl, demoUrl, techStack, date } = project.data;
+const href = `/projects/${project.id}/`;
+const ext = { target: '_blank', rel: 'noopener noreferrer' };
+---
+
+<article class:list={['index-row group grid grid-cols-[3.5rem_1fr] gap-x-4 px-2 md:grid-cols-[5rem_1fr_2rem] md:gap-x-8 md:px-3', lead ? 'py-10 md:py-14' : 'py-7 md:py-8']}>
+  <p class:list={['num text-xs text-faint transition-colors group-hover:text-accent', lead ? 'pt-3 md:pt-5' : 'pt-2']}>
+    {formatDate(date, { year: 'numeric' })}
+    <span class="mt-1 block text-faint/80">{formatDate(date, { month: 'short' })}</span>
+  </p>
+
+  <div class="min-w-0">
+    <h2>
+      <a href={href}
+        class:list={['row-title h-display block outline-none transition-colors after:absolute after:inset-0 after:content-[""] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-accent', lead ? 'text-5xl md:text-7xl' : 'text-[2.1rem] md:text-[2.5rem]']}
+        transition:name={`project-${project.id}`}
+      >{name}</a>
+    </h2>
+    {subtitle && <p class:list={['h-title mt-2 text-text/80', lead ? 'text-lg md:text-xl' : 'text-base md:text-lg']}>{subtitle}</p>}
+    <p class:list={['dek mt-3 max-w-[60ch] leading-relaxed', lead ? 'text-lg' : 'text-[0.975rem]']}>{project.data.description}</p>
+    <div class="mt-4 max-w-[60ch]">
+      <p class="font-mono text-[11px] uppercase leading-relaxed tracking-[0.08em] text-faint">{techStack.join(' · ')}</p>
+      <p class="relative z-10 mt-2 flex items-baseline gap-2 text-sm md:mt-3">
+        {repoUrl && <a href={repoUrl} {...ext} class="link inline-flex min-h-10 items-center md:min-h-0">Repo ↗</a>}
+        {repoUrl && demoUrl && <span class="text-faint" aria-hidden="true">·</span>}
+        {demoUrl && <a href={demoUrl} {...ext} class="link inline-flex min-h-10 items-center whitespace-nowrap md:min-h-0">{demoLabel(demoUrl)} ↗</a>}
+      </p>
+    </div>
+  </div>
+
+  <span class:list={['row-arrow pointer-events-none hidden text-right text-lg text-faint md:block', lead ? 'pt-5' : 'pt-2']} aria-hidden="true">→</span>
+</article>

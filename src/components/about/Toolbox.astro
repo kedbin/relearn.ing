@@ -1,0 +1,30 @@
+---
+import type { SkillGroup } from '../../data/about';
+
+interface Props {
+  groups: SkillGroup[];
+}
+const { groups } = Astro.props;
+---
+
+<dl class="border-b">
+  {groups.map((g) => (
+    <div class="grid gap-x-8 gap-y-1.5 border-t py-5 first:border-t-0 first:pt-0 sm:grid-cols-[10rem_1fr]">
+      <dt class="label pt-0.5">{g.title}</dt>
+      <dd>
+        <ul class="tools text-[0.975rem] leading-relaxed text-text/90">
+          {g.items.map((it) => <li>{it}</li>)}
+        </ul>
+      </dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .tools li { display: inline; }
+  .tools li:not(:last-child)::after {
+    content: '·';
+    padding: 0 0.55em;
+    color: rgb(var(--faint));
+  }
+</style>

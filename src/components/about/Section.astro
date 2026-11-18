@@ -1,0 +1,28 @@
+---
+/**
+ * Two-column editorial section: label + display heading in a left gutter,
+ * content on the right. Stacks on mobile.
+ */
+interface Props {
+  id: string;
+  label: string;
+  /** Optional mono note under the heading (e.g. "Updated Nov 2026") */
+  note?: string;
+  /** Override the default top margin (e.g. when following the readout) */
+  class?: string;
+}
+const { id, label, note, class: cls = 'mt-24 md:mt-32' } = Astro.props;
+---
+
+<section class:list={['wrap', cls]} aria-labelledby={`${id}-h`}>
+  <div class="grid gap-8 border-t pt-8 lg:grid-cols-[17rem_1fr] lg:gap-16 lg:pt-10">
+    <header>
+      <p class="label"><i class="sq"></i>{label}</p>
+      <h2 id={`${id}-h`} class="h-display mt-4 text-4xl md:text-5xl"><slot name="title" /></h2>
+      {note && <p class="num mt-4 text-[11px] uppercase tracking-[0.08em] text-faint">{note}</p>}
+    </header>
+    <div class="min-w-0">
+      <slot />
+    </div>
+  </div>
+</section>

@@ -5,7 +5,7 @@ import Timeline from '../components/about/Timeline.astro';
 import CertList from '../components/about/CertList.astro';
 import Toolbox from '../components/about/Toolbox.astro';
 import {
-  profile, now, nowUpdated, stats, experience, certs, skills, principles, vanPhoto,
+  profile, facts, now, nowUpdated, stats, experience, certs, skills, principles, vanPhoto,
 } from '../data/about';
 
 const L = profile.links;
@@ -25,22 +25,30 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
           Hi, I'm Kim. I automate things, including, lately, <em>myself</em><span class="text-accent">.</span>
         </h1>
 
-        <div class="reveal mt-10 max-w-[38rem] space-y-5 text-lg leading-relaxed text-text/85 md:text-[1.2rem]" style="--d:2">
-          <p>
+        <figure class="reveal mt-8 lg:hidden" style="--d:2">
+          <div class="h-[280px] w-[224px] overflow-hidden rounded-[3px] bg-surface2">
+            <img src={profile.photo.src} alt={profile.photo.alt} width="900" height="1342"
+              class="h-full w-full object-cover object-[center_22%] dark:brightness-[0.92]" loading="eager" decoding="async" />
+          </div>
+          <figcaption class="mt-3 flex w-[224px] items-center justify-between font-mono text-[11px] uppercase tracking-[0.08em] text-faint">
+            <span>Fig. 1</span><span>{profile.photo.caption}</span>
+          </figcaption>
+        </figure>
+
+        <div class="reveal mt-10 max-w-[38rem] space-y-5 text-[1.0625rem] leading-relaxed text-text/85 md:text-lg" style="--d:2">
+          <p class="font-serif text-[1.3rem] leading-[1.55] text-text/90 md:text-[1.4rem]">
             By day I'm an AI automation engineer at Accenture in Toronto. I build Playwright pipelines and LLM agents
-            that write, run and review tests, so the people on my team can spend their time on judgement
-            instead of busywork.
+            that write, run and review tests, so my team can spend its time on judgement, not busywork.
           </p>
           <p>
-            I didn't start in tech. I trained in medical technology in Manila, running specimens through protocols
-            in a clinical lab, then rebuilt my career from scratch in cloud operations, QA and, eventually, AI. That lab
-            habit stuck: write it down, control the variables, report what actually happened.
+            I didn't start in tech. I trained in medical technology in Manila, then rebuilt my career from scratch
+            in cloud operations, QA and, eventually, AI. The lab habit stuck: write it down, control the variables,
+            report what actually happened.
           </p>
           <p>
-            relearn.ing exists because of the engineer's paradox. I build reliable, fault-tolerant systems for clients, but
-            my own operating system was a mess of half-started projects and productivity apps that only added friction.
-            So I started debugging sleep, focus and decisions like production infrastructure, and logging every
-            experiment here, in public.
+            relearn.ing exists because of the engineer's paradox. I build reliable systems for clients, but my own
+            operating system was a mess of half-started projects and apps that only added friction. So I started
+            debugging sleep, focus and decisions like infrastructure, and logging every experiment here.
           </p>
         </div>
 
@@ -52,7 +60,7 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
         </ul>
       </div>
 
-      <figure class="reveal self-start lg:mt-4" style="--d:2">
+      <figure class="reveal hidden self-start lg:mt-4 lg:block" style="--d:2">
         <div class="overflow-hidden rounded-[3px] bg-surface2">
           <img
             src={profile.photo.src}
@@ -67,19 +75,27 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
         <figcaption class="mt-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.08em] text-faint">
           <span>Fig. 1 · Kim Binasoy</span><span>{profile.photo.caption}</span>
         </figcaption>
+        <dl class="mt-8 border-b text-sm">
+          {facts.map((f) => (
+            <div class="grid grid-cols-[6.5rem_1fr] gap-4 border-t py-3">
+              <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-faint">{f.k}</dt>
+              <dd class="text-text/85">{f.v}</dd>
+            </div>
+          ))}
+        </dl>
       </figure>
     </div>
   </section>
 
   <!-- ─────────── Readout ─────────── -->
   <section class="wrap mt-16 md:mt-24" aria-label="Work in numbers">
-    <div class="border-y">
+    <div class="border-t">
       <p class="label pt-6">Readout <span class="text-faint">· from the day job and this site</span></p>
       <dl class="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {stats.map((s, i) => (
-          <div class:list={['flex flex-col-reverse py-6 sm:py-8', i > 0 && 'sm:pl-8', i < stats.length - 1 && 'sm:pr-8']}>
-            <dt class="mt-3 max-w-[24ch] text-sm leading-snug text-muted">{s.label}</dt>
-            <dd class="num text-5xl tracking-tight text-text md:text-6xl">{s.value}</dd>
+          <div class:list={['flex flex-col justify-start py-6 sm:pb-10 sm:pt-6', i > 0 && 'sm:pl-8', i < stats.length - 1 && 'sm:pr-8']}>
+            <dt class="order-2 mt-3 max-w-[26ch] font-mono text-[11px] uppercase leading-relaxed tracking-[0.08em] text-muted">{s.label}</dt>
+            <dd class="order-1 font-display text-[3.75rem] leading-none tracking-tight text-text md:text-[4.5rem]">{s.value}</dd>
           </div>
         ))}
       </dl>
@@ -87,11 +103,11 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
   </section>
 
   <!-- ─────────── Now ─────────── -->
-  <Section id="now" label="Now" note={`Updated ${nowUpdated}`}>
+  <Section id="now" label="Now" note={`Updated ${nowUpdated}`} class="mt-0 md:mt-0">
     <Fragment slot="title">What I'm <em>on</em> right now</Fragment>
     <dl class="border-b">
       {now.map((n) => (
-        <div class="grid gap-x-8 gap-y-1 border-t py-5 sm:grid-cols-[8rem_1fr]">
+        <div class="grid gap-x-8 gap-y-1 border-t py-5 first:border-t-0 first:pt-0 sm:grid-cols-[8rem_1fr]">
           <dt class="label pt-1">{n.label}</dt>
           <dd class="text-[1.05rem] leading-relaxed text-text/90">{n.text}</dd>
         </div>
@@ -143,7 +159,7 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
     <Fragment slot="title">Four <em>rules</em></Fragment>
     <ol class="grid gap-x-10 border-b sm:grid-cols-2">
       {principles.map((p, i) => (
-        <li class="border-t py-7">
+        <li class="border-t py-7 first:border-t-0 first:pt-0 sm:[&:nth-child(2)]:border-t-0 sm:[&:nth-child(2)]:pt-0">
           <span class="num text-xs text-accent">{String(i + 1).padStart(2, '0')}</span>
           <h3 class="h-title mt-3 text-xl">{p.title}</h3>
           <p class="mt-2 max-w-[44ch] leading-relaxed text-text/80">{p.body}</p>
