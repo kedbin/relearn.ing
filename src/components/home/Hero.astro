@@ -9,7 +9,7 @@ const { latest } = Astro.props;
 <section class="wrap" aria-labelledby="intro-title">
   <div class="opening">
     <div>
-      <h1 id="intro-title" class="headline font-display">Automation<br />in practice.</h1>
+      <h1 id="intro-title" class="headline font-display"><span class="sr-only">relearn.ing</span><span aria-hidden="true">re<span class="syl">·</span>learn<span class="syl">·</span><span class="ing">ing</span></span></h1>
       <p class="mt-4 max-w-[37ch] text-base leading-relaxed text-muted md:mt-6 md:text-lg">Case studies in coding agents, deployment pipelines and the choices behind them.</p>
     </div>
 
@@ -29,7 +29,10 @@ const { latest } = Astro.props;
 
 <style>
   .opening { display: grid; gap: 1.5rem; padding-top: 2rem; }
-  .headline { font-size: clamp(4rem, 8.5vw, 7.4rem); line-height: .92; letter-spacing: -.04em; }
+  .headline { font-size: clamp(3.6rem, 10vw, 9rem); line-height: .92; letter-spacing: -.04em; }
+  .syl { color: rgb(var(--accent)); font-size: .42em; vertical-align: .42em; margin: 0 .07em; }
+  .ing { font-style: italic; background: linear-gradient(90deg, rgb(var(--text)) 30%, rgb(var(--text) / .4)); background-clip: text; color: transparent; padding-right: .08em; }
+  @media (max-width: 767px) { .headline { font-size: clamp(3.6rem, 18vw, 7rem); } }
   .feature { padding: 1.15rem 1.25rem; border-top: 2px solid rgb(var(--text)); }
   .feature-title { font-size: clamp(2rem, 3.3vw, 3rem); line-height: 1.02; letter-spacing: -.018em; margin: 1rem 0 1.25rem; text-wrap: balance; }
   @media (min-width: 768px) {
