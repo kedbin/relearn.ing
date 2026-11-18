@@ -8,6 +8,7 @@ import Highlights from '../../components/article/Highlights.astro';
 import Toc from '../../components/article/Toc.astro';
 import LiteYouTube from '../../components/article/LiteYouTube.astro';
 import EntryFooter from '../../components/article/EntryFooter.astro';
+import SeriesNext from '../../components/article/SeriesNext.astro';
 import ArticlePen from '../../components/article/pen/ArticlePen.astro';
 import { tocHeadings, shouldShowToc, bodyEmbedsVideo } from '../../components/article/article-utils';
 import {
@@ -37,7 +38,8 @@ const showToc = shouldShowToc(toc);
 
 const showVideo = !!d.youtube_video_id && !bodyEmbedsVideo(entry.body, d.youtube_video_id);
 const { prev, next } = neighbours(entry, all);
-const related = relatedEntries(entry, all, 3);
+// In a series, the next day is the primary path; related entries drop out of the way.
+const related = series.length > 1 ? [] : relatedEntries(entry, all, 3);
 ---
 
 <Layout title={d.title} description={d.summary} type="article">
@@ -123,6 +125,8 @@ const related = relatedEntries(entry, all, 3);
             <LiteYouTube id={d.youtube_video_id!} title={d.youtube_title || d.title} />
           </div>
         )}
+
+        {series.length > 1 && <SeriesNext current={entry.id} series={series} />}
       </div>
     </div>
   </article>

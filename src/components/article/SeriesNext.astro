@@ -1,0 +1,35 @@
+---
+/**
+ * End-of-entry series step: links straight to the next day. On the last day it
+ * closes the series and offers the return channel instead.
+ */
+import ReturnChannel from '../site/ReturnChannel.astro';
+import { entryNo } from '../../lib/content';
+
+interface Props {
+  current: string;
+  series: readonly { id: string; day: number; title: string }[];
+}
+const { current, series } = Astro.props;
+const pos = series.findIndex((s) => s.id === current);
+const next = pos >= 0 ? series[pos + 1] : undefined;
+---
+
+{next ? (
+  <div class="wrap-narrow mt-16">
+    <a href={`/journal/${next.id}/`} class="group block border-y py-6">
+      <span class="num text-xs text-muted">FDE Workshop · next: Day {next.day} of {series.length} · <span class="text-accent">№</span> {entryNo(next.id)}</span>
+      <span class="h-title mt-2 flex items-baseline justify-between gap-4 text-xl transition-colors group-hover:text-accent md:text-2xl">
+        {next.title}<span class="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">→</span>
+      </span>
+    </a>
+  </div>
+) : pos === series.length - 1 && (
+  <div class="mt-16">
+    <ReturnChannel
+      width="narrow"
+      title="That’s the whole series."
+      note={`${series.length} days, ${series.length} entries. The next set of field notes goes to the RSS feed first, with shorter versions on Threads and LinkedIn.`}
+    />
+  </div>
+)}

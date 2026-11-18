@@ -6,11 +6,31 @@ interface Props {
   series: readonly { id: string; day: number; title: string }[];
 }
 const { current, series } = Astro.props;
+const pos = series.findIndex((s) => s.id === current);
 ---
 
 <nav aria-labelledby="series-label" class="series-nav">
-  <p id="series-label" class="label"><i class="sq"></i>Series · FDE Workshop, day by day</p>
-  <ol class="mt-4 border-b">
+  <!-- Mobile: one line, the full list on request. -->
+  <details class="group border-y md:hidden">
+    <summary class="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 py-3 [&::-webkit-details-marker]:hidden">
+      <span class="num text-xs text-muted"><span class="text-accent">FDE Workshop</span> · Day {series[pos]?.day ?? pos + 1} of {series.length}</span>
+      <span class="flex items-center gap-2 text-[13px] text-muted">View series
+        <svg class="h-3 w-3 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m3 4.5 3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </summary>
+    <ol class="pb-2">
+      {series.map((s) => (
+        <li>
+          <a href={`/journal/${s.id}/`} aria-current={s.id === current ? 'page' : undefined} class="grid min-h-10 grid-cols-[3.5rem_1fr] items-baseline gap-x-3 py-2 text-[0.95rem] text-muted aria-[current=page]:text-text">
+            <span class="num text-xs text-accent">Day {s.day}</span><span>{s.title}</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </details>
+
+  <p id="series-label" class="label hidden md:inline-flex"><i class="sq"></i>Series · FDE Workshop, day by day</p>
+  <ol class="mt-4 hidden border-b md:block">
     {series.map((s) => {
       const here = s.id === current;
       return (
