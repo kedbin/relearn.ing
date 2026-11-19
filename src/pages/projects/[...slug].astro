@@ -4,6 +4,8 @@ import { render } from 'astro:content';
 import AudioPlayer from '../../components/article/AudioPlayer.astro';
 import { getProjects, formatDate, readingTime } from '../../lib/content';
 import { splitTitle, demoLabel } from '../../components/projects/projectMeta';
+import KindleStudio from '../../components/article/kindle/KindleStudio.astro';
+import KindleFraming from '../../components/article/kindle/KindleFraming.astro';
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -18,6 +20,8 @@ const { Content } = await render(project);
 const { name, subtitle } = splitTitle(project.data.title);
 const { date, description, techStack, repoUrl, demoUrl, audioUrl } = project.data;
 const ext = { target: '_blank', rel: 'noopener noreferrer' };
+/** Project-scoped figures; the Three.js module only loads from this page. */
+const isKindle = project.id === 'kindle-explainer';
 ---
 
 <Layout title={name} description={description} type="article">
@@ -62,10 +66,13 @@ const ext = { target: '_blank', rel: 'noopener noreferrer' };
       )}
     </header>
 
+    {isKindle && <KindleStudio />}
+
     <div class="wrap-narrow mt-12 md:mt-14">
       <div class="prose-lab">
         <Content />
       </div>
+      {isKindle && <KindleFraming />}
     </div>
   </article>
 

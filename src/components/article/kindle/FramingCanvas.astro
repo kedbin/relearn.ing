@@ -1,0 +1,30 @@
+---
+import KindleSheet from './KindleSheet.astro';
+interface Props { layout?: 'portrait' | 'split' }
+const { layout = 'portrait' } = Astro.props;
+---
+<div class="frame" data-frame={layout} aria-hidden="true">
+  <span class="frame-no">BOARD / 16:9</span>
+  <div class="board" data-flip><KindleSheet /></div>
+  <div class="sidebar" data-flip>
+    <span class="small">REFERENCE</span>
+    <h3>Job handoff</h3>
+    <div class="code"><span>01</span> take next job<br /><span>02</span> hand off to worker</div>
+    <div class="sidebar-foot">QUEUE → WORKER</div>
+  </div>
+</div>
+
+<style>
+  .frame { container-type: inline-size; aspect-ratio: 16 / 9; overflow: hidden; position: relative; color: rgb(var(--on-media)); background-color: rgb(var(--chassis)); background-image: radial-gradient(rgb(var(--faint)) .7px, transparent .7px); background-size: 11px 11px; border: 1px solid rgb(var(--metal)); }
+  .frame::after { content: ''; position: absolute; pointer-events: none; inset: 5%; border: 1px dashed rgb(var(--metal)); }
+  .frame-no { position: absolute; z-index: 1; top: 7%; left: 6.8%; color: rgb(var(--on-media)); font: 500 clamp(.43rem, 2.25cqw, .76rem)/1.1 "Geist Mono Variable", monospace; letter-spacing: .05em; }
+  .board { position: absolute; z-index: 2; height: 84%; top: 8%; left: 32.72%; aspect-ratio: 160 / 216; overflow: hidden; box-shadow: 2px 3px 0 rgb(var(--scrim)); transform-origin: top left; }
+  .sidebar { transform-origin: top left; position: absolute; top: 22%; left: 49%; width: 38%; padding: 3%; overflow: hidden; background: rgb(var(--bg)); color: rgb(var(--text)); border-top: 2px solid rgb(var(--accent)); visibility: hidden; }
+  .small, .sidebar-foot { display: block; color: rgb(var(--accent)); font: 650 2cqw/1.2 "Geist Mono Variable", monospace; letter-spacing: .05em; }
+  h3 { font: 400 5.25cqw/1.02 "Instrument Serif", Georgia, serif; margin: 1cqw 0 1.65cqw; }
+  .code { padding-block: 1cqw; border-block: 1px solid rgb(var(--metal)); white-space: nowrap; font: 550 2.4cqw/1.5 "Geist Mono Variable", monospace; }
+  .code span { color: rgb(var(--muted)); }
+  .sidebar-foot { margin-top: 1.3cqw; }
+  .frame[data-frame="split"] .board { top: 18%; left: 12%; height: 72%; }
+  .frame[data-frame="split"] .sidebar { visibility: visible; }
+</style>

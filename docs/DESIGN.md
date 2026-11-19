@@ -51,14 +51,7 @@ Dark mode is blue-black slate with periwinkle ink. We deliberately avoid warm cr
 (they read as generic "AI brand").
 Tokens are RGB triplets in CSS variables, so `bg-accent/10` works.
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `bg` / `surface` / `surface2` | #F4F5F2 / … | #0D0F14 / … | Page and subtle fills. Use them sparingly. |
-| `line` | graphite @ 13% | mist @ 11% | Hairlines. Most structure comes from these. |
-| `text` / `muted` / `faint` | #11141C / #585E6A / #646A76 | #E4E8F0 / #949CAC / #848C9C | Text hierarchy. `faint` is ≥ 4.5:1 on `bg` and `surface` in both themes, so it may carry small semantic text. |
-| `accent` | ultramarine #2B3FD6 | periwinkle #8A9BFF | Links on hover, active state, №, focus, *one* focal point per screen. |
-| `accent-2` | pen-red #D63A5C | #FF7A96 | Very rare: a correction mark or a "failure" annotation. |
-| `eng` / `life` / `work` | teal / plum / ochre | brighter versions | Domain dots and chart bars only. |
+See [COLOR.md](COLOR.md) for the governed role table and enforcement workflow.
 
 ## Signature motifs
 1. **The entry number.** Every journal entry has `№ 068` (`.num`, accent `№`). Lists show the

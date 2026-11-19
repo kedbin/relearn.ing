@@ -1,4 +1,5 @@
 ---
+import colors from '../styles/colors.json';
 import Header from '../components/site/Header.astro';
 import Footer from '../components/site/Footer.astro';
 import PaletteTrigger from '../components/site/palette/PaletteTrigger.astro';
@@ -34,11 +35,10 @@ const currentPath = Astro.url.pathname;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=4" />
+    <link rel="icon" type="image/svg+xml" href="/favicon-light.svg" />
     <link rel="alternate" type="application/rss+xml" title="relearn.ing" href="/rss.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="theme-color" content="#f4f5f2" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0d0f14" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content={colors.bg.light} data-light={colors.bg.light} data-dark={colors.bg.dark} />
 
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="relearn.ing" />
@@ -56,8 +56,14 @@ const currentPath = Astro.url.pathname;
           var t = localStorage.getItem('theme');
           var dark = t ? t === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
           doc.documentElement.classList.toggle('dark', dark);
+          var meta = doc.querySelector('meta[name="theme-color"]');
+          meta.content = dark ? meta.dataset.dark : meta.dataset.light;
+          doc.querySelector('link[rel="icon"]').href = dark ? '/favicon.svg' : '/favicon-light.svg';
         }
         apply(document);
+        matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+          if (!localStorage.getItem('theme')) apply(document);
+        });
         document.addEventListener('astro:before-swap', function (e) { apply(e.newDocument); });
       })();
     </script>

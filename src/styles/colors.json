@@ -1,0 +1,77 @@
+{
+  "bg": {
+    "light": "#f4f5f2",
+    "dark": "#0d0f14",
+    "role": "Page / drawing paper"
+  },
+  "surface": {
+    "light": "#eaece9",
+    "dark": "#15181f",
+    "role": "Raised surface / desk"
+  },
+  "surface-2": {
+    "light": "#dfe2df",
+    "dark": "#1e222b",
+    "role": "Inset surface / printed grid"
+  },
+  "line": {
+    "light": "#11141c",
+    "dark": "#dce2f0",
+    "role": "Hairline (apply alpha)"
+  },
+  "text": {
+    "light": "#11141c",
+    "dark": "#e4e8f0",
+    "role": "Reading ink"
+  },
+  "muted": {
+    "light": "#585e6a",
+    "dark": "#949cac",
+    "role": "Secondary copy"
+  },
+  "faint": {
+    "light": "#646a76",
+    "dark": "#848c9c",
+    "role": "Quiet labels"
+  },
+  "accent": {
+    "light": "#2b3fd6",
+    "dark": "#8a9bff",
+    "role": "Action / focus"
+  },
+  "eng": {
+    "light": "#0e8076",
+    "dark": "#4ad0be",
+    "role": "Engineering data"
+  },
+  "life": {
+    "light": "#8442a0",
+    "dark": "#c496ff",
+    "role": "Life data"
+  },
+  "work": {
+    "light": "#b07a0c",
+    "dark": "#eebe5a",
+    "role": "Work data"
+  },
+  "chassis": {
+    "light": "#333946",
+    "dark": "#50596c",
+    "role": "Device shell / framing board"
+  },
+  "metal": {
+    "light": "#a8afba",
+    "dark": "#707b91",
+    "role": "Device metal / diagram edges"
+  },
+  "scrim": {
+    "light": "#11141c",
+    "dark": "#090b10",
+    "role": "Media scrim / shadow"
+  },
+  "on-media": {
+    "light": "#f4f5f2",
+    "dark": "#e4e8f0",
+    "role": "Ink over media / neutral scene light"
+  }
+}

@@ -1,0 +1,123 @@
+---
+import FramingCanvas from './FramingCanvas.astro';
+const layouts = [
+  { key: 'portrait', label: 'Portrait crop', text: 'Keep the whole portrait page visible. Space remains at the sides, even after trimming the browser’s own margins.' },
+  { key: 'split', label: 'Side by side', text: 'Move the page left and use the spare width for context. The proportions of the sketch stay the same.' },
+] as const;
+---
+<section id="kindle-framing" class="framing" aria-labelledby="kindle-framing-heading">
+  <p class="kicker">FIG. 02 <i></i> FRAMING STUDY</p>
+  <h2 id="kindle-framing-heading">Fit the page to the shot</h2>
+  <kindle-framing-study>
+    <div data-live class="live" hidden>
+      <fieldset>
+        <legend class="sr-only">Board composition</legend>
+        {layouts.map(({ key, label }, index) => (
+          <label>
+            <input class="sr-only" type="radio" name="kindle-layout" value={key} checked={index === 0} />
+            <span>{label}</span>
+          </label>
+        ))}
+      </fieldset>
+      <FramingCanvas />
+      <p data-caption class="caption" aria-live="polite">{layouts[0].text}</p>
+    </div>
+    <div data-stills class="stills">
+      {layouts.map(({ key, label, text }) => (
+        <figure data-layout={key}>
+          <FramingCanvas layout={key} />
+          <figcaption><span>{label}</span><p>{text}</p></figcaption>
+        </figure>
+      ))}
+    </div>
+  </kindle-framing-study>
+  <p class="fine">Original mockups of a 16:9 Board scene, not OBS screenshots.</p>
+</section>
+
+<script>
+  class KindleFramingStudy extends HTMLElement {
+    private cleanup?: AbortController;
+    private running: Animation[] = [];
+
+    connectedCallback() {
+      const frame = this.querySelector<HTMLElement>('[data-live] [data-frame]');
+      const controls = this.querySelector<HTMLElement>('[data-live]');
+      const stills = this.querySelector<HTMLElement>('[data-stills]');
+      const caption = this.querySelector('[data-caption]');
+      const choices = Array.from(this.querySelectorAll<HTMLInputElement>('input[type="radio"]'));
+      if (!frame || !controls || !stills || !caption) return;
+      const pieces = Array.from(frame.querySelectorAll<HTMLElement>('[data-flip]'));
+      const captions = new Map(Array.from(stills.querySelectorAll('figure')).map((figure) => [
+        figure.dataset.layout, figure.querySelector('figcaption p')?.textContent,
+      ]));
+      this.cleanup?.abort();
+      const { signal } = (this.cleanup = new AbortController());
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      const stop = () => {
+        this.running.forEach((animation) => animation.cancel());
+        this.running = [];
+      };
+      const update = (choice: HTMLInputElement, animate: boolean) => {
+        const before = animate ? pieces.map((piece) => piece.getBoundingClientRect()) : [];
+        stop();
+        frame.dataset.frame = choice.value;
+        caption.textContent = captions.get(choice.value) ?? '';
+        if (!animate || reduced.matches) return;
+        this.running = pieces.map((piece, index) => {
+          const first = before[index];
+          const last = piece.getBoundingClientRect();
+          const ratio = first.width / last.width; // Scale uniformly: the notebook must not stretch.
+          return piece.animate(
+            [{ transform: `translate(${first.left - last.left}px, ${first.top - last.top}px) scale(${ratio})` }, { transform: 'none' }],
+            { duration: 300, easing: 'cubic-bezier(.2,.7,.3,1)' },
+          );
+        });
+      };
+      const motion = () => {
+        stop();
+        const selected = choices.find((choice) => choice.checked);
+        if (selected) update(selected, false);
+        controls.hidden = reduced.matches;
+        stills.hidden = !reduced.matches;
+      };
+      choices.forEach((choice) => choice.addEventListener('change', () => {
+        if (choice.checked) update(choice, true);
+      }, { signal }));
+      reduced.addEventListener('change', motion, { signal });
+      motion();
+    }
+
+    disconnectedCallback() {
+      this.cleanup?.abort();
+      this.running.forEach((animation) => animation.cancel());
+      this.running = [];
+    }
+  }
+
+  if (!customElements.get('kindle-framing-study')) customElements.define('kindle-framing-study', KindleFramingStudy);
+</script>
+
+<style>
+  .framing { margin-top: 3.5rem; scroll-margin-top: 6rem; }
+  .kicker { color: rgb(var(--accent)); font: 600 .68rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .1em; }
+  .kicker i { display: inline-block; width: 1.1rem; height: 1px; margin-inline: .2rem; background: currentColor; vertical-align: middle; }
+  h2 { font: 400 clamp(2.4rem, 5vw, 3.35rem)/1 "Instrument Serif", Georgia, serif; margin: .55rem 0 1rem; }
+  kindle-framing-study { display: block; color: rgb(var(--text)); background: rgb(var(--bg)); border: 1px solid rgb(var(--surface-2)); }
+  .live[hidden], .stills[hidden] { display: none; }
+  fieldset { display: grid; grid-template-columns: 1fr 1fr; border: 0; background: rgb(var(--surface)); }
+  label + label { border-left: 1px solid rgb(var(--surface-2)); }
+  label span { display: grid; place-items: center; padding: .42rem; min-height: 2.75rem; color: rgb(var(--text)); cursor: pointer; font: 650 .84rem/1.2 "Geist Variable", sans-serif; }
+  label:hover span { background: rgb(var(--surface-2)); }
+  input:checked + span { background: rgb(var(--surface-2)); box-shadow: inset 0 -2px rgb(var(--accent)); color: rgb(var(--accent)); }
+  input:focus-visible + span { outline: 2px solid rgb(var(--accent)); outline-offset: -3px; }
+  .caption, figcaption { padding: .8rem 1rem .9rem; color: rgb(var(--text)); font: 400 1.07rem/1.4 "Newsreader Variable", Georgia, serif; }
+  .caption { min-height: 3.4em; }
+  .stills { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgb(var(--surface-2)); }
+  figure { background: rgb(var(--bg)); min-width: 0; }
+  figcaption span { display: block; font: 600 .72rem/1.3 "Geist Mono Variable", monospace; color: rgb(var(--accent)); margin-bottom: .35rem; }
+  .fine { color: rgb(var(--muted)); font: 500 .72rem/1.45 "Geist Variable", sans-serif; margin-top: .6rem; }
+  @media (max-width: 525px) {
+    .stills { grid-template-columns: 1fr; }
+    .caption { min-height: 5.18em; }
+  }
+</style>

@@ -1,3 +1,4 @@
+@import './colors.css';
 @import '@fontsource/instrument-serif/400.css';
 @import '@fontsource/instrument-serif/400-italic.css';
 @import '@fontsource-variable/newsreader/opsz.css';
@@ -13,37 +14,11 @@
 @layer base {
   /* "Ink & Graphite" — an engineer's notebook: cool paper, graphite, ultramarine fountain-pen ink. */
   :root {
-    /* Light — cool drafting paper */
-    --bg: 244 245 242;
-    --surface: 234 236 233;
-    --surface-2: 223 226 223;
-    --line: 17 20 28;          /* used at low alpha via .hair */
-    --text: 17 20 28;          /* graphite */
-    --muted: 88 94 106;
-    --faint: 100 106 118;      /* ≥ 4.5:1 on bg and surface (AA for small labels) */
-    --accent: 43 63 214;       /* ultramarine ink */
-    --accent-2: 214 58 92;     /* rare second signal (pen-red correction mark) */
-    --eng: 14 128 118;         /* teal */
-    --life: 132 66 160;        /* plum */
-    --work: 176 122 12;        /* ochre */
     --hair-a: 0.13;
     color-scheme: light;
   }
 
   .dark {
-    /* Dark — blue-black slate, like ink on a blackboard */
-    --bg: 13 15 20;
-    --surface: 21 24 31;
-    --surface-2: 30 34 43;
-    --line: 220 226 240;
-    --text: 228 232 240;
-    --muted: 148 156 172;
-    --faint: 132 140 156;      /* ≥ 4.5:1 on bg and surface */
-    --accent: 138 155 255;     /* periwinkle ink */
-    --accent-2: 255 122 150;
-    --eng: 74 208 190;
-    --life: 196 150 255;
-    --work: 238 190 90;
     --hair-a: 0.11;
     color-scheme: dark;
   }
@@ -286,6 +261,21 @@
 
 }
 
-/* Astro shiki code blocks: honour theme */
+/* Astro shiki code blocks: syntax tokens mapped to palette roles (docs/COLOR.md). */
+:root {
+  --astro-code-foreground: rgb(var(--text));
+  --astro-code-background: transparent;
+  --astro-code-token-keyword: rgb(var(--accent));
+  --astro-code-token-string: rgb(var(--eng));
+  --astro-code-token-string-expression: rgb(var(--eng));
+  --astro-code-token-constant: rgb(var(--work));
+  --astro-code-token-function: rgb(var(--life));
+  --astro-code-token-parameter: rgb(var(--text));
+  --astro-code-token-punctuation: rgb(var(--muted));
+  --astro-code-token-comment: rgb(var(--faint));
+  --astro-code-token-link: rgb(var(--accent));
+  --astro-code-token-inserted: rgb(var(--eng));
+  --astro-code-token-deleted: rgb(var(--muted));
+  --astro-code-token-changed: rgb(var(--work));
+}
 .astro-code, .astro-code span { background-color: transparent !important; }
-.dark .astro-code, .dark .astro-code span { color: var(--shiki-dark) !important; }

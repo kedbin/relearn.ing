@@ -1,5 +1,7 @@
 # Relearn.ing Automation Protocol (Gemini.md)
 
+Site UI and illustrations: follow [the color contract](docs/COLOR.md); run `npm run colors:check` before shipping.
+
 This document serves as the standard operating procedure for AI agents (and humans) to autonomously manage content and features for [Relearn.ing](https://relearn.ing).
 
 ## 1. Content Ingestion Protocol (Adding Journals)

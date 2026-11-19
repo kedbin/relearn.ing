@@ -1,0 +1,36 @@
+<svg class="sheet" viewBox="0 0 160 216" aria-hidden="true">
+  <rect width="160" height="216" fill="rgb(var(--bg))"/>
+  <g fill="none" stroke="rgb(var(--surface-2))" stroke-width="1">
+    <path d="M0 24h160M0 48h160M0 72h160M0 96h160M0 120h160M0 144h160M0 168h160M0 192h160"/>
+    <path d="M18 0v216"/>
+  </g>
+  <g class="reference">
+    <rect width="160" height="216" fill="rgb(var(--bg))"/>
+    <path d="M17 30h126M17 188h126" stroke="rgb(var(--metal))" stroke-width="1"/>
+    <g fill="rgb(var(--text))" font-family="monospace">
+      <text x="17" y="23" font-size="8" letter-spacing="1">JOB HANDOFF</text>
+      <text x="17" y="201" font-size="6.8" letter-spacing=".6">DIAGRAM / SAMPLE</text>
+    </g>
+    <g fill="rgb(var(--surface))" stroke="rgb(var(--muted))" stroke-width="1">
+      <rect x="17" y="47" width="77" height="37" rx="2"/>
+      <rect x="67" y="134" width="77" height="37" rx="2"/>
+    </g>
+    <g fill="rgb(var(--text))" font-family="monospace" font-size="12">
+      <text x="24" y="65">Queue</text><text x="74" y="152">Worker</text>
+    </g>
+    <path d="M24 73h30m-30 4h18m32 83h30m-30 4h18" stroke="rgb(var(--muted))" fill="none"/>
+  </g>
+  <path class="ink" pathLength="1" d="M45 93C48 116 67 125 100 120q8-1 19-5m-10-6 11 6-5 10" stroke-linejoin="round"/>
+  <path class="mark" pathLength="1" d="M138 133c-1-7-25-8-41-7-21 1-36 7-38 21-3 17 19 23 41 24 22 1 48-3 51-20 2-10-5-15-19-19" />
+</svg>
+
+<style>
+  .sheet { display: block; width: 100%; height: 100%; transform-origin: 65% 63%; transition: transform .32s ease; }
+  .reference { opacity: var(--paper, 1); transition: opacity .23s ease; }
+  .ink, .mark { fill: none; stroke: rgb(var(--accent)); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 1; }
+  .ink { stroke-dashoffset: var(--ink, 0); opacity: var(--ink-on, 1); }
+  .mark { stroke-dashoffset: var(--mark, 0); opacity: var(--mark-on, 1); }
+  @media (prefers-reduced-motion: no-preference) {
+    .sheet { transform: scale(var(--zoom, 1)); }
+  }
+</style>

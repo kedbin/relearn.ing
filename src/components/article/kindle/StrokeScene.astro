@@ -1,0 +1,70 @@
+---
+import KindleSheet from './KindleSheet.astro';
+interface Props { frame?: number }
+const { frame } = Astro.props;
+const still = frame !== undefined;
+---
+<div class:list={['scene', { still }]} aria-hidden="true" style={still ? {
+  '--pen-ink': frame >= 1 ? '0' : '1',
+  '--pen-on': frame >= 1 ? '1' : '0',
+  '--mirror-ink': frame >= 2 ? '0' : '1',
+  '--mirror-on': frame >= 2 ? '1' : '0',
+  '--paper': frame >= 3 ? '1' : '0',
+  '--mark': frame >= 3 ? '0' : '1',
+  '--mark-on': frame >= 3 ? '1' : '0',
+} : undefined}>
+  <div class="device source">
+    <div class="device-label"><span>01</span> Scribe <i>Local ink</i></div>
+    <div class="scribe">
+      <div class="screen" style="--ink: var(--pen-ink, 1); --ink-on: var(--pen-on, 0);"><KindleSheet /></div>
+    </div>
+  </div>
+  <div class="link-line"><span></span><b>→</b></div>
+  <div class="device destination">
+    <div class="device-label"><span>02</span> Browser <i>Live View</i></div>
+    <div class="browser">
+      <div class="browser-top"><b></b><b></b><b></b><span>Live View</span></div>
+      <div class="browser-bed">
+        <div class="screen" style="--ink: var(--mirror-ink, 1); --ink-on: var(--mirror-on, 0);"><KindleSheet /></div>
+        {(!still || frame === 4) && <div class="detail"><KindleSheet /></div>}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .scene { display: grid; grid-template-columns: minmax(0, .9fr) minmax(1.65rem, .17fr) minmax(0, 1.65fr); align-items: center; gap: .6rem; --paper: 0; --mark: 1; --mark-on: 0; }
+  .device { min-width: 0; }
+  .device-label { display: flex; gap: .4rem; align-items: baseline; margin-bottom: .45rem; color: rgb(var(--text)); font: 650 .8rem/1.25 "Geist Variable", sans-serif; }
+  .device-label span, .device-label i { color: rgb(var(--muted)); font: 550 .61rem/1.2 "Geist Mono Variable", monospace; }
+  .device-label i { margin-left: auto; }
+  .scribe { max-width: 100%; padding: 7% 6% 9% 14%; background: rgb(var(--chassis)); border-radius: 7px; box-shadow: 2px 4px 0 rgb(var(--surface-2)); }
+  .screen { aspect-ratio: 160 / 216; overflow: hidden; background: rgb(var(--bg)); }
+  .source .screen { border-radius: 2px; }
+  .link-line { display: flex; align-items: center; color: rgb(var(--accent)); }
+  .link-line span { flex: 1; border-top: 1px dashed currentColor; }
+  .link-line b { font-size: .98rem; line-height: 1; }
+  .browser { border: 3px solid rgb(var(--chassis)); background: rgb(var(--chassis)); border-radius: 7px; overflow: hidden; box-shadow: 2px 4px 0 rgb(var(--surface-2)); }
+  .browser-top { display: flex; align-items: center; gap: .235rem; padding: .32rem .45rem; background: rgb(var(--surface-2)); color: rgb(var(--muted)); font: 550 .61rem/1 "Geist Mono Variable", monospace; }
+  .browser-top b { width: .23rem; height: .23rem; background: rgb(var(--muted)); border-radius: 50%; }
+  .browser-top span { margin-left: auto; }
+  .browser-bed { display: grid; place-items: center; position: relative; aspect-ratio: 1.53; padding-block: 3%; grid-template-rows: minmax(0, 1fr); }
+  .browser .screen { height: 100%; }
+  .detail { position: absolute; right: 5%; bottom: 5%; width: 43%; aspect-ratio: 1; border: 1px solid rgb(var(--accent)); border-radius: 50%; overflow: hidden; background: rgb(var(--bg)); }
+  .detail :global(svg) { transform: scale(2.5); }
+  .scene:not(.still) .detail { opacity: var(--loupe, 0); transition: opacity .2s ease; }
+  .scene:not(.still) .browser .screen { --zoom: 1; }
+  .still { grid-template-columns: minmax(0, .95fr) 1rem minmax(0, 1.55fr); gap: .23rem; }
+  .still .device-label, .still .browser-top span { display: none; }
+  .still .browser-top { padding: .19rem .23rem; }
+  .still .browser { border-width: 2px; }
+  @media (max-width: 520px) {
+    .scene:not(.still) { grid-template-columns: 1fr; gap: .33rem; }
+    .scene:not(.still) .source { width: min(55%, 9rem); justify-self: center; }
+    .scene:not(.still) .destination { width: min(100%, 15rem); justify-self: center; }
+    .scene:not(.still) .link-line { width: 1.7rem; rotate: 90deg; justify-self: center; }
+  }
+  @media (max-width: 410px) {
+    .scene:not(.still) .source { width: 8.25rem; }
+  }
+</style>

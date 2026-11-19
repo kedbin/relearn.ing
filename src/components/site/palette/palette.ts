@@ -63,7 +63,7 @@ function build() {
 
   const dialog = el(
     'div',
-    'relative w-full max-w-[600px] overflow-hidden rounded-lg border bg-bg shadow-[0_24px_60px_-28px_rgb(0_0_0/0.35)] animate-[palette-in_180ms_cubic-bezier(0.22,1,0.36,1)_both] motion-reduce:animate-none',
+    'relative w-full max-w-[600px] overflow-hidden rounded-lg border bg-bg shadow-[0_24px_60px_-28px_rgb(var(--scrim)/0.35)] animate-[palette-in_180ms_cubic-bezier(0.22,1,0.36,1)_both] motion-reduce:animate-none',
   );
   dialog.setAttribute('role', 'dialog');
   dialog.setAttribute('aria-modal', 'true');

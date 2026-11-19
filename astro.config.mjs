@@ -13,7 +13,8 @@ export default defineConfig({
   vite: { preview: { allowedHosts: ['.ts.net'] }, server: { allowedHosts: ['.ts.net'] } },
   markdown: {
     shikiConfig: {
-      themes: { light: 'github-light', dark: 'vitesse-dark' },
+      // Syntax colors come from palette roles (see docs/COLOR.md), so code follows day and night.
+      theme: 'css-variables',
       wrap: false,
     },
   },

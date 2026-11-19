@@ -1,5 +1,7 @@
 # relearn.ing | The Public Log of a Recovering Perfectionist
 
+Site UI and illustrations: follow [the color contract](docs/COLOR.md); run `npm run colors:check` before shipping.
+
 > "I spent 4 years architecting automation for banks and transportation networks. But I couldn't automate my own habits."
 
 This repository is **not** a tutorial. It is a **living artifact** of my attempt to apply enterprise-grade engineering discipline to the messy reality of being human.

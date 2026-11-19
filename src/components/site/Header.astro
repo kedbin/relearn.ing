@@ -114,6 +114,10 @@ const isActive = (href: string) => currentPath.startsWith(href.replace(/\/$/, ''
       const dark = !root.classList.contains('dark');
       root.classList.add('theme-switching');
       root.classList.toggle('dark', dark);
+      const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+      if (meta) meta.content = (dark ? meta.dataset.dark : meta.dataset.light)!;
+      const icon = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+      if (icon) icon.href = dark ? '/favicon.svg' : '/favicon-light.svg';
       try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch { /* storage blocked */ }
       requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('theme-switching')));
     });

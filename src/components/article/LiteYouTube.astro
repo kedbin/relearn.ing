@@ -26,14 +26,14 @@ const safeId = id.replace(/[^\w-]/g, '');
       height="360"
       class="absolute inset-0 h-full w-full object-cover opacity-90 transition duration-500 ease-out-quint group-hover:scale-[1.015] group-hover:opacity-100"
     />
-    <span class="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true"></span>
-    <span class="absolute bottom-5 left-5 right-5 flex items-center gap-4 text-white">
-      <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white/95 text-[#111] shadow-lg transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+    <span class="absolute inset-0 bg-gradient-to-t from-scrim/90 via-scrim/10 to-transparent" aria-hidden="true"></span>
+    <span class="absolute bottom-5 left-5 right-5 flex items-center gap-4 text-on-media">
+      <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-on-media/95 text-scrim shadow-lg shadow-scrim/20 transition-colors duration-200 group-hover:bg-accent group-hover:text-bg">
         <svg class="ml-1 h-5 w-5" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M3 1.8v10.4a.6.6 0 0 0 .9.5l8.4-5.2a.6.6 0 0 0 0-1L3.9 1.3a.6.6 0 0 0-.9.5Z"/></svg>
       </span>
       <span class="min-w-0">
         <span class="block truncate text-sm font-medium">{title}</span>
-        <span class="mt-0.5 block font-mono text-[11px] uppercase tracking-[0.08em] text-white/70">YouTube · loads on click</span>
+        <span class="mt-0.5 block font-mono text-[11px] uppercase tracking-[0.08em] text-on-media/70">YouTube · loads on click</span>
       </span>
     </span>
   </a>

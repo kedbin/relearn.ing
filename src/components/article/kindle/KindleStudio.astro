@@ -1,0 +1,294 @@
+---
+import KindlePoster from './KindlePoster.astro';
+import StrokeScene from './StrokeScene.astro';
+import { CHAPTERS } from './stroke-progress';
+
+const notes = [
+  { label: 'Ready', note: 'A Kindle Scribe and a laptop on the desk. The Scribe is the only one you can write on.' },
+  { label: 'Draw', note: 'The ink starts on the Scribe, as ordinary local ink. The browser hasn’t caught up yet.' },
+  { label: 'Mirror', note: 'Over Wi-Fi, Live View shows the same arrow in the browser. It’s a view of the page, not a second editor.' },
+  { label: 'Mark', note: 'An imported diagram becomes the page background, and the ink circle goes on top. The browser shows both.' },
+  { label: 'Zoom', note: 'Pinch on the Scribe to make the handoff easier to see. The view changes on both screens; the drawing doesn’t.' },
+];
+const chapters = notes.map((n, i) => ({ ...n, at: CHAPTERS[i] }));
+---
+<section class="studio" id="kindle-studio" aria-labelledby="kindle-studio-heading">
+  <div class="head">
+    <p class="kicker">FIG. 01 <i></i> THE BUILD IN FIVE BEATS</p>
+    <h2 id="kindle-studio-heading">Draw here, <em>show there</em></h2>
+  </div>
+
+  <kindle-studio>
+    <div class="plate">
+      <div class="stage" data-stage>
+        <div class="poster" data-poster><KindlePoster /></div>
+        <span class="tag" data-label="scribe" hidden aria-hidden="true"><b>01</b> Scribe · local ink</span>
+        <span class="tag" data-label="laptop" hidden aria-hidden="true"><b>02</b> Browser · Live View</span>
+      </div>
+
+      <div class="desk" data-controls hidden>
+        <button type="button" class="play" data-play aria-label="Play the sequence">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path data-icon d="M4 2.5v11l9-5.5z" /></svg>
+        </button>
+        <div class="track">
+          <label for="kindle-studio-range" class="sr-only">Sequence position</label>
+          <input id="kindle-studio-range" data-range type="range" min="0" max="100" step="0.5" value="0" aria-valuetext="Ready" />
+          <div class="steps" role="group" aria-label="Jump to a beat">
+            {chapters.map(({ at, label }, i) => (
+              <button type="button" data-jump={at} aria-pressed={i === 0 ? 'true' : 'false'} style={`--at:${at}`}>
+                <span aria-hidden="true">0{i + 1}</span>{label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p class="note" data-note aria-live="polite">{chapters[0].note}</p>
+      </div>
+    </div>
+
+    <details class="stills" data-stills open>
+      <summary>The five beats as still frames</summary>
+      <ol>
+        {chapters.map(({ label, note }, i) => (
+          <li data-note-text={note}>
+            <StrokeScene frame={i} />
+            <div><span>0{i + 1} / {label}</span><p>{note}</p></div>
+          </li>
+        ))}
+      </ol>
+    </details>
+
+    <p class="fine">Original illustration drawn in software, not a screen recording or a photo of my device. The delay between the screens is for demonstration, not measured latency.</p>
+  </kindle-studio>
+</section>
+
+<script>
+  import { strokeProgress } from './stroke-progress';
+  import type { Studio } from './studio-scene';
+
+  const PLAY = 'M4 2.5v11l9-5.5z';
+  const PAUSE = 'M4 2.5h3v11H4zm5 0h3v11H9z';
+  const REPLAY = 'M8 3a5 5 0 1 1-4.6 3H1.5l3-3.5 3 3.5H5.6A3.2 3.2 0 1 0 8 4.8z';
+  /** Milliseconds per sequence unit while playing (100 units ≈ 11 s, with holds on each beat). */
+  const SPEED = 92;
+  const HOLD = 650;
+
+  function webglAvailable() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch { return false; }
+  }
+
+  class KindleStudio extends HTMLElement {
+    private abort?: AbortController;
+    private studio?: Studio;
+    private raf = 0;
+    private dirty = false;
+
+    connectedCallback() {
+      this.abort?.abort();
+      const abort = (this.abort = new AbortController());
+      const { signal } = abort;
+      const stage = this.querySelector<HTMLElement>('[data-stage]');
+      const poster = this.querySelector<HTMLElement>('[data-poster]');
+      const controls = this.querySelector<HTMLElement>('[data-controls]');
+      const stills = this.querySelector<HTMLDetailsElement>('[data-stills]');
+      const range = this.querySelector<HTMLInputElement>('[data-range]');
+      const play = this.querySelector<HTMLButtonElement>('[data-play]');
+      const icon = this.querySelector<SVGPathElement>('[data-icon]');
+      const note = this.querySelector<HTMLElement>('[data-note]');
+      const jumps = Array.from(this.querySelectorAll<HTMLButtonElement>('[data-jump]'));
+      const texts = Array.from(this.querySelectorAll<HTMLElement>('[data-note-text]')).map((li) => li.dataset.noteText ?? '');
+      const scribeTag = this.querySelector<HTMLElement>('[data-label="scribe"]');
+      const laptopTag = this.querySelector<HTMLElement>('[data-label="laptop"]');
+      if (!stage || !poster || !controls || !stills || !range || !play || !icon || !note || jumps.length !== 5) return;
+      if (!webglAvailable()) return; // The SVG poster and still frames are the complete figure.
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      let position = 0;
+      let playing = false;
+      let tween: { from: number; to: number; start: number; ms: number } | null = null;
+      let visible = false;
+      let hold = 0;
+      let last = 0;
+      let started = false;
+
+      const setIcon = () => {
+        const end = position >= 100;
+        icon.setAttribute('d', playing ? PAUSE : end ? REPLAY : PLAY);
+        play.setAttribute('aria-label', playing ? 'Pause the sequence' : end ? 'Replay the sequence' : 'Play the sequence');
+      };
+
+      const sync = () => {
+        const s = strokeProgress(position);
+        range.value = String(position);
+        const label = jumps[s.frame].textContent?.replace(/^\d+/, '').trim() ?? '';
+        range.setAttribute('aria-valuetext', `${label}, ${Math.round(position)}%`);
+        jumps.forEach((j, i) => j.setAttribute('aria-pressed', String(i === s.frame)));
+        if (note.textContent !== texts[s.frame]) note.textContent = texts[s.frame];
+        this.style.setProperty('--progress', String(position));
+        setIcon();
+        return s;
+      };
+
+      const frame = (now: number) => {
+        this.raf = 0;
+        if (!this.studio) return;
+        const dt = last ? Math.min(64, now - last) : 16;
+        last = now;
+        if (tween) {
+          const k = Math.min(1, (now - tween.start) / tween.ms);
+          const e = 1 - Math.pow(1 - k, 3);
+          position = tween.from + (tween.to - tween.from) * e;
+          if (k >= 1) tween = null;
+        } else if (playing && visible) {
+          if (hold > 0) hold -= dt;
+          else {
+            const before = position;
+            position = Math.min(100, position + dt / SPEED);
+            const beat = [25, 50, 75].find((b) => before < b && position >= b);
+            if (beat !== undefined) { position = beat; hold = HOLD; }
+            if (position >= 100) playing = false;
+          }
+        }
+        this.studio.render(sync());
+        if (tween || (playing && visible)) this.raf = requestAnimationFrame(frame);
+        else last = 0;
+      };
+
+      const request = () => {
+        if (!this.raf && this.studio) this.raf = requestAnimationFrame(frame);
+      };
+
+      const goTo = (to: number, animate: boolean) => {
+        playing = false;
+        if (!animate || reduced.matches) { tween = null; position = to; }
+        else tween = { from: position, to, start: performance.now(), ms: 420 + Math.abs(to - position) * 9 };
+        request();
+      };
+
+      const start = async () => {
+        if (started) return;
+        started = true;
+        try {
+          const { createStudio } = await import('./studio-scene');
+          if (signal.aborted) return;
+          this.studio = createStudio(stage, { scribe: scribeTag ?? undefined, laptop: laptopTag ?? undefined });
+        } catch (error) {
+          console.warn('Kindle studio: WebGL unavailable, keeping the illustration.', error);
+          return;
+        }
+        const canvas = stage.querySelector('canvas');
+        canvas?.addEventListener('webglcontextlost', (e) => { e.preventDefault(); fallback(); }, { signal });
+        this.classList.add('is-live');
+        poster.hidden = true;
+        controls.hidden = false;
+        if (scribeTag) scribeTag.hidden = false;
+        if (laptopTag) laptopTag.hidden = false;
+        stills.open = false;
+        // Autoplay once on arrival, unless the reader prefers less motion.
+        if (!reduced.matches && visible) playing = true;
+        request();
+      };
+
+      const fallback = () => {
+        cancelAnimationFrame(this.raf);
+        this.raf = 0;
+        this.studio?.dispose();
+        this.studio = undefined;
+        this.classList.remove('is-live');
+        poster.hidden = false;
+        controls.hidden = true;
+        if (scribeTag) scribeTag.hidden = true;
+        if (laptopTag) laptopTag.hidden = true;
+        stills.open = true;
+      };
+
+      play.addEventListener('click', () => {
+        if (playing) { playing = false; return setIcon(); }
+        if (position >= 100) position = 0;
+        tween = null;
+        playing = true;
+        hold = 0;
+        request();
+      }, { signal });
+      range.addEventListener('input', () => { playing = false; tween = null; position = range.valueAsNumber; request(); }, { signal });
+      jumps.forEach((j) => j.addEventListener('click', () => goTo(Number(j.dataset.jump), true), { signal }));
+      reduced.addEventListener('change', () => { if (reduced.matches) { playing = false; tween = null; request(); } }, { signal });
+      document.addEventListener('visibilitychange', () => { if (document.hidden) { playing = false; setIcon(); } }, { signal });
+
+      const io = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) { start(); request(); }
+      }, { rootMargin: '120px 0px' });
+      io.observe(stage);
+      const ro = new ResizeObserver(() => { if (this.studio) { this.studio.resize(); request(); } });
+      ro.observe(stage);
+      const root = document.documentElement;
+      let dark = root.classList.contains('dark');
+      const theme = new MutationObserver(() => {
+        if (dark === root.classList.contains('dark')) return;
+        dark = !dark;
+        this.studio?.refreshTheme();
+        request();
+      });
+      theme.observe(root, { attributes: true, attributeFilter: ['class'] });
+      signal.addEventListener('abort', () => { io.disconnect(); ro.disconnect(); theme.disconnect(); });
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+      this.studio?.dispose();
+      this.studio = undefined;
+    }
+  }
+
+  if (!customElements.get('kindle-studio')) customElements.define('kindle-studio', KindleStudio);
+</script>
+
+<style>
+  .studio { width: min(calc(100% - 2.5rem), 64rem); margin: clamp(2.75rem, 6vw, 4rem) auto 0; scroll-margin-top: 5rem; }
+  .kicker { color: rgb(var(--accent)); font: 600 .68rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .1em; }
+  .kicker i { display: inline-block; width: 1.1rem; height: 1px; margin-inline: .2rem; background: currentColor; vertical-align: middle; }
+  h2 { font: 400 clamp(2.4rem, 5.6vw, 4.1rem)/.98 "Instrument Serif", Georgia, serif; letter-spacing: -.015em; margin: .55rem 0 1.1rem; }
+  h2 em { color: rgb(var(--accent)); }
+  kindle-studio { display: block; color: rgb(var(--text)); }
+  .plate { border: 1px solid rgb(var(--surface-2)); background: rgb(var(--surface)); overflow: hidden; }
+  .stage { position: relative; }
+  kindle-studio.is-live .stage { aspect-ratio: 16 / 9; }
+  .poster { background-image: radial-gradient(rgb(var(--surface-2)) .65px, transparent .65px); background-size: 11px 11px; }
+  .poster[hidden], .desk[hidden], .tag[hidden] { display: none; }
+  .stage :global(.studio-canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .tag { position: absolute; left: 0; top: 0; z-index: 1; translate: 0 -100%; pointer-events: none; white-space: nowrap; padding: .2rem .45rem; border: 1px solid rgb(var(--metal)); background: rgb(var(--bg)); color: rgb(var(--text)); font: 600 clamp(.58rem, 1.2vw, .7rem)/1.2 "Geist Mono Variable", monospace; letter-spacing: .04em; }
+  .tag b { color: rgb(var(--accent)); font-weight: 650; margin-right: .2rem; }
+
+  .desk { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .35rem 1rem; align-items: center; padding: .9rem clamp(.8rem, 3vw, 1.6rem) 1rem; border-top: 1px solid rgb(var(--surface-2)); background: rgb(var(--surface)); }
+  .play { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border: 1px solid rgb(var(--metal)); border-radius: 50%; background: rgb(var(--bg)); color: rgb(var(--accent)); }
+  .play svg { width: 1rem; height: 1rem; fill: currentColor; }
+  .play:hover { background: rgb(var(--bg)); }
+  .track { min-width: 0; }
+  input { display: block; width: 100%; height: 1.6rem; accent-color: rgb(var(--accent)); cursor: ew-resize; }
+  .steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid rgb(var(--surface-2)); }
+  .steps button { display: flex; flex-direction: column; align-items: center; min-height: 2.75rem; justify-content: center; padding: .3rem .1rem; color: rgb(var(--text)); font: 650 clamp(.66rem, 1.4vw, .8rem)/1.2 "Geist Variable", sans-serif; }
+  .steps button span { font: 500 .6rem/1.2 "Geist Mono Variable", monospace; color: rgb(var(--muted)); margin-bottom: .1rem; }
+  .steps button:hover { background: rgb(var(--surface-2)); }
+  .steps button[aria-pressed="true"] { box-shadow: inset 0 2px rgb(var(--accent)); color: rgb(var(--accent)); }
+  .play:focus-visible, .steps button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; position: relative; z-index: 1; }
+  .note { grid-column: 1 / -1; min-height: 2.9em; color: rgb(var(--text)); font: 400 1.06rem/1.4 "Newsreader Variable", Georgia, serif; }
+
+  .stills { margin-top: .75rem; border: 1px solid rgb(var(--surface-2)); background: rgb(var(--bg)); }
+  summary { cursor: pointer; padding: .7rem 1rem; color: rgb(var(--text)); font: 600 .7rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .08em; text-transform: uppercase; }
+  .stills ol { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); border-top: 1px solid rgb(var(--surface-2)); }
+  .stills li { display: grid; grid-template-rows: auto 1fr; gap: .85rem; padding: .85rem; border: 1px solid rgb(var(--surface-2)); }
+  .stills li span { color: rgb(var(--accent)); font: 650 .68rem/1.35 "Geist Mono Variable", monospace; text-transform: uppercase; letter-spacing: .05em; }
+  .stills p { color: rgb(var(--text)); font: 400 .98rem/1.4 "Newsreader Variable", Georgia, serif; }
+  .fine { margin-top: .6rem; color: rgb(var(--muted)); font: 500 .72rem/1.45 "Geist Variable", sans-serif; }
+
+  @media (max-width: 640px) {
+    .studio { width: min(calc(100% - 1.5rem), 64rem); }
+    kindle-studio.is-live .stage { aspect-ratio: 4 / 5; }
+    .steps button { font-size: .68rem; }
+  }
+</style>
