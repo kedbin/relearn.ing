@@ -1,0 +1,227 @@
+---
+/**
+ * The route board: one reader task per site, July vs now. Each route is a line of stops
+ * (a subway-map idiom: stations on a rule). Where the current site offers several ways
+ * in, the line forks. Native radio inputs pick the era; without JS both eras show,
+ * stacked, so nothing is hidden. Palette roles only (docs/COLOR.md).
+ */
+import { LANES, type Route } from './routes';
+
+const eras = [
+  { key: 'july', label: 'July 2026', note: 'Before the rebuilds' },
+  { key: 'now', label: 'November 2026', note: 'After the rebuilds' },
+] as const;
+type Era = (typeof eras)[number]['key'];
+
+const stopNo = (i: number) => String(i + 1).padStart(2, '0');
+---
+
+<section id="route-board" class="board" aria-labelledby="route-board-h">
+  <p class="kicker">FIG. 01 <i></i> ONE TASK, TWO DIRECTIONS</p>
+  <h2 id="route-board-h">The <em>route board</em></h2>
+  <p class="intro">Follow the résumé through the portfolio and entry 027 through the notebook. Switch the month to see where a path branches, and where a reader can go straight to the document.</p>
+
+  <route-board>
+    <fieldset class="eras" data-eras hidden>
+      <legend class="sr-only">Compare site versions by month</legend>
+      {eras.map(({ key, label, note }, i) => (
+        <label>
+          <input class="sr-only" type="radio" name="route-era" value={key} checked={i === 1} />
+          <span><b>{label}</b><small>{note}</small></span>
+        </label>
+      ))}
+    </fieldset>
+
+    <div class="lanes">
+      {LANES.map((lane, li) => (
+        <article class="lane" aria-labelledby={`lane-${li}`}>
+          <header class="lane-head">
+            <h3 id={`lane-${li}`}><a href={lane.href} class="site" rel="noopener noreferrer" target="_blank">{lane.site} <span aria-hidden="true">↗</span></a></h3>
+            <p class="task"><span class="task-label">Task · </span>{lane.task}</p>
+          </header>
+
+          {eras.map(({ key, label }) => {
+            const route: Route = lane[key as Era];
+            return (
+              <div class="era" data-era={key}>
+                <p class="era-label"><span>{label}</span><a class="src" href={route.source.href}>{route.source.label} ↗</a></p>
+                <p class="summary">{route.summary}</p>
+                <ol class="line" aria-label={`${lane.site}, ${label} route`}>
+                  {route.stops.map((stop, i) => (
+                    <li class="stop">
+                      <span class="pin" aria-hidden="true">{stopNo(i)}</span>
+                      <div class="stop-body">
+                        <p class="stop-title">{stop.title}</p>
+                        <p class="stop-detail">{stop.detail}</p>
+                      </div>
+                    </li>
+                  ))}
+                  {route.fork && (
+                    <li class="fork">
+                      <p class="fork-label" id={`fork-${li}-${key}`}>Possible routes</p>
+                      <ul class="ways" aria-labelledby={`fork-${li}-${key}`}>
+                        {route.fork.map((way) => (
+                          <li class="way">
+                            <p class="way-name"><b>{way.name}</b><small>{way.tag}</small></p>
+                            <ol class="line branch" start={route.stops.length + 1}>
+                              {way.stops.map((stop, j) => (
+                                <li class="stop">
+                                  <span class="pin" aria-hidden="true">{stopNo(route.stops.length + j)}</span>
+                                  <div class="stop-body">
+                                    <p class="stop-title">{stop.title}</p>
+                                    <p class="stop-detail">{stop.detail}</p>
+                                  </div>
+                                </li>
+                              ))}
+                            </ol>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  )}
+                </ol>
+              </div>
+            );
+          })}
+        </article>
+      ))}
+    </div>
+
+    <p class="verdict" data-verdict aria-live="polite">
+      <span data-for="july">July: the résumé was on the front page. The deploy story was already in the archive, behind Journal.</span>
+      <span data-for="now">November: the clipboard adds a detour to the PDF. The home pick and the search shortcut each lead straight to entry 027.</span>
+    </p>
+  </route-board>
+  <p class="fine">Reconstructed routes, not screenshots. Stations mark landmarks, not elapsed time or clicks.</p>
+</section>
+
+<script>
+  class RouteBoard extends HTMLElement {
+    private abort?: AbortController;
+    connectedCallback() {
+      this.abort?.abort();
+      const { signal } = (this.abort = new AbortController());
+      const eras = this.querySelector<HTMLFieldSetElement>('[data-eras]');
+      const radios = Array.from(this.querySelectorAll<HTMLInputElement>('input[name="route-era"]'));
+      if (!eras || radios.length !== 2) return;
+      const apply = (animate: boolean) => {
+        const era = radios.find((r) => r.checked)?.value ?? 'now';
+        const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.dataset.era = era;
+        if (animate && !reduced) {
+          this.classList.remove('is-drawing');
+          void this.offsetWidth; // restart the line draw
+          this.classList.add('is-drawing');
+        }
+      };
+      eras.hidden = false;
+      this.classList.add('is-live');
+      radios.forEach((r) => r.addEventListener('change', () => apply(true), { signal }));
+      apply(false);
+    }
+    disconnectedCallback() { this.abort?.abort(); }
+  }
+  if (!customElements.get('route-board')) customElements.define('route-board', RouteBoard);
+</script>
+
+<style>
+  .board { width: min(calc(100% - 2.5rem), 64rem); margin: clamp(2.75rem, 6vw, 4rem) auto 0; scroll-margin-top: 6rem; }
+  @media (max-width: 640px) { .board { width: min(calc(100% - 1.5rem), 64rem); } }
+  .kicker { color: rgb(var(--accent)); font: 600 .68rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .1em; }
+  .kicker i { display: inline-block; width: 1.1rem; height: 1px; margin-inline: .2rem; background: currentColor; vertical-align: middle; }
+  h2 { font: 400 clamp(2.4rem, 5vw, 3.35rem)/1 "Instrument Serif", Georgia, serif; margin: .55rem 0 .7rem; color: rgb(var(--text)); }
+  h2 em { color: rgb(var(--accent)); }
+  .intro { color: rgb(var(--muted)); font: 400 1.05rem/1.5 "Newsreader Variable", Georgia, serif; max-width: 60ch; }
+
+  route-board { display: block; margin-top: 1.25rem; border: 1px solid rgb(var(--line) / var(--hair-a)); background: rgb(var(--surface) / .55); }
+
+  /* Era switch: two native radios styled as a segmented control. */
+  .eras { display: grid; grid-template-columns: 1fr 1fr; border: 0; border-bottom: 1px solid rgb(var(--line) / var(--hair-a)); }
+  .eras[hidden] { display: none; }
+  .eras label { cursor: pointer; }
+  .eras label + label { border-left: 1px solid rgb(var(--line) / var(--hair-a)); }
+  .eras span { display: grid; gap: .1rem; place-items: center; min-height: 3.25rem; padding: .5rem; color: rgb(var(--muted)); }
+  .eras b { font: 650 .9rem/1.2 "Geist Variable", sans-serif; color: rgb(var(--text)); }
+  .eras small { font: 500 .64rem/1.2 "Geist Mono Variable", monospace; letter-spacing: .06em; text-transform: uppercase; }
+  .eras label:hover span { background: rgb(var(--surface)); }
+  .eras input:checked + span { background: rgb(var(--bg)); box-shadow: inset 0 -2px rgb(var(--accent)); }
+  .eras input:checked + span b { color: rgb(var(--accent)); }
+  .eras input:focus-visible + span { outline: 2px solid rgb(var(--accent)); outline-offset: -4px; }
+
+  .lanes { display: grid; grid-template-columns: 1fr 1fr; }
+  .lane { min-width: 0; padding: 1.1rem clamp(.85rem, 2.4vw, 1.4rem) 1.3rem; }
+  .lane + .lane { border-left: 1px solid rgb(var(--line) / var(--hair-a)); }
+  .lane-head { padding-bottom: .8rem; border-bottom: 1px solid rgb(var(--line) / var(--hair-a)); }
+  .lane-head h3 { margin: 0; font: 400 1.65rem/1.05 "Instrument Serif", Georgia, serif; }
+  .site { color: rgb(var(--text)); text-decoration: none; }
+  .site:hover { color: rgb(var(--accent)); }
+  .site span { font-size: .7em; color: rgb(var(--faint)); }
+  .task { margin-top: .35rem; color: rgb(var(--muted)); font: 500 .82rem/1.35 "Geist Variable", sans-serif; }
+  .task-label { font: 600 .64rem/1 "Geist Mono Variable", monospace; letter-spacing: .08em; text-transform: uppercase; color: rgb(var(--faint)); }
+
+  .era + .era { margin-top: 1.4rem; padding-top: 1rem; border-top: 1px dashed rgb(var(--line) / .2); }
+  route-board.is-live .era { display: none; }
+  route-board.is-live .era + .era { margin-top: 0; padding-top: 0; border-top: 0; }
+  route-board[data-era="july"] .era[data-era="july"],
+  route-board[data-era="now"] .era[data-era="now"] { display: block; }
+
+  .era-label { display: flex; justify-content: space-between; align-items: baseline; gap: .5rem; margin-top: .95rem; font: 600 .66rem/1.2 "Geist Mono Variable", monospace; letter-spacing: .08em; text-transform: uppercase; color: rgb(var(--faint)); }
+  .era-label .src { margin: 0; text-transform: none; font-size: .72rem; }
+  .summary { margin-top: .3rem; color: rgb(var(--text)); font: 400 1.02rem/1.35 "Newsreader Variable", Georgia, serif; }
+
+  /* The line: a rule with numbered stations. */
+  .line { --pin: 1.55rem; position: relative; margin-top: .85rem; list-style: none; padding: 0; }
+  .line::before { content: ''; position: absolute; left: calc(var(--pin) / 2 - 1px); top: .4rem; bottom: .4rem; width: 2px; background: rgb(var(--accent) / .55); transform-origin: top; }
+  .stop { position: relative; display: grid; grid-template-columns: var(--pin) minmax(0, 1fr); gap: .7rem; padding-bottom: .9rem; }
+  .pin { position: relative; z-index: 1; display: grid; place-items: center; width: var(--pin); height: var(--pin); border-radius: 50%; border: 2px solid rgb(var(--accent)); background: rgb(var(--bg)); color: rgb(var(--accent)); font: 650 .6rem/1 "Geist Mono Variable", monospace; }
+  .stop-title { color: rgb(var(--text)); font: 600 .9rem/1.3 "Geist Variable", sans-serif; }
+  .stop-detail { margin-top: .15rem; color: rgb(var(--muted)); font: 400 .82rem/1.45 "Geist Variable", sans-serif; }
+  .src { display: inline-block; margin-top: .25rem; color: rgb(var(--faint)); font: 500 .62rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .02em; }
+  a.src { text-decoration: underline; text-decoration-color: rgb(var(--faint) / .4); text-underline-offset: 2px; }
+  a.src:hover { color: rgb(var(--accent)); }
+
+  /* The fork: branches hang off the trunk. */
+  .fork { position: relative; padding-left: calc(var(--pin) / 2); }
+  .fork-label { margin: .1rem 0 .55rem calc(var(--pin) / 2 + .7rem); font: 600 .62rem/1.2 "Geist Mono Variable", monospace; letter-spacing: .08em; text-transform: uppercase; color: rgb(var(--faint)); }
+  .ways { list-style: none; padding: 0; display: grid; gap: .65rem; }
+  .way { position: relative; padding: .25rem .35rem .1rem calc(var(--pin) / 2 + .7rem); border-left: 2px solid rgb(var(--accent) / .55); }
+  .way::before { content: ''; position: absolute; left: -2px; top: -.65rem; width: 2px; height: .65rem; background: rgb(var(--accent) / .55); }
+  .way:first-child::before { display: none; }
+  .way-name { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .55rem; margin-bottom: .55rem; }
+  .way-name b { color: rgb(var(--text)); font: 650 .86rem/1.2 "Geist Variable", sans-serif; }
+  .way-name small { color: rgb(var(--muted)); font: 500 .62rem/1.2 "Geist Mono Variable", monospace; letter-spacing: .05em; text-transform: uppercase; }
+  .branch { margin-top: 0; }
+  .line .stop:last-child { padding-bottom: .3rem; }
+
+  .verdict { padding: .95rem clamp(.85rem, 2.4vw, 1.4rem) 1.05rem; border-top: 1px solid rgb(var(--line) / var(--hair-a)); background: rgb(var(--bg) / .6); color: rgb(var(--text)); font: 400 1.04rem/1.45 "Newsreader Variable", Georgia, serif; }
+  .verdict span { display: block; }
+  .verdict span + span { margin-top: .5rem; }
+  route-board.is-live .verdict span { display: none; }
+  route-board.is-live .verdict span + span { margin-top: 0; }
+  route-board[data-era="july"] .verdict [data-for="july"],
+  route-board[data-era="now"] .verdict [data-for="now"] { display: block; }
+  .fine { margin-top: .6rem; color: rgb(var(--muted)); font: 500 .72rem/1.45 "Geist Variable", sans-serif; }
+
+  /* One purposeful motion: the route draws itself down the line when you switch eras. */
+  @media (prefers-reduced-motion: no-preference) {
+    route-board.is-drawing .line::before { animation: draw 520ms cubic-bezier(.22, 1, .36, 1) both; }
+    route-board.is-drawing .stop, route-board.is-drawing .way-name { animation: arrive 360ms cubic-bezier(.22, 1, .36, 1) both; }
+    route-board.is-drawing .line > .stop:nth-child(2), route-board.is-drawing .branch .stop:nth-child(1) { animation-delay: 90ms; }
+    route-board.is-drawing .branch .stop:nth-child(2) { animation-delay: 160ms; }
+    route-board.is-drawing .branch .stop:nth-child(3) { animation-delay: 230ms; }
+  }
+  @keyframes draw { from { transform: scaleY(0); } to { transform: none; } }
+  @keyframes arrive { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 760px) {
+    .lanes { grid-template-columns: 1fr; }
+    .lane + .lane { border-left: 0; border-top: 1px solid rgb(var(--line) / var(--hair-a)); }
+  }
+  @media print {
+    route-board .era, route-board .verdict [data-for] { display: block !important; }
+    .lanes { display: block; }
+    .stop, .way { break-inside: avoid; }
+    .lane-head, .era-label, .summary { break-after: avoid; }
+    .eras { display: none !important; }
+  }
+</style>

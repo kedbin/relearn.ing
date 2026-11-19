@@ -8,6 +8,8 @@ techStack: ["SCSS", "HTML", "JavaScript", "Webpack"]
 audioUrl: "https://audio.relearn.ing/binasoy-kim.mp3"
 ---
 
+> **Update, November 2026.** binasoy.kim has since been rebuilt as a 3D van camp with a plain-page fallback. [Two Sites, Two Directions](/projects/two-sites-rebuilt/) covers that rebuild. Below is the original note from December 2025.
+
 ## The Objective
 
 This project serves as the foundational "Base of Operations" for my digital presence. Unlike `relearn.ing`, which focuses on the *process* of cognitive architecture, `binasoy.kim` is the *identity* layer—the "Who" behind the "How."

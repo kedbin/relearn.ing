@@ -6,6 +6,7 @@ import { getProjects, formatDate, readingTime } from '../../lib/content';
 import { splitTitle, demoLabel } from '../../components/projects/projectMeta';
 import KindleStudio from '../../components/article/kindle/KindleStudio.astro';
 import KindleFraming from '../../components/article/kindle/KindleFraming.astro';
+import RouteBoard from '../../components/article/two-sites/RouteBoard.astro';
 
 export async function getStaticPaths() {
   const projects = await getProjects();
@@ -22,6 +23,7 @@ const { date, description, techStack, repoUrl, demoUrl, audioUrl } = project.dat
 const ext = { target: '_blank', rel: 'noopener noreferrer' };
 /** Project-scoped figures; the Three.js module only loads from this page. */
 const isKindle = project.id === 'kindle-explainer';
+const isTwoSites = project.id === 'two-sites-rebuilt';
 ---
 
 <Layout title={name} description={description} type="article">
@@ -67,6 +69,7 @@ const isKindle = project.id === 'kindle-explainer';
     </header>
 
     {isKindle && <KindleStudio />}
+    {isTwoSites && <RouteBoard />}
 
     <div class="wrap-narrow mt-12 md:mt-14">
       <div class="prose-lab">

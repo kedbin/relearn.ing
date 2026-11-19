@@ -8,7 +8,7 @@ techStack: ["Astro", "TypeScript", "Tailwind CSS"]
 audioUrl: "https://audio.relearn.ing/relearn-ing.mp3"
 ---
 
-> **Update, November 2026.** The site was redesigned: cool paper and graphite with a single blue accent, a ruled entry index, search that loads only when you open it, and no React on the page. Light and dark themes follow your system setting. Everything below is the original build note from December 2025, kept as written; its styling and roadmap sections describe that first version, not the current site.
+> **Update, November 2026.** The site was redesigned: cool paper and graphite with a single blue accent, a ruled entry index, search that loads only when you open it, and no React on the page. Light and dark themes follow your system setting. Everything below is the original build note from December 2025, kept as written; its styling and roadmap sections describe that first version, not the current site. [Two Sites, Two Directions](/projects/two-sites-rebuilt/) covers the redesign.
 
 ## Build note, December 2025
 
