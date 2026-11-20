@@ -10,6 +10,7 @@ import LiteYouTube from '../../components/article/LiteYouTube.astro';
 import EntryFooter from '../../components/article/EntryFooter.astro';
 import SeriesNext from '../../components/article/SeriesNext.astro';
 import ArticlePen from '../../components/article/pen/ArticlePen.astro';
+import ControlCenter from '../../components/article/control-center/ControlCenter.astro';
 import { tocHeadings, shouldShowToc, bodyEmbedsVideo } from '../../components/article/article-utils';
 import {
   getEntries, entryNo, domainOf, topicOf, domainDotClass, readingTime, formatDate, relatedEntries, neighbours,
@@ -86,6 +87,8 @@ const related = series.length > 1 ? [] : relatedEntries(entry, all, 3);
         </div>
       )}
     </header>
+
+    {entry.id === 'entry-069' && <ControlCenter />}
 
     <!-- ───────── Series + takeaways ───────── -->
     {(series.length > 1 || d.highlights.length > 0) && (

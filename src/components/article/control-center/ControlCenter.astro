@@ -1,0 +1,699 @@
+---
+/**
+ * FIG. 01 for journal entry 069: Pi in Termux keeps the context and approvals. It hands a scoped
+ * task to a named agent on another machine; that agent works in its own checkout and reports back
+ * on the reply route it was given. Only the Windows laptop is verified; the Linux VPS is proposed.
+ * One-shot SSH is a secondary diagnostic mode, not the main story.
+ *
+ * Layers: the SVG diagram, the phase strip and the facts list are the complete figure without JS.
+ * With JS the native radio controls, phase strip and log work everywhere and the SVG packet moves.
+ * With WebGL a lazily loaded Three.js scene replaces the SVG at the same stage size. Palette roles only.
+ */
+import { LOCAL_STEPS, MODES, TARGETS, outcome, phases } from './routes';
+import { CODE } from './code';
+
+const y = { laptop: 100, vps: 300 } as const;
+// Two lanes per target: outbound (task) and inbound (report). Outbound is the outer lane.
+const lanes = {
+  laptop: { out: 'M146 172 C 250 108, 350 82, 456 88', back: 'M456 114 C 350 122, 250 168, 146 192' },
+  vps: { out: 'M146 228 C 250 292, 350 318, 456 312', back: 'M456 286 C 350 278, 250 232, 146 208' },
+} as const;
+const flow = phases('agent');
+const first = outcome(TARGETS[0], 'agent');
+const steps = LOCAL_STEPS.agent;
+---
+
+<section class="cc" id="control-center" aria-labelledby="control-center-h">
+  <p class="kicker">FIG. 01 <i></i> ASSIGN, WORK LOCALLY, REPORT BACK</p>
+  <h2 id="control-center-h">Hand off the task, <em>not the shell</em></h2>
+  <p class="intro">Pi in Termux keeps the conversation and the approvals. It gives a named agent on another machine a scoped task and a reply route. That agent works in its own checkout with its own tools, then sends a short report back on the same route. Press Play and watch the code light up as the task goes out, the work happens, and the report comes back.</p>
+
+  <control-center data-selected="laptop" data-mode="agent" data-kind="idle">
+    <div class="plate">
+      <div class="stage" data-stage>
+        <div class="poster" data-poster>
+          <svg viewBox="0 0 720 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="cc-svg-t cc-svg-d">
+            <title id="cc-svg-t">Pi in Termux assigns a task to an agent on another machine and receives its report</title>
+            <desc id="cc-svg-d">Two lanes run between the phone and each target. The outbound lane carries a scoped task and a reply route to the target. The target agent works locally in its own checkout: read the brief, edit, run checks, write a report file. The inbound lane carries the report back: verdict, checks, blockers and report path. Lanes to the Windows laptop are solid and marked verified. Lanes to the Linux VPS are dashed and marked proposed; they go directly from the phone, not through the laptop.</desc>
+            <defs>
+              <pattern id="cc-dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".9" fill="rgb(var(--surface-2))" /></pattern>
+              <marker id="cc-ah-out" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="rgb(var(--accent))" /></marker>
+              <marker id="cc-ah-back" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="rgb(var(--eng))" /></marker>
+              <marker id="cc-ah-dim" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="rgb(var(--metal))" /></marker>
+            </defs>
+            <rect width="720" height="400" fill="url(#cc-dots)" />
+            <g fill="none" stroke-width="2" stroke-linecap="round">
+              {TARGETS.map((t) => (
+                <g data-lanes={t.id} class:list={['lanes', t.status]}>
+                  <path data-lane="out" class="lane out" d={lanes[t.id].out} />
+                  <path data-lane="back" class="lane back" d={lanes[t.id].back} />
+                </g>
+              ))}
+            </g>
+            <g class="lane-notes" aria-hidden="true">
+              <text x="300" y="86" text-anchor="middle" class="svg-note out">task + reply route →</text>
+              <text x="300" y="176" text-anchor="middle" class="svg-note back">← report</text>
+            </g>
+            <g>
+              <rect x="40" y="120" width="88" height="160" rx="14" fill="rgb(var(--chassis))" />
+              <rect x="48" y="134" width="72" height="132" rx="4" fill="rgb(var(--bg))" />
+              <path d="M56 150h34M56 162h46M56 174h24" stroke="rgb(var(--accent))" stroke-width="3" stroke-linecap="round" />
+              <path class="inbox" data-inbox d="M56 196h52" stroke="rgb(var(--eng))" stroke-width="3" stroke-linecap="round" />
+              <text x="84" y="304" text-anchor="middle" class="svg-label">Termux + Pi</text>
+              <text x="84" y="320" text-anchor="middle" class="svg-sub">context · approvals</text>
+            </g>
+            {TARGETS.map((t) => {
+              const cy = y[t.id];
+              return (
+                <g data-node={t.id} class="node">
+                  {t.kind === 'laptop'
+                    ? <><rect x="468" y={cy - 30} width="66" height="42" rx="4" fill="rgb(var(--chassis))" /><rect x="474" y={cy - 25} width="54" height="32" fill="rgb(var(--bg))" /><rect x="460" y={cy + 12} width="82" height="7" rx="3" fill="rgb(var(--chassis))" /></>
+                    : <><rect x="466" y={cy - 22} width="70" height="20" rx="3" fill="rgb(var(--chassis))" /><rect x="466" y={cy + 2} width="70" height="20" rx="3" fill="rgb(var(--metal))" /><circle cx="526" cy={cy - 12} r="3" fill="rgb(var(--accent))" /><circle cx="526" cy={cy + 12} r="3" fill="rgb(var(--accent))" /></>}
+                  <g class="chips" aria-hidden="true">
+                    {steps.map((_, i) => <rect data-chip={i} class="chip" x={471 + i * 16} y={cy - 50} width="12" height="10" rx="2" />)}
+                  </g>
+                  <text x="556" y={cy - 10} class="svg-label">{t.name}</text>
+                  <text x="556" y={cy + 6} class="svg-sub">{t.role}</text>
+                  <text x="556" y={cy + 22} class:list={['svg-sub', 'status', t.status]}>{t.status}</text>
+                </g>
+              );
+            })}
+            <g class="legend" aria-hidden="true" transform="translate(40 368)">
+              <path d="M0 0h26" stroke="rgb(var(--accent))" stroke-width="2" marker-end="url(#cc-ah-out)" />
+              <text x="34" y="4" class="svg-sub">outbound: task</text>
+              <path d="M150 0h26" stroke="rgb(var(--eng))" stroke-width="2" marker-end="url(#cc-ah-back)" />
+              <text x="184" y="4" class="svg-sub">inbound: report</text>
+              <path d="M310 0h26" stroke="rgb(var(--metal))" stroke-width="2" stroke-dasharray="5 4" />
+              <text x="344" y="4" class="svg-sub">dashed: proposed</text>
+              <rect x="474" y="-5" width="12" height="10" rx="2" fill="rgb(var(--eng))" />
+              <text x="494" y="4" class="svg-sub">local step done</text>
+            </g>
+            <circle class="svg-packet" data-svg-packet r="7" cx="146" cy="172" />
+          </svg>
+        </div>
+        <span class="tag phone" data-tag="phone" hidden aria-hidden="true"><b>PI</b> Termux<small>context · approvals</small></span>
+        {TARGETS.map((t) => (
+          <span class:list={['tag', t.status]} data-tag={t.id} hidden aria-hidden="true">{t.name}<small>{t.status}</small></span>
+        ))}
+        <span class="tag work" data-tag="work" hidden aria-hidden="true"></span>
+        <span class="tag packet" data-tag="packet" hidden aria-hidden="true"></span>
+      </div>
+
+      <ol class="overview" aria-label="Hand-off at a glance">
+        {flow.map((p, i) => <li><small>{i + 1} · {['Phone', 'Target', 'Phone'][i]}</small><b data-overview>{p.title}</b></li>)}
+      </ol>
+
+      <div class="code" data-code>
+        <div class="run" data-run hidden>
+          <button type="button" class="send" data-send>Play the hand-off</button>
+          <div class="tabs" role="radiogroup" aria-label="Show code for">
+            {CODE.map((c, i) => (
+              <label data-tab={c.id} hidden={c.id === 'ssh'}>
+                <input class="sr-only" type="radio" name="cc-code" value={c.id} checked={i === 0} />
+                <span>{c.label}</span>
+              </label>
+            ))}
+          </div>
+          <span class="status" data-status aria-live="polite"></span>
+          <p class="motion" data-motion hidden>Reduced motion: Play jumps to the end state without animation.</p>
+        </div>
+        <p class="nojs" data-nojs>Static view: the Play button and the 3D scene need JavaScript. The diagram, the code and the steps below tell the same story.</p>
+        {CODE.map((c) => (
+          <figure class="panel" data-panel={c.id}>
+            <figcaption><b>{c.label}</b> · {c.where}</figcaption>
+            <pre tabindex="0"><code>{c.lines.map((l, i) => <span class="ln" data-line={i} data-at={l.at} data-step={l.step}>{l.text || ' '}</span>)}</code></pre>
+          </figure>
+        ))}
+        <p class="code-note">Illustrative. The browser runs none of this. <code>build-vps</code> is a placeholder for the proposed Linux VPS. Herdr Core carries the task and the reply over the SSH connection it already holds, so nothing polls.</p>
+      </div>
+
+      <aside class="addr" data-addr aria-labelledby="cc-addr-h">
+        <h3 id="cc-addr-h">Why the reply address matters</h3>
+        <p>A bare <code>t1</code> means “t1 on whichever core reads it”. The <a href="https://github.com/herdrdev/herdr-core/blob/v0.1.21/docs/machines.md#what-runs-where">Machines guide</a> says to use the full <code>machine/tN</code> address from another machine, and the <a href="https://github.com/herdrdev/herdr-core/blob/v0.1.21/crates/herdr-core/tests/remote.rs#L360-L368">cross-machine test</a> does exactly that: the remote child reads its qualified <code>parent</code> and sends to it.</p>
+        <svg viewBox="0 0 360 172" role="img" aria-labelledby="cc-addr-t cc-addr-d">
+          <title id="cc-addr-t">Two cores, two different t1 terminals</title>
+          <desc id="cc-addr-d">On build-vps, the worker t4 sending to bare t1 reaches build-vps's own t1, the wrong terminal. Instead it reads its parent, phone/t1, from its own record on build-vps and sends there. The message goes over the connection the phone already holds and lands in Pi.</desc>
+          <defs><marker id="cc-addr-ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="rgb(var(--eng))" /></marker></defs>
+          <text x="8" y="18" class="a-core">phone core</text>
+          <rect x="8" y="26" width="132" height="58" class="a-box" />
+          <rect x="18" y="40" width="112" height="30" class="a-row pi" /><text x="26" y="60" class="a-t">t1 · Pi</text>
+          <text x="196" y="18" class="a-core">build-vps core</text>
+          <rect x="196" y="26" width="156" height="104" class="a-box" />
+          <rect x="206" y="40" width="108" height="30" class="a-row dim" /><text x="214" y="60" class="a-t dim">t1 · other</text>
+          <rect x="206" y="88" width="108" height="30" class="a-row me" /><text x="214" y="108" class="a-t">t4 · worker</text>
+          <path d="M316 103 C 344 103, 344 55, 318 55" class="a-bad" />
+          <text x="338" y="84" text-anchor="middle" class="a-x">✕</text>
+          <path class="a-good" d="M206 103 C 168 103, 172 55, 134 55" marker-end="url(#cc-addr-ah)" />
+          <text x="168" y="40" text-anchor="middle" class="a-lbl">phone/t1</text>
+          <text x="8" y="150" class="a-cap">.parent read on build-vps: no new dial or agent</text>
+          <text x="8" y="166" class="a-cap">reply rides the SSH link the phone already holds</text>
+        </svg>
+        <ol class="hops">
+          <li class="bad"><code>hc send t1</code> from the worker → build-vps’s own t1. Wrong terminal.</li>
+          <li><b>Worker side, on build-vps:</b> <code>hc get "$HC_TERMINAL_ID" --json</code> → <code>.parent</code> is <code>phone/t1</code>. A lookup in its own record, not a new connection or a new agent.</li>
+          <li class="good"><code>hc send phone/t1 "[date-fix] …"</code> → travels back over the existing connection → Pi sees <code>&lt;hc from="build-vps/t4"&gt;[date-fix] …</code>. No polling; <code>hc wait</code> is optional.</li>
+          <li>Follow-ups go to the same worker: <code>hc send build-vps/t4 "…"</code>. One interactive agent, reused, not a fresh spawn per reply.</li>
+        </ol>
+        <p class="fine">Addresses are fictional. The direct VPS route is still proposed.</p>
+      </aside>
+
+      <div class="desk" data-controls hidden>
+        <fieldset class="pick">
+          <legend>Target</legend>
+          <div class="opts">
+            {TARGETS.map((t, i) => (
+              <label>
+                <input class="sr-only" type="radio" name="cc-target" value={t.id} checked={i === 0} />
+                <span><b>{t.name}</b><small class={t.status}>{t.status === 'verified' ? 'Verified' : 'Proposed'} · {t.role}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <fieldset class="pick">
+          <legend>Hand-off</legend>
+          <div class="opts">
+            {MODES.map((m, i) => (
+              <label>
+                <input class="sr-only" type="radio" name="cc-mode" value={m.id} checked={i === 0} />
+                <span><b>{m.label}</b><small>{m.hint}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+        <div class="log" role="group" aria-label="Task and result">
+          <p><span class="who out">→</span> <span data-brief>{first.brief}</span></p>
+          <p><span class="who back">←</span> <span data-result aria-live="polite">Press play to watch one hand-off.</span></p>
+          <p class="evidence" data-evidence>{TARGETS[0].evidence}</p>
+        </div>
+      </div>
+
+      <ol class="flow" data-flow aria-label="How a task moves">
+        {flow.map((p, i) => (
+          <li class:list={['phase', p.kind]} data-phase={i}>
+            <span class="num" aria-hidden="true">{p.kind === 'out' ? '→' : p.kind === 'back' ? '←' : '⟳'}</span>
+            <div>
+              <b data-phase-title>{p.title}</b>
+              <span class="payload" data-phase-payload>{p.payload}</span>
+              <small data-phase-via>{p.via}</small>
+              {p.kind === 'local' && (
+                <ul class="steps" data-steps>
+                  {steps.map((s) => <li>{s}</li>)}
+                </ul>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+
+    <details class="facts" data-facts open>
+      <summary>The figure in words</summary>
+      <ul>
+        {TARGETS.map((t) => (
+          <li>
+            <span class:list={['badge', t.status]}>{t.status}</span>
+            <div><b>{t.name}</b> · {t.role}<p>{t.evidence}</p></div>
+          </li>
+        ))}
+        <li>
+          <span class="badge">route</span>
+          <div><b>Assign and report on one route</b><p>Herdr Core reaches the other machine over host-key-verified Tailscale SSH. The task goes out with a reply route; the agent reads its qualified parent (for example <code>phone/t1</code>) from its own record and answers with <code>hc send</code> to that address. There is no <code>hc receive</code>: a report arrives as a new message in the parent’s terminal. If that route is down, the report file the agent writes is still there to read.</p></div>
+        </li>
+        <li>
+          <span class="badge">aside</span>
+          <div><b>Not on this route</b><p>A one-shot SSH command is a quick diagnostic, not the way work gets handed off. The Windows preview server reaches the phone through a separate HTTP tunnel, not through Herdr Core.</p></div>
+        </li>
+      </ul>
+    </details>
+
+    <p class="fine">Illustration with role names only; no real hosts, users, terminals or paths. Playback timing is for demonstration. A simulated report is not evidence that the route works.</p>
+  </control-center>
+</section>
+
+<script>
+  import { LOCAL_STEPS, TARGETS, exchangeMs, finalFrame, frameAt, isMode, outcome, phases, targetById, type Frame, type Mode, type TargetId } from './routes';
+  import type { CenterScene } from './scene';
+  import { codeById, type CodePanel } from './code';
+
+  function webglAvailable() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch { return false; }
+  }
+
+  const ANNOUNCE = { out: 'Task sent to the target.', local: 'Target agent working locally.', back: 'Report coming back.' } as const;
+
+  class ControlCenter extends HTMLElement {
+    private abort?: AbortController;
+    private scene?: CenterScene;
+    private raf = 0;
+
+    connectedCallback() {
+      this.abort?.abort();
+      const abort = (this.abort = new AbortController());
+      const { signal } = abort;
+      const $ = <T extends Element>(s: string) => this.querySelector<T>(s);
+      const $$ = <T extends Element>(s: string) => [...this.querySelectorAll<T>(s)];
+      const stage = $<HTMLElement>('[data-stage]');
+      const poster = $<HTMLElement>('[data-poster]');
+      const controls = $<HTMLElement>('[data-controls]');
+      const facts = $<HTMLDetailsElement>('[data-facts]');
+      const send = $<HTMLButtonElement>('[data-send]');
+      const briefEl = $<HTMLElement>('[data-brief]');
+      const resultEl = $<HTMLElement>('[data-result]');
+      const statusEl = $<HTMLElement>('[data-status]');
+      const evidenceEl = $<HTMLElement>('[data-evidence]');
+      const motionEl = $<HTMLElement>('[data-motion]');
+      const stepsEl = $<HTMLElement>('[data-steps]');
+      const svgPacket = $<SVGCircleElement>('[data-svg-packet]');
+      const overview = $$<HTMLElement>('[data-overview]');
+      const phaseEls = $$<HTMLElement>('[data-phase]');
+      const runBar = $<HTMLElement>('[data-run]');
+      const noJs = $<HTMLElement>('[data-nojs]');
+      const panels = $$<HTMLElement>('[data-panel]');
+      const tag = (k: string) => $<HTMLElement>('[data-tag="' + k + '"]') ?? undefined;
+      if (!stage || !poster || !controls || !facts || !send || !briefEl || !resultEl || !statusEl || !evidenceEl || !stepsEl || !svgPacket || !runBar) return;
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      let selected: TargetId = 'laptop';
+      let mode: Mode = 'agent';
+      let run: { start: number; ms: number } | null = null;
+      let t = -1; // playback time; -1 = idle
+      let done = false; // resting after a completed run
+      let lastPhase = -1;
+      let deadline = 0;
+      let code: CodePanel['id'] = 'pi';
+
+      // The SVG figure is interactive on its own: show the controls now, before (and without) Three.
+      controls.hidden = false;
+      runBar.hidden = false;
+      if (noJs) noJs.hidden = true;
+      facts.open = false;
+      this.dataset.ui = 'svg';
+
+      const showCode = () => {
+        if (mode === 'ssh') code = 'ssh';
+        else if (code === 'ssh') code = 'pi';
+        panels.forEach((el) => (el.hidden = el.dataset.panel !== code));
+        $$<HTMLElement>('[data-tab]').forEach((el) => (el.hidden = (el.dataset.tab === 'ssh') !== (mode === 'ssh')));
+        $$<HTMLInputElement>('input[name="cc-code"]').forEach((r) => (r.checked = r.value === code));
+      };
+      /** Highlight the code lines for the current phase; worker lines follow the local step. */
+      const paintCode = (f: Frame | null) => {
+        const panel = panels.find((el) => el.dataset.panel === code);
+        if (!panel) return;
+        const usesSteps = code !== 'pi';
+        panel.querySelectorAll<HTMLElement>('[data-line]').forEach((ln) => {
+          const at = ln.dataset.at, step = ln.dataset.step === undefined ? -1 : Number(ln.dataset.step);
+          let on = !!f && at === f.kind;
+          if (on && f!.kind === 'local' && usesSteps && step >= 0) on = step === f!.step;
+          ln.classList.toggle('is-on', on);
+          ln.classList.toggle('is-done', done && !!at);
+        });
+        const lit = panel.querySelector<HTMLElement>('.ln.is-on');
+        const pre = panel.querySelector('pre');
+        if (lit && pre) { // keep the lit line in view inside the panel, without scrolling the page
+          const top = lit.offsetTop - pre.clientHeight / 2;
+          if (lit.offsetTop < pre.scrollTop || lit.offsetTop > pre.scrollTop + pre.clientHeight - 24) pre.scrollTop = Math.max(0, top);
+        }
+      };
+
+      const label = () => mode === 'agent' ? 'Play the hand-off' : 'Play the SSH check';
+      const describe = () => {
+        const target = targetById(selected);
+        briefEl.textContent = outcome(target, mode).brief;
+        evidenceEl.textContent = target.evidence;
+        phases(mode).forEach((p, i) => {
+          const caption = overview[i]; if (caption) caption.textContent = p.title;
+          const li = phaseEls[i]; if (!li) return;
+          li.querySelector('[data-phase-title]')!.textContent = p.title;
+          li.querySelector('[data-phase-payload]')!.textContent = p.payload;
+          li.querySelector('[data-phase-via]')!.textContent = target.status === 'proposed' && p.kind !== 'local' ? p.via + ' (proposed)' : p.via;
+        });
+        stepsEl.replaceChildren(...LOCAL_STEPS[mode].map((s) => Object.assign(document.createElement('li'), { textContent: s })));
+        this.dataset.selected = selected;
+        this.dataset.mode = mode;
+        showCode();
+      };
+
+      const paintFlow = (f: Frame | null) => {
+        this.dataset.kind = f ? f.kind : done ? 'done' : 'idle';
+        phaseEls.forEach((li, i) => {
+          const isOn = !!f && f.phase === i;
+          li.classList.toggle('is-on', isOn);
+          li.classList.toggle('is-done', done || (!!f && f.phase > i));
+          if (isOn) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+        });
+        [...stepsEl.children].forEach((li, i) => {
+          li.classList.toggle('is-on', !!f && f.kind === 'local' && f.step === i);
+          li.classList.toggle('is-done', done || (!!f && f.step > i));
+        });
+        const count = LOCAL_STEPS[mode].length;
+        $$<SVGRectElement>('[data-node="' + selected + '"] [data-chip]').forEach((c, i) => {
+          c.classList.toggle('is-on', !!f && f.kind === 'local' && f.step === i);
+          c.classList.toggle('is-done', done || (!!f && f.step > i));
+          c.classList.toggle('is-unused', i >= count);
+        });
+      };
+
+      // Losing an optional renderer must never cancel the playback clock.
+      const fallback = () => {
+        const scene = this.scene;
+        this.scene = undefined;
+        try { scene?.dispose(); } catch (error) { console.warn('Control center: scene cleanup failed.', error); }
+        stage.querySelector('.center-canvas')?.remove();
+        this.classList.remove('is-live');
+        this.dataset.ui = 'svg';
+        poster.hidden = false;
+        stage.querySelectorAll<HTMLElement>('.tag').forEach((el) => (el.hidden = true));
+      };
+
+      const draw = () => {
+        const f = t >= 0 ? frameAt(t, mode) : done ? finalFrame(mode) : null;
+        const playing = t >= 0 ? f : null;
+        paintFlow(playing);
+        paintCode(playing);
+        if (playing && playing.phase !== lastPhase) { lastPhase = playing.phase; statusEl.textContent = ANNOUNCE[playing.kind]; }
+        if (this.scene) {
+          const p = phases(mode);
+          const pk = tag('packet'), wk = tag('work');
+          if (pk && playing) pk.textContent = p[playing.phase].kind === 'out' ? '→ ' + p[0].title.toLowerCase() : mode === 'agent' ? '← [date-fix] to phone/t1' : '← ' + p[2].title.toLowerCase();
+          if (wk && playing && playing.kind === 'local') wk.textContent = LOCAL_STEPS[mode][Math.max(0, playing.step)];
+          try {
+            this.scene.render({ selected, mode, frame: playing, done });
+            return;
+          } catch (error) {
+            console.warn('Control center: rendering failed, continuing with the diagram.', error);
+            fallback();
+          }
+        }
+        // SVG fallback: the packet rides the outbound lane, then the inbound lane.
+        svgPacket.style.visibility = playing?.packet ? 'visible' : 'hidden';
+        if (playing?.packet) {
+          const lane = this.querySelector<SVGPathElement>('[data-lanes="' + selected + '"] [data-lane="' + (playing.kind === 'out' ? 'out' : 'back') + '"]');
+          if (lane && typeof lane.getPointAtLength === 'function') {
+            const len = lane.getTotalLength();
+            // The inbound path is drawn target → phone, so u (0 = phone) maps to the far end.
+            const pt = lane.getPointAtLength((playing.kind === 'out' ? playing.u : 1 - playing.u) * len);
+            svgPacket.setAttribute('cx', pt.x.toFixed(1));
+            svgPacket.setAttribute('cy', pt.y.toFixed(1));
+          }
+        }
+      };
+
+      const finish = () => {
+        clearTimeout(deadline);
+        cancelAnimationFrame(this.raf); this.raf = 0;
+        run = null; t = -1; done = true; lastPhase = -1;
+        statusEl.textContent = 'Report received (simulated).';
+        resultEl.textContent = outcome(targetById(selected), mode).result;
+        send.removeAttribute('aria-disabled');
+        send.textContent = 'Replay';
+        draw();
+      };
+
+      const frame = (now: number) => {
+        this.raf = 0;
+        if (!run) return draw();
+        if (document.hidden) { finish(); return; }
+        t = Math.min(1, (now - run.start) / run.ms);
+        draw();
+        if (t >= 1) finish();
+        else this.raf = requestAnimationFrame(frame);
+      };
+      const request = () => { if (!this.raf) this.raf = requestAnimationFrame(frame); };
+
+      const reset = () => {
+        clearTimeout(deadline);
+        cancelAnimationFrame(this.raf); this.raf = 0;
+        run = null; t = -1; done = false; lastPhase = -1;
+        send.removeAttribute('aria-disabled');
+        send.textContent = label();
+        statusEl.textContent = '';
+        resultEl.textContent = 'Press play to watch one hand-off.';
+        describe();
+        request();
+      };
+
+      $$<HTMLInputElement>('input[name="cc-target"]').forEach((r) => r.addEventListener('change', () => {
+        if (r.checked) { selected = targetById(r.value).id; reset(); }
+      }, { signal }));
+      $$<HTMLInputElement>('input[name="cc-mode"]').forEach((r) => r.addEventListener('change', () => {
+        if (r.checked && isMode(r.value)) { mode = r.value; reset(); }
+      }, { signal }));
+
+      $$<HTMLInputElement>('input[name="cc-code"]').forEach((r) => r.addEventListener('change', () => {
+        if (r.checked) { code = r.value as CodePanel['id']; showCode(); paintCode(t >= 0 ? frameAt(t, mode) : null); }
+      }, { signal }));
+
+      send.addEventListener('click', () => {
+        if (run) return; // already playing; aria-disabled keeps focus on the button
+        describe();
+        done = false;
+        // Bring the figure into view if Play was tapped with the stage scrolled away.
+        const r = stage.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > innerHeight) stage.scrollIntoView({ block: 'nearest', behavior: reduced.matches ? 'auto' : 'smooth' });
+        if (reduced.matches) { finish(); return; }
+        resultEl.textContent = targetById(selected).status === 'proposed' ? 'Playing (illustration only)…' : 'Playing…';
+        send.setAttribute('aria-disabled', 'true');
+        run = { start: performance.now(), ms: exchangeMs(mode) };
+        // Completion is independent of rAF delivery (and any drawing error).
+        deadline = window.setTimeout(finish, run.ms);
+        request();
+      }, { signal });
+
+      const syncMotion = () => { if (motionEl) motionEl.hidden = !reduced.matches; if (reduced.matches && run) finish(); };
+      syncMotion();
+      reduced.addEventListener('change', syncMotion, { signal });
+      document.addEventListener('visibilitychange', () => { if (document.hidden && run) finish(); }, { signal });
+
+      let started = false;
+      const start = async () => {
+        if (started || !webglAvailable() || this.hasAttribute('data-no-webgl')) return;
+        started = true;
+        try {
+          const { createCenter } = await import('./scene');
+          if (signal.aborted) return;
+          this.classList.add('is-live');
+          this.dataset.ui = '3d';
+          poster.hidden = true;
+          this.scene = createCenter(stage, {
+            phone: tag('phone'), packet: tag('packet'), work: tag('work'),
+            targets: Object.fromEntries(TARGETS.map((x) => [x.id, tag(x.id)])),
+          });
+        } catch (error) {
+          console.warn('Control center: WebGL unavailable, keeping the diagram.', error);
+          if (!signal.aborted) { fallback(); request(); }
+          return;
+        }
+        stage.querySelector('canvas')?.addEventListener('webglcontextlost', (e) => { e.preventDefault(); fallback(); request(); }, { signal, once: true });
+        request();
+      };
+
+      const io = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting && !signal.aborted) { start(); request(); }
+      }, { rootMargin: '400px 0px' });
+      io.observe(stage);
+      const ro = new ResizeObserver(() => { if (this.scene) { this.scene.resize(); request(); } });
+      ro.observe(stage);
+      const root = document.documentElement;
+      let dark = root.classList.contains('dark');
+      const theme = new MutationObserver(() => {
+        if (dark === root.classList.contains('dark')) return;
+        dark = !dark;
+        this.scene?.refreshTheme();
+        request();
+      });
+      theme.observe(root, { attributes: true, attributeFilter: ['class'] });
+      signal.addEventListener('abort', () => {
+        clearTimeout(deadline); io.disconnect(); ro.disconnect(); theme.disconnect(); fallback();
+      });
+      selected = targetById($<HTMLInputElement>('input[name="cc-target"]:checked')?.value ?? '').id;
+      const checkedMode = $<HTMLInputElement>('input[name="cc-mode"]:checked')?.value;
+      if (checkedMode && isMode(checkedMode)) mode = checkedMode;
+      reset();
+    }
+
+    disconnectedCallback() {
+      this.abort?.abort();
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+
+    }
+  }
+
+  if (!customElements.get('control-center')) customElements.define('control-center', ControlCenter);
+</script>
+
+<style>
+  .cc { width: min(calc(100% - 2.5rem), 64rem); margin: clamp(2.75rem, 6vw, 4rem) auto 0; scroll-margin-top: 5rem; }
+  .kicker { color: rgb(var(--accent)); font: 600 .68rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .1em; }
+  .kicker i { display: inline-block; width: 1.1rem; height: 1px; margin-inline: .2rem; background: currentColor; vertical-align: middle; }
+  h2 { font: 400 clamp(2.2rem, 5.2vw, 3.6rem)/.98 "Instrument Serif", Georgia, serif; letter-spacing: -.015em; margin: .55rem 0 .9rem; color: rgb(var(--text)); }
+  h2 em { color: rgb(var(--accent)); }
+  .intro { max-width: 44rem; margin-bottom: 1.2rem; color: rgb(var(--muted)); font: 400 1.06rem/1.45 "Newsreader Variable", Georgia, serif; }
+  control-center { display: block; color: rgb(var(--text)); }
+  .plate { border: 1px solid rgb(var(--surface-2)); background: rgb(var(--surface)); overflow: hidden; }
+  .overview { display: grid; grid-template-columns: repeat(3, 1fr); list-style: none; margin: 0; padding: 0; border-block: 1px solid rgb(var(--surface-2)); }
+  .overview li { padding: .5rem .6rem; border-inline-start: 2px solid rgb(var(--metal)); }
+  .overview small, .overview b { display: block; }
+  .overview small { font: 500 .7rem/1.4 monospace; }
+  .overview b { font-size: .86rem; }
+  control-center[data-kind="out"] .overview li:first-child,
+  control-center[data-kind="local"] .overview li:nth-child(2),
+  control-center[data-kind="back"] .overview li:last-child { background: rgb(var(--surface-2)); border-color: rgb(var(--accent)); }
+  /* One stage size for the SVG and the canvas, so switching layers never changes the height. */
+  .stage { position: relative; aspect-ratio: 720 / 400; }
+  .poster { position: absolute; inset: 0; }
+  .poster[hidden], .desk[hidden], .tag[hidden], .motion[hidden] { display: none; }
+  .poster svg { display: block; width: 100%; height: 100%; }
+  .stage :global(.center-canvas) { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .lane { stroke: rgb(var(--metal)); opacity: .6; marker-end: url(#cc-ah-dim); }
+  .lanes.proposed .lane { stroke-dasharray: 6 6; }
+  control-center[data-selected="laptop"] [data-lanes="laptop"] .lane,
+  control-center[data-selected="vps"] [data-lanes="vps"] .lane { opacity: 1; stroke-width: 2.6; }
+  control-center[data-selected="laptop"] [data-lanes="laptop"] .out,
+  control-center[data-selected="vps"] [data-lanes="vps"] .out { stroke: rgb(var(--accent)); marker-end: url(#cc-ah-out); }
+  control-center[data-selected="laptop"] [data-lanes="laptop"] .back,
+  control-center[data-selected="vps"] [data-lanes="vps"] .back { stroke: rgb(var(--eng)); marker-end: url(#cc-ah-back); }
+  .lane-notes { transition: transform .25s; }
+  control-center[data-selected="vps"] .lane-notes { transform: translateY(126px); }
+  .svg-label { fill: rgb(var(--text)); font: 600 13px "Geist Variable", sans-serif; }
+  .svg-sub { fill: rgb(var(--muted)); font: 500 10.5px "Geist Mono Variable", monospace; letter-spacing: .03em; }
+  .svg-sub.status { text-transform: uppercase; letter-spacing: .08em; }
+  .svg-sub.verified { fill: rgb(var(--accent)); }
+  .svg-note { font: 600 11px "Geist Mono Variable", monospace; }
+  .svg-note.out { fill: rgb(var(--accent)); }
+  .svg-note.back { fill: rgb(var(--eng)); }
+  .chip { fill: rgb(var(--metal)); opacity: .55; }
+  .chip.is-on { fill: rgb(var(--accent)); opacity: 1; }
+  .chip.is-done { fill: rgb(var(--eng)); opacity: 1; }
+  .chip.is-unused { visibility: hidden; }
+  .inbox { visibility: hidden; }
+  control-center[data-kind="done"] .inbox { visibility: visible; }
+  .svg-packet { visibility: hidden; fill: rgb(var(--accent)); }
+  control-center[data-kind="back"] .svg-packet { fill: rgb(var(--eng)); }
+
+  .tag { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; white-space: nowrap; padding: .2rem .45rem; border: 1px solid rgb(var(--metal)); background: rgb(var(--bg)); color: rgb(var(--text)); font: 600 clamp(.56rem, 1.15vw, .7rem)/1.2 "Geist Mono Variable", monospace; letter-spacing: .03em; }
+  .tag b { color: rgb(var(--accent)); margin-right: .25rem; }
+  .tag small { display: block; font-weight: 500; color: rgb(var(--muted)); text-transform: uppercase; letter-spacing: .06em; }
+  .tag.verified small { color: rgb(var(--accent)); }
+  .tag.proposed { border-style: dashed; }
+  .tag.work { border-color: rgb(var(--accent)); color: rgb(var(--accent)); }
+  .tag.packet { border-color: rgb(var(--accent)); color: rgb(var(--accent)); }
+  control-center[data-kind="back"] .tag.packet { border-color: rgb(var(--eng)); color: rgb(var(--eng)); }
+
+  .flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid rgb(var(--surface-2)); list-style: none; counter-reset: none; }
+  .phase { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr); gap: .5rem; padding: .8rem clamp(.7rem, 2vw, 1.1rem); border-left: 1px solid rgb(var(--surface-2)); transition: background-color .2s; }
+  .phase:first-child { border-left: 0; }
+  .num { display: grid; place-items: center; width: 1.6rem; height: 1.6rem; border: 1px solid rgb(var(--metal)); color: rgb(var(--muted)); font: 600 .8rem/1 "Geist Mono Variable", monospace; }
+  .phase.out .num { border-color: rgb(var(--accent)); color: rgb(var(--accent)); }
+  .phase.back .num { border-color: rgb(var(--eng)); color: rgb(var(--eng)); }
+  .phase b { display: block; font: 650 .86rem/1.25 "Geist Variable", sans-serif; }
+  .payload { display: block; margin-top: .1rem; font: 500 .76rem/1.35 "Geist Mono Variable", monospace; }
+  .phase small { display: block; margin-top: .15rem; color: rgb(var(--muted)); font: 500 .72rem/1.3 "Geist Variable", sans-serif; }
+  .phase.is-on { background: rgb(var(--bg)); box-shadow: inset 0 3px rgb(var(--accent)); }
+  .phase.back.is-on { box-shadow: inset 0 3px rgb(var(--eng)); }
+  .phase.is-done .num { background: rgb(var(--surface-2)); }
+  .steps { display: grid; gap: .15rem; margin-top: .45rem; list-style: none; }
+  .steps li { position: relative; padding-left: .95rem; color: rgb(var(--muted)); font: 500 .72rem/1.3 "Geist Variable", sans-serif; }
+  .steps li::before { content: ""; position: absolute; left: 0; top: .32em; width: .5rem; height: .5rem; border: 1px solid rgb(var(--metal)); }
+  .steps li.is-on { color: rgb(var(--text)); }
+  .steps li.is-on::before { background: rgb(var(--accent)); border-color: rgb(var(--accent)); }
+  .steps li.is-done::before { background: rgb(var(--eng)); border-color: rgb(var(--eng)); }
+
+  .desk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .9rem 1.2rem; padding: 1rem clamp(.8rem, 3vw, 1.6rem) 1.1rem; border-top: 1px solid rgb(var(--surface-2)); }
+  .pick { min-width: 0; }
+  legend { margin-bottom: .4rem; color: rgb(var(--muted)); font: 600 .66rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .08em; text-transform: uppercase; }
+  .opts { display: grid; gap: .35rem; }
+  .opts label { display: block; cursor: pointer; }
+  .opts span { display: block; min-height: 2.75rem; padding: .45rem .7rem; border: 1px solid rgb(var(--surface-2)); background: rgb(var(--bg)); }
+  .opts b { display: block; font: 650 .86rem/1.25 "Geist Variable", sans-serif; }
+  .opts small { display: block; color: rgb(var(--muted)); font: 500 .72rem/1.3 "Geist Variable", sans-serif; }
+  .opts small.verified { color: rgb(var(--accent)); }
+  .opts label:hover span { border-color: rgb(var(--metal)); }
+  .opts input:checked + span { border-color: rgb(var(--accent)); box-shadow: inset 3px 0 rgb(var(--accent)); }
+  .opts input:focus-visible + span, .send:focus-visible, summary:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+  .code { border-top: 1px solid rgb(var(--surface-2)); padding: .8rem clamp(.7rem, 3vw, 1.6rem) .9rem; }
+  .run { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .8rem; margin-bottom: .7rem; }
+  .run[hidden], .nojs[hidden], .panel[hidden], .tabs label[hidden] { display: none; }
+  .tabs { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .tabs label { cursor: pointer; }
+  .tabs span { display: inline-flex; align-items: center; min-height: 2.75rem; padding: .3rem .75rem; border: 1px solid rgb(var(--surface-2)); background: rgb(var(--bg)); color: rgb(var(--muted)); font: 600 .74rem/1.2 "Geist Mono Variable", monospace; }
+  .tabs input:checked + span { border-color: rgb(var(--accent)); color: rgb(var(--text)); box-shadow: inset 0 -2px rgb(var(--accent)); }
+  .tabs input:focus-visible + span { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+  .nojs { margin-bottom: .6rem; color: rgb(var(--muted)); font: 500 .76rem/1.4 "Geist Variable", sans-serif; }
+  .panel + .panel { margin-top: .8rem; }
+  .panel figcaption { margin-bottom: .35rem; color: rgb(var(--muted)); font: 500 .72rem/1.3 "Geist Variable", sans-serif; }
+  .panel figcaption b { color: rgb(var(--text)); }
+  .panel pre { max-height: 17rem; overflow: auto; padding: .55rem 0; border: 1px solid rgb(var(--surface-2)); background: rgb(var(--bg)); user-select: text; -webkit-user-select: text; font: 500 .74rem/1.55 "Geist Mono Variable", monospace; tab-size: 2; }
+  .panel pre:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+  .ln { display: block; min-width: max-content; padding: 0 .8rem; border-left: 3px solid transparent; white-space: pre; color: rgb(var(--muted)); transition: background-color .15s, color .15s; }
+  .ln[data-at] { color: rgb(var(--text)); }
+  .ln.is-done { border-left-color: rgb(var(--surface-2)); }
+  .ln.is-on { background: rgb(var(--surface-2)); border-left-color: rgb(var(--accent)); color: rgb(var(--text)); }
+  .ln.is-on[data-at="back"] { border-left-color: rgb(var(--eng)); }
+  .code-note { margin-top: .55rem; color: rgb(var(--muted)); font: 500 .72rem/1.45 "Geist Variable", sans-serif; }
+  .code-note code { font-family: "Geist Mono Variable", monospace; }
+  .addr { border-top: 1px solid rgb(var(--surface-2)); padding: .9rem clamp(.7rem, 3vw, 1.6rem) 1rem; }
+  .addr h3 { font: 650 .95rem/1.3 "Geist Variable", sans-serif; color: rgb(var(--text)); }
+  .addr > p:not(.fine) { margin-top: .3rem; max-width: 44rem; color: rgb(var(--muted)); font: 400 .98rem/1.45 "Newsreader Variable", Georgia, serif; }
+  .addr a { color: rgb(var(--accent)); text-decoration: underline; text-underline-offset: 2px; }
+  .addr code, .hops code { font: 500 .8em "Geist Mono Variable", monospace; overflow-wrap: anywhere; }
+  .addr svg { display: block; width: 100%; max-width: 30rem; margin: .7rem 0 .4rem; }
+  .a-core { fill: rgb(var(--muted)); font: 600 10.5px "Geist Mono Variable", monospace; letter-spacing: .06em; text-transform: uppercase; }
+  .a-box { fill: rgb(var(--bg)); stroke: rgb(var(--surface-2)); }
+  .a-row { fill: rgb(var(--surface)); stroke: rgb(var(--metal)); }
+  .a-row.pi { stroke: rgb(var(--eng)); }
+  .a-row.me { stroke: rgb(var(--accent)); }
+  .a-row.dim { stroke-dasharray: 3 3; }
+  .a-t { fill: rgb(var(--text)); font: 600 12px "Geist Mono Variable", monospace; }
+  .a-t.dim { fill: rgb(var(--muted)); }
+  .a-bad { fill: none; stroke: rgb(var(--metal)); stroke-width: 1.6; stroke-dasharray: 4 4; }
+  .a-x { fill: rgb(var(--muted)); font: 700 12px "Geist Variable", sans-serif; }
+  .a-good { fill: none; stroke: rgb(var(--eng)); stroke-width: 2.4; }
+  .a-lbl { fill: rgb(var(--eng)); font: 600 11px "Geist Mono Variable", monospace; }
+  .a-cap { fill: rgb(var(--muted)); font: 500 10px "Geist Mono Variable", monospace; }
+  control-center[data-kind="back"] .a-good { stroke-width: 3.4; }
+  control-center[data-kind="back"] .a-row.pi, control-center[data-kind="done"] .a-row.pi { fill: rgb(var(--surface-2)); }
+  .hops { display: grid; gap: .3rem; margin-top: .4rem; padding-left: 1.2rem; list-style: decimal; color: rgb(var(--muted)); font: 400 .82rem/1.45 "Geist Variable", sans-serif; }
+  .hops li { padding: .15rem .35rem; border-left: 3px solid transparent; }
+  .hops .bad code { text-decoration: line-through; }
+  control-center[data-kind="back"] .hops li:not(.bad):not(:last-child) { border-left-color: rgb(var(--eng)); color: rgb(var(--text)); background: rgb(var(--bg)); }
+  .send { min-height: 2.75rem; padding: .5rem 1.2rem; border: 1px solid rgb(var(--accent)); background: rgb(var(--accent)); color: rgb(var(--bg)); font: 650 .86rem/1 "Geist Variable", sans-serif; cursor: pointer; }
+  .send[aria-disabled="true"] { opacity: .6; cursor: progress; }
+  .status { color: rgb(var(--muted)); font: 500 .76rem/1.3 "Geist Mono Variable", monospace; }
+  .motion { color: rgb(var(--muted)); font: 500 .74rem/1.3 "Geist Variable", sans-serif; }
+  .log { grid-column: 1 / -1; padding: .75rem .9rem; border: 1px solid rgb(var(--surface-2)); background: rgb(var(--bg)); font: 500 .8rem/1.45 "Geist Mono Variable", monospace; overflow-wrap: anywhere; }
+  .log p + p { margin-top: .3rem; }
+  .who.out { color: rgb(var(--accent)); }
+  .who.back { color: rgb(var(--eng)); }
+  .log .evidence { margin-top: .55rem; color: rgb(var(--muted)); font: 400 .98rem/1.4 "Newsreader Variable", Georgia, serif; }
+
+  .facts { margin-top: .75rem; border: 1px solid rgb(var(--surface-2)); background: rgb(var(--bg)); }
+  summary { cursor: pointer; padding: .7rem 1rem; color: rgb(var(--text)); font: 600 .7rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .08em; text-transform: uppercase; }
+  .facts ul { border-top: 1px solid rgb(var(--surface-2)); }
+  .facts li { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: .8rem; padding: .75rem 1rem; border-top: 1px solid rgb(var(--surface-2)); font: 400 .9rem/1.4 "Geist Variable", sans-serif; }
+  .facts li:first-child { border-top: 0; }
+  .facts p { margin-top: .2rem; color: rgb(var(--muted)); font: 400 .98rem/1.4 "Newsreader Variable", Georgia, serif; }
+  .badge { align-self: start; padding: .15rem .4rem; border: 1px solid rgb(var(--metal)); color: rgb(var(--muted)); font: 600 .62rem/1.3 "Geist Mono Variable", monospace; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+  .badge.verified { border-color: rgb(var(--accent)); color: rgb(var(--accent)); }
+  .badge.proposed { border-style: dashed; }
+  .fine { margin-top: .6rem; color: rgb(var(--muted)); font: 500 .72rem/1.45 "Geist Variable", sans-serif; }
+
+  @media (max-width: 640px) {
+    .cc { width: min(calc(100% - 1.5rem), 64rem); }
+    .stage { aspect-ratio: 3 / 2; }
+    .flow { grid-template-columns: minmax(0, 1fr); }
+    .phase { border-left: 0; border-top: 1px solid rgb(var(--surface-2)); }
+    .phase:first-child { border-top: 0; }
+    .desk { grid-template-columns: minmax(0, 1fr); }
+    .facts li { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
+    .badge { justify-self: start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lane-notes, .phase, .ln { transition: none; }
+  }
+</style>
